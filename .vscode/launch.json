@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-YariApplication<yari>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.yari.YariApplication",
+            "projectName": "yari",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

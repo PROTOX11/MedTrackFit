@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#hello},~{::title},~{::script},~{::#power})}">
+<head>
+    <title>about page</title>
+</head>
+<body>
+    <h1 id="hello">
+        <h2>hello boy</h2>
+        <script>
+            console.log("this is about page")
+        </script>
+    </h1>
+    <p id="power">Lorem ipsum dolor sit amet.</p>
+    <script>
+        console.log("this is mine about page")
+    </script>
+</body>
+</html>
