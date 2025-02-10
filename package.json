@@ -1,20 +1,12 @@
 {
-  "name": "yari",
+  "name": "medtrackfit",
   "version": "1.0.0",
   "main": "index.js",
-
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "yari": "file:"
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.4.16"
-  }
+  "description": ""
 }

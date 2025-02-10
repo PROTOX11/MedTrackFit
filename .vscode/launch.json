@@ -2,11 +2,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-YariApplication<yari>",
+            "name": "Spring Boot-medtrackfitApplication<medtrackfit>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "com.example.yari.YariApplication",
-            "projectName": "yari",
+            "mainClass": "com.example.medtrackfit.medtrackfitApplication",
+            "projectName": "medtrackfit",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
