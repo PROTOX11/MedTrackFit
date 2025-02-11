@@ -3,7 +3,9 @@ package com.example.medtrackfit.controllers;
 import com.example.medtrackfit.entities.User;
 import com.example.medtrackfit.services.UserService;
 import com.medtrackfit.forms.UserForm;
-
+import com.medtrackfit.helper.Message;
+import jakarta.servlet.http.HttpSession;
+import com.medtrackfit.helper.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +65,7 @@ public class PageController {
         return "signup";
     }
     @RequestMapping(value = "/do-signup", method = RequestMethod.POST)
-    public String processRegister(@ModelAttribute UserForm userForm) {
+    public String processRegister(@ModelAttribute UserForm userForm,HttpSession session) {
         System.out.println("Registration page loading");
         System.out.println(userForm);
         //saving in database
@@ -89,6 +91,9 @@ public class PageController {
 
         User savedUser = userService.saveUser(user);
         System.out.println("user saved :");
+
+        Message message = Message.builder().content("Registration successfull").type(MessageType.green).build();
+        session.setAttribute("message", message);
         return "redirect:/signup";
     }
 }
