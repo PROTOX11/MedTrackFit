@@ -6,11 +6,11 @@
     <title>homepage</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
-<body class="bg-home-bg bg-cover bg-center">
+<body>
     <div id="home">
-        <div>
-            <div>
-                <div>
+        <!-- <img th:src="@{'/images/bgimg.jpg'}" alt="backgroundmtf" class="bg-home-bg bg-cover bg-center"> -->
+        <div class="grid grid-cols-12">
+                <div class="col-span-8 md:col-span-8 lg:col-span-8 xl:col-span-8">
                     <h1 class="text-4xl font-bold text-red-600 dark:text-red-600">
                         MEDICAL TRACKING FITNESS
                     </h1>
@@ -20,18 +20,15 @@
                     <p>
                         Connect with recovered patients, get step-by-step guidance from a mentor, and consult doctors when needed.
                     </p>
-                </div>
-                <div>
                     <button type="button" class="text-red-700 hover:text-white border border-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-3 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-300 dark:focus:ring-red-600">Find Help</button>
                 </div>
-            </div>
-            <div>
-                <h2>
-
-                </h2>
-            </div>
-            <div>
-
+                <div class="relative w-full max-w-md col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-4">
+                    <img th:src="@{'/images/topright.png'}" alt="medical" class="w-full h-auto">
+                        <h3>this is top right area</h3>
+                        <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-white opacity-40 rounded-bl-full"></div>
+                        <div class="absolute bottom-0 left-0 w-1/2 h-1/2 bg-white opacity-60 rounded-tr-full"></div>
+                </div>
+                
             </div>
         </div>
     </div>
