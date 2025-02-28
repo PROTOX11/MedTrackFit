@@ -1,18 +1,90 @@
 <!DOCTYPE html>
-<html lang="en" th:replace="~{base :: parent(~{::#hello},~{::title},~{::script},~{::#power})}">
+<html lang="en" th:replace="~{base :: parent(~{::#hello},~{::title},~{},~{})}">
 <head>
     <title>about page</title>
 </head>
 <body>
-    <h1 id="hello">
-        <h2>hello boy</h2>
-        <script>
-            console.log("this is about page")
-        </script>
-    </h1>
-    <p id="power">Lorem ipsum dolor sit amet.</p>
-    <script>
-        console.log("this is mine about page")
-    </script>
+    <div id="hello"> 
+        <div>
+            <div class="w-screen bg-red-200 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 flex">
+                <a href="#" class="w-1/2">
+                    <img class="rounded-t-lg w-full h-full object-cover" src="/images/about/about-bg.jpg" alt="" />
+                </a>
+                <div class="p-5 w-1/2">
+                    <a href="#">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            About Us - Med Track Fit
+                        </h5>
+                    </a>
+                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        Welcome to Med Track Fit, where compassionate care meets practical solutions. We believe that health guidance should be accessible and affordable for everyone, regardless of financial background. Our mission is to bridge the gap between sufferers and those who have successfully recovered, providing a reliable support system for your health journey.
+                    </p>
+                    <br>
+                    <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Read more
+                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <hr class="border-t border-gray-300">
+        <div class="grid grid-cols-10 pt-10 ">
+            <div class="col-span-8 md:col-span-8 lg:col-span-8 xl:col-span-8 text-black">
+            <h2 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white underline">Our mission</h2>
+            <p>
+            We believe in the power of community to improve the lived experience of patients managing complex health conditions. Our purpose is to create a trusted digital platform that empowers patients to navigate their health journeys together through peer support, personalized health insights, tailored digital health services and patient-friendly clinical education.
+            </p>
+            </div>    
+            <div class="col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2">
+            </div>
+        </div>
+        <br>
+        <hr class="w-sm h-1 mx-auto bg-gray-100 border-2 rounded-sm md:my-10 dark:bg-gray-700">
+        <div class="flex pt-10">
+            
+            <div class="pr-4">
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">PATIENT DRIVEN</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">In our eyes, the patient is the center of the healthcare universe. We lead with a patient first mentality in all areas of our business.</p>
+                </div>
+            </div>
+            <div class="pr-4">
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">FOR COMMUNITY</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">Healing is not a solitary journey. By sharing our experiences and providing empathetic support, patients can help other patients take charge of their health.</p>
+                </div>
+            </div>
+            <div>
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">TRUST</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">We honor the trust our members place in us to safeguard their health data. We are committed to acting transparently and with integrity in using our members' data to deliver insights to our community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex pt-10">
+            <div class="pr-4">
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">TRUST</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">We honor the trust our members place in us to safeguard their health data. We are committed to acting transparently and with integrity in using our members' data to deliver insights to our community.</p>
+                </div>
+            </div> 
+            <div class="pr-4">
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">FOR COMMUNITY</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">Healing is not a solitary journey. By sharing our experiences and providing empathetic support, patients can help other patients take charge of their health.</p>
+                </div>
+            </div>
+            <div class="pr-4">
+                <div href="#" class="block max-w-sm p-6 h-60 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                    <h5 class="mb-2 text-2l font-bold tracking-tight text-gray-900 dark:text-white underline">PATIENT DRIVEN</h5>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">In our eyes, the patient is the center of the healthcare universe. We lead with a patient first mentality in all areas of our business.</p>
+                </div>
+            </div>
+        </div>
+</div>
 </body>
 </html>

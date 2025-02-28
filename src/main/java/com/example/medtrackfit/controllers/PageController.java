@@ -5,21 +5,24 @@ import com.example.medtrackfit.services.UserService;
 import com.medtrackfit.forms.UserForm;
 import com.medtrackfit.helper.Message;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
 import com.medtrackfit.helper.MessageType;
+
+import javax.naming.Binding;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PageController {
     @Autowired
     private UserService userService;
-
-
 
     @RequestMapping("/home")
     public String home(Model model) {
@@ -48,11 +51,24 @@ public class PageController {
         System.out.println("Login page loading");
         return "login";
     }
+    @RequestMapping("/privacy")
+    public String privacy() {
+        System.out.println("Privacy page loading");
+        return "privacy";
+    }
+    @RequestMapping("/logged_home")
+
+    public String logged_home() {
+        System.out.println("Logged home page loading");
+        return "logged_home";
+    }
+
     @RequestMapping("/contact")
     public String contact() {
     System.out.println("Signup page loading");
     return "contact";
     }
+
     @RequestMapping("/signup")
     public String signup(Model model) {
         UserForm userForm = new UserForm();
@@ -65,18 +81,13 @@ public class PageController {
         return "signup";
     }
     @RequestMapping(value = "/do-signup", method = RequestMethod.POST)
-    public String processRegister(@ModelAttribute UserForm userForm,HttpSession session) {
+    public String processRegister(@Valid @ModelAttribute UserForm userForm, BindingResult rBindingResult, HttpSession session) {
         System.out.println("Registration page loading");
         System.out.println(userForm);
-        //saving in database
-        // User user = User.builder()
-        // .name(userForm.getName())
-        // .email(userForm.getEmail())
-        // .password(userForm.getPassword())
-        // .about(userForm.getAbout())
-        // .phoneNumber(userForm.getPhoneNumber())
-        // .profilePicture("https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=")
 
+        if (rBindingResult.hasErrors()) {
+            return "signup";
+        }
         // .build();
 
         User user = new User();

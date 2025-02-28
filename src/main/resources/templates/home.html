@@ -6,31 +6,106 @@
     <title>homepage</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
-<body>
+<body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
     <div id="home">
-        <!-- <img th:src="@{'/images/bgimg.jpg'}" alt="backgroundmtf" class="bg-home-bg bg-cover bg-center"> -->
         <div class="grid grid-cols-12">
-                <div class="col-span-8 md:col-span-8 lg:col-span-8 xl:col-span-8">
-                    <h1 class="text-4xl font-bold text-red-600 dark:text-red-600">
-                        MEDICAL TRACKING FITNESS
-                    </h1>
-                    <P class="text-lg font-semibold text-gray-700 dark:text-gray-400">
-                        Affordable Health Guidance for Everyone
-                    </P>
-                    <p>
-                        Connect with recovered patients, get step-by-step guidance from a mentor, and consult doctors when needed.
-                    </p>
-                    <button type="button" class="text-red-700 hover:text-white border border-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-3 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-300 dark:focus:ring-red-600">Find Help</button>
-                </div>
-                <div class="relative w-full max-w-md col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-4">
-                    <img th:src="@{'/images/topright.png'}" alt="medical" class="w-full h-auto">
-                        <h3>this is top right area</h3>
-                        <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-white opacity-40 rounded-bl-full"></div>
-                        <div class="absolute bottom-0 left-0 w-1/2 h-1/2 bg-white opacity-60 rounded-tr-full"></div>
+            <div class="col-span-7 md:col-span-7 lg:col-span-7 xl:col-span-6">
+                <div class="items-start">
+                <h1 class="text-4xl lg:text-5xl xl:text-7xl font-bold text-red-600 dark:text-red-600">
+                    MedTrackFit - Your Health, Your Support System
+                </h1>
+                <br>
+                <br>
+                <button type="button" class="text-red-700 hover:text-white border border-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-4 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-300 dark:focus:ring-red-600">Find Help</button><br><br>
                 </div>
                 
             </div>
+            <div class="col-span-1 md:col-span-1 lg:col-span-1"></div>
+            <div class="relative w-full max-w-md col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-4">
+                <div>
+                    <img th:src="@{'/images/topright.png'}" alt="medical" class="w-auto h-auto">
+                    <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-white opacity-40 rounded-bl-full"></div>
+                    <div class="absolute bottom-0 left-0 w-1/2 h-1/2 bg-white opacity-60 rounded-tr-full"></div>
+                </div>
+            </div>
         </div>
+        <br>
+        <div class="grid col-span-12">
+                <div class=" col-span-10 md:col-span-10 lg:col-span-10 xl:col-span-10 p-6 bg-red-50 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                    <a href="#">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Affordable Health Guidance for Everyone</h5>
+                    </a>
+                    <div class="flex justify-end">
+                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Struggling with an illness? Can't afford expensive doctor consultations? You're not alone. Many middle-class and lower-class patients face the same challenge. Med Track Fit connects you with people who have successfully recovered from the same condition—because real-life experience matters.</p>
+                    </div>
+                    <div class="col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 p-6  rounded-lg">
+                        <div class="flex justify-end">
+                            <a href="#" class="inline-flex items-center px-8 py-4 text-sm font-large text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                Read more
+                                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2">
+
+                </div>
+            </div>
+        <br>
+        <br>
+        <br>
+        <div class="grid grid-cols-12 gap-12 px-12">
+            
+            <!-- Right-aligned Card (Why Choose Med Track Fit) -->
+            <div class="col-span-12 md:col-span-12 lg:col-span-12 flex justify-start">
+                <a href="#" class="flex h-[700px] md:h-[550px] flex-col md:flex-row items-center bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 overflow-hidden">
+                    <div class="w-full md:w-48 lg:w-55 xl:w-60 h-full flex-shrink-0">
+                        <img class="object-cover w-full h-full" src="/images/why.png" alt="Why Choose Med Track Fit">
+                    </div>
+                    <div class="flex flex-col justify-between p-6 w-full">
+                        <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Why Choose Med Track Fit?</h5>
+                        <ul class="list-inside text-gray-800 dark:text-gray-400 space-y-3">
+                            <li>✅ <strong>Affordable & Accessible</strong> – No costly hospital visits.</li>
+                            <li>✅ <strong>Real-World Solutions</strong> – Learn from those who have recovered.</li>
+                            <li>✅ <strong>Mentor Support</strong> – Stay on track with a trainer.</li>
+                            <li>✅ <strong>Doctor-Verified Plans</strong> – Ensure expert validation.</li>
+                        </ul>
+                        <div class="text-center mt-4">
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">💙 Recover. Guide. Earn. Heal. 💙</p>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-4 mt-4">
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">🔹 Sign Up Now</button>
+                            <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition">🔹 Learn More</button>
+                            <button class="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition">🔹 Connect with a Mentor</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Left-aligned Card (How It Works) -->
+            <div class="col-span-12 md:col-span-12 lg:col-span-12 flex justify-end">
+                <a href="#" class="flex flex-col md:flex-row items-center bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 overflow-hidden">
+                    <div class="w-full md:w-48 h-90">
+                        <img class="object-cover w-full h-full" src="/images/how.jpg" alt="How It Works">
+                    </div>
+                    <div class="flex flex-col justify-between p-6 w-full">
+                        <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">How It Works?</h5>
+                        <ul class="list-inside text-gray-800 dark:text-gray-400 space-y-3">
+                            <li>✔ <strong>Sufferers (Patients in Need)</strong> – Connect with recovered patients for guidance.</li>
+                            <li>✔ <strong>Recovered Patients</strong> – Share your journey and earn by mentoring.</li>
+                            <li>✔ <strong>Mentors/Trainers</strong> – Ensure sufferers follow the recovery plan.</li>
+                            <li>✔ <strong>Senior Doctors</strong> – Validate recovery plans for safety.</li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+</div>
+
+
     </div>
 </body>
 </html>
