@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>profile</title>
+    <title data-th-text="${loggedInUser}+' | MTF">profile</title>
 </head>
 <body>
-    <div>
-        <h1>
-            this is profile page
-        </h1>
+    <div id="home">
+    <h1>this is profile page</h1>
+            <h1 data-th-text="${loggedinuser.name}"></h1>
+            <h1 data-th-text="${loggedinuser.email}"></h1>
+        <div th:if="${loggedinuser}">
+            <h1>User is logged in</h1>
+            <h1>this is user logged in section</h1>
+                
+        </div>
     </div>
 </body>
 </html>

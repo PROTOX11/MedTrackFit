@@ -2,6 +2,10 @@ package com.example.medtrackfit.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.UserDatabase;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails, org.apache.catalina.User {
 
     @Id
     private String userId;
@@ -95,5 +99,89 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    @Override
+    public String getFullName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFullName'");
+    }
+
+    @Override
+    public void setFullName(String fullName) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setFullName'");
+    }
+
+    @Override
+    public Iterator<Group> getGroups() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getGroups'");
+    }
+
+    @Override
+    public Iterator<Role> getRoles() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getRoles'");
+    }
+
+    @Override
+    public UserDatabase getUserDatabase() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUserDatabase'");
+    }
+
+    @Override
+    public void setUsername(String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setUsername'");
+    }
+
+    @Override
+    public void addGroup(Group group) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addGroup'");
+    }
+
+    @Override
+    public void addRole(Role role) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addRole'");
+    }
+
+    @Override
+    public boolean isInGroup(Group group) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isInGroup'");
+    }
+
+    @Override
+    public boolean isInRole(Role role) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isInRole'");
+    }
+
+    @Override
+    public void removeGroup(Group group) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeGroup'");
+    }
+
+    @Override
+    public void removeGroups() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeGroups'");
+    }
+
+    @Override
+    public void removeRole(Role role) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeRole'");
+    }
+
+    @Override
+    public void removeRoles() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeRoles'");
     }
 }

@@ -9,7 +9,13 @@
     <title data-th-replace="${title}">Base page</title>
 </head>
 <body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800">
-    <div data-th-replace="navbar :: navbar"></div>
+
+
+    <div th:if="${loggedInUser}">
+        <div data-th-replace="user/user_navbar::user-navbar"></div>
+    </div>
+
+    
     <!-- content -->
     <div class="p-4">
         <section data-th-replace="${content}"></section>

@@ -25,5 +25,4 @@ public class SessionHelper {
             System.out.println("Error in session helper: " + e.getMessage());
         }
     }
-    
 }
