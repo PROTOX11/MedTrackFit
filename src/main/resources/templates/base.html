@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title data-th-replace="${title}">Base page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSH7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title th:replace="${title}">Base page</title>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800">
-
-    <div th:if="${loggedInUser}">
-        <div data-th-replace="user/user_navbar::user-navbar"></div>
-    </div>
-
-    <div th:unless="${loggedInUser}">
-        <div data-th-replace="navbar :: navbar"></div>
-    </div>
+<body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800 min-h-screen flex flex-col">
+    <header th:if="${loggedInUser}">
+        <div th:replace="user/user_navbar::user-navbar"></div>
+    </header>
+    <header th:unless="${loggedInUser}">
+        <div th:replace="navbar :: navbar"></div>
+    </header>
     
-    <!-- content -->
-    <div class="p-4">
-        <section data-th-replace="${content}"></section>
-        <section data-th-replace="${power}"></section>
+    <div class="flex flex-1">
+        <aside th:if="${loggedInUser}" id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 sm:static sm:w-64 sm:min-h-screen">
+            <div th:replace="~{user/sidebar :: sidebar}"></div>
+        </aside>
+        <main class="flex-grow p-4 w-full sm:ml-64" id="main-content">
+            <section th:replace="${content}"></section>
+            <section th:replace="${power}"></section>
+        </main>
     </div>
-    <div data-th-replace="footer :: footer"></div>
-    <script data-th-replace="${script}"></script>
+
+    <footer th:if="${loggedInUser}">
+        <div th:replace="user/user_footer::user-footer"></div>
+    </footer>
+    <footer th:unless="${loggedInUser}">
+        <div th:replace="footer :: footer"></div>
+    </footer>
+
+    <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-    <script data-th-src="@{'/js/script.js'}"></script>
+    <script th:src="@{'/js/script.js'}"></script>
 </body>
 </html>

@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-th-text="${loggedInUser?.name}+' | MTF'">profile</title>
+    <title data-th-text="${loggedInUser?.name}+' | MTF'">contact</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
 <body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
     <div id="home">
+        <div th:if="${loggedInUser}">
+            <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+        </div>
         <div class="sm:pl-64 pt-20 min-h-[calc(100vh-160px)]" style="height: 1000px;">
-        <h1 class="text-4xl">Welcome to the profile page</h1>
+        <h1 class="text-4xl">Welcome to the add contact page</h1>
     </div>
     </div>
 </body>
