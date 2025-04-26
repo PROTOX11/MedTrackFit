@@ -32,7 +32,7 @@ public class UserController {
         User user=userService.getUserByEmail(username);
         System.out.println(user.getName());
         System.out.println(user.getEmail());
-        model.addAttribute("loggedinuser", user);
+        model.addAttribute("LoggedInUser", user);
     }
 
     @RequestMapping(value = "/dashboard")
@@ -55,7 +55,7 @@ public class UserController {
         System.out.println(user.getName());
         System.out.println(user.getEmail());
 
-        model.addAttribute("loggedinuser", user);
+        model.addAttribute("loggedInUser", user);
         return "user/profile";
     }
 

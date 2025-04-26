@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dashboard</title>
+    <title data-th-text="${loggedInUser?.name}+' | MTF'">profile</title>
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
-<body>
-        <h1>
-            this is dashboard page
-        </h1>
-        <a data-th-href="@{'/do-logout'}">Logout</a>
+<body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
+    <div id="home">
+        <h1>hello dashboard</h1>
+    </div>
 </body>
 </html>

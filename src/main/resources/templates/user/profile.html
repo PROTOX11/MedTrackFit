@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
 <head>
-    <title data-th-text="${loggedInUser}+' | MTF">profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-th-text="${loggedInUser?.name}+' | MTF'">profile</title>
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
-<body>
+<body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
     <div id="home">
-    <h1>this is profile page</h1>
-            <h1 data-th-text="${loggedinuser.name}"></h1>
-            <h1 data-th-text="${loggedinuser.email}"></h1>
-        <div th:if="${loggedinuser}">
-            <h1>User is logged in</h1>
-            <h1>this is user logged in section</h1>
-                
-        </div>
+        <h1>hello profile</h1>
     </div>
 </body>
 </html>
