@@ -20,7 +20,12 @@
         <aside th:if="${loggedInUser}" id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 sm:static sm:w-64 sm:min-h-screen">
             <div th:replace="~{user/sidebar :: sidebar}"></div>
         </aside>
-        <main class="flex-grow p-4 w-full sm:ml-64" id="main-content">
+        <aside th:unless="${loggedInUser}">
+            <div>
+                
+            </div>
+        </aside>
+        <main class="flex-grow p-4 w-full " id="main-content">
             <section th:replace="${content}"></section>
             <section th:replace="${power}"></section>
         </main>

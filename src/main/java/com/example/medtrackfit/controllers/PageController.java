@@ -79,7 +79,7 @@ public class PageController {
         UserForm userForm = new UserForm();
         userForm.setName("");
         userForm.setEmail("");
-        userForm.setPhoneNumber("91");
+        userForm.setPhoneNumber("");
         userForm.setAbout("");
         model.addAttribute("userForm", userForm);
         System.out.println("Signup page loading");

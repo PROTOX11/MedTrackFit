@@ -68,4 +68,12 @@ public class UserController {
     public String logout() {
         return "user/logout";
     }
+    @RequestMapping("/chat")
+    public String chat() {
+        return "user/chat";
+    }
+    @RequestMapping("/recpatient")
+    public String recpatient() {
+        return "user/recpatient";
+    }
 }

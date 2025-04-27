@@ -1,16 +1,154 @@
 <!DOCTYPE html>
-<html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
+<html lang="en" 
+      th:replace="~{base :: parent(~{::#home}, ~{::title}, ~{::script}, ~{})}" 
+      class="light" 
+      data-theme="light" 
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-th-text="${loggedInUser?.name}+' | MTF'">profile</title>
+    <title>User Profile</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    <style>
+        :root {
+            --bg: #f7f8fa;
+            --text: #6b7280;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --btn-bg: #2563eb;
+            --btn-text: #ffffff;
+            --link: #3b82f6;
+            --gradient-start: #a7f3d0;
+            --gradient-end: #60a5fa;
+        }
+        [data-theme="dark"] {
+            --bg: #1e293b;
+            --text: #d1d5db;
+            --card-bg: #2d3748;
+            --card-border: #4b5563;
+            --btn-bg: #1d4ed8;
+            --btn-text: #ffffff;
+            --link: #60a5fa;
+            --gradient-start: #4b5563;
+            --gradient-end: #1e40af;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        .profile-card {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: #1f2937;
+        }
+        [data-theme="dark"] .profile-card {
+            color: #e5e7eb;
+        }
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+        .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        [data-theme="dark"] .btn-secondary {
+            background: #4b5563;
+            color: #d1d5db;
+        }
+        [data-theme="dark"] .btn-secondary:hover {
+            background: #6b7280;
+        }
+        a {
+            color: var(--link);
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        [data-theme="dark"] .progress-bar {
+            background: #4b5563;
+        }
+        @media (max-width: 640px) {
+            .profile-card img {
+                width: 64px;
+                height: 64px;
+            }
+            .profile-card h2 {
+                font-size: 1.5rem;
+            }
+            .info-card h3 {
+                font-size: 1.125rem;
+            }
+            .info-card p {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
 </head>
-<body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
-    <div id="home">
-        <div class="sm:pl-64 pt-20 min-h-[calc(100vh-160px)]" style="height: 1000px;">
-        <h1 class="text-4xl">Welcome to the profile page</h1>
+<body class="overflow-x-hidden bg-gray-50 dark:bg-gray-800 transition-colors duration-200 ">
+    <div id="home" class="sm:ml-64">
+        <!-- Hamburger Menu for Mobile -->
+        <button id="sidebar-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md" aria-label="Open sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+
+        <div class="container mx-auto px-4 pt-12 sm:pt-4 max-w-5xl">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    My Profile
+                </h1>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Manage your personal and medical information
+                </p>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"><div class="h-32 md:h-48 bg-gradient-to-r from-teal-500 to-blue-500"></div><div class="px-4 py-5 md:px-6 md:py-6"><div class="flex flex-col md:flex-row md:items-end -mt-16 md:-mt-24 mb-4 md:mb-6"><div class="md:mr-6"><div class="w-14 h-14 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div></div><div class="mt-4 md:mt-0 flex-1"><div class="flex flex-col md:flex-row md:items-center md:justify-between"><div><h1 class="text-2xl font-bold text-gray-800">Sarah Johnson</h1><p class="text-gray-600">Patient</p></div><button class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen mr-2"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"></path></svg>Edit Profile</button></div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="md:col-span-2"><h2 class="text-lg font-semibold mb-2">About</h2><p class="text-gray-600">I'm on a journey to better manage my Type 2 Diabetes and improve my overall health. Looking to connect with others who have similar experiences and healthcare professionals who can guide me.</p><div class="mt-4 space-y-2"><div class="flex items-center text-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mr-2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>San Francisco, CA</span></div><div class="flex items-center text-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail mr-2"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg><span>sarah.johnson@example.com</span></div><div class="flex items-center text-gray-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-2"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg><span>Member since January 2023</span></div></div></div><div class="bg-gray-50 p-4 rounded-lg"><div class="text-center py-4"><div class="text-3xl font-bold text-gray-800">24</div><div class="text-gray-600">Connections</div></div></div></div></div></div>
+            <br>
+            <!-- Medical History and Health Goals -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Medical History -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden "><div class="p-5 border-b border-gray-100 flex justify-between items-center"><div><h3 class="font-semibold text-gray-800">Medical History</h3><p class="text-sm text-gray-500 mt-1">Record of conditions and treatments</p></div><div><button class="text-sm text-teal-600 hover:text-teal-800 font-medium">Update</button></div></div><div class="p-5"><div class="space-y-4"><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start"><div><h3 class="font-medium text-gray-800">Type 2 Diabetes</h3><p class="text-sm text-gray-500 mt-1">Diagnosed: Jan 2019</p></div><span class="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">Managed</span></div><div class="mt-3 pt-3 border-t border-gray-100"><p class="text-sm text-gray-600">Controlled with diet and medication. Regular check-ups every 3 months.</p></div></div><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start"><div><h3 class="font-medium text-gray-800">Hypertension</h3><p class="text-sm text-gray-500 mt-1">Diagnosed: Mar 2020</p></div><span class="bg-red-50 text-red-700 text-xs px-2 py-1 rounded-full font-medium">Active</span></div><div class="mt-3 pt-3 border-t border-gray-100"><p class="text-sm text-gray-600">Currently on medication. Working on lifestyle changes to improve condition.</p></div></div><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start"><div><h3 class="font-medium text-gray-800">Knee Injury</h3><p class="text-sm text-gray-500 mt-1">Diagnosed: Sep 2021</p></div><span class="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-full font-medium">Resolved</span></div><div class="mt-3 pt-3 border-t border-gray-100"><p class="text-sm text-gray-600">Completed physical therapy program. Occasional mild discomfort during intense activity.</p></div></div></div></div></div>
+
+                <!-- Health Goals -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden "><div class="p-5 border-b border-gray-100 flex justify-between items-center"><div><h3 class="font-semibold text-gray-800">Health Goals</h3><p class="text-sm text-gray-500 mt-1">Your progress towards better health</p></div><div><button class="text-sm text-teal-600 hover:text-teal-800 font-medium">Add Goal</button></div></div><div class="p-5"><div class="space-y-6"><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start mb-3"><div class="flex items-center"><div class="mr-3 flex-shrink-0"><span class="text-lg">🩺</span></div><div><h3 class="font-medium text-gray-800">Reduce A1C Levels</h3><p class="text-sm text-gray-500">Reach and maintain A1C below 6.5% through diet and exercise</p></div></div></div><div class="mb-2 flex justify-between text-sm"><span class="text-gray-600">Jan 15, 2023</span><span class="text-gray-600">Jul 15, 2023</span></div><div class="h-2 w-full bg-gray-200 rounded overflow-hidden"><div class="h-full rounded bg-gradient-to-r from-teal-500 to-teal-300" style="width: 65%;"></div></div><div class="mt-2 flex justify-between items-center"><span class="text-sm font-medium text-gray-700">65% complete</span><button class="text-xs text-teal-600 hover:text-teal-800 font-medium">Update Progress</button></div></div><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start mb-3"><div class="flex items-center"><div class="mr-3 flex-shrink-0"><span class="text-lg">🏋️‍♂️</span></div><div><h3 class="font-medium text-gray-800">Complete Cardiac Rehab Program</h3><p class="text-sm text-gray-500">Attend all 36 sessions of prescribed cardiac rehabilitation</p></div></div></div><div class="mb-2 flex justify-between text-sm"><span class="text-gray-600">Feb 8, 2023</span><span class="text-gray-600">Aug 8, 2023</span></div><div class="h-2 w-full bg-gray-200 rounded overflow-hidden"><div class="h-full rounded bg-gradient-to-r from-blue-500 to-blue-300" style="width: 78%;"></div></div><div class="mt-2 flex justify-between items-center"><span class="text-sm font-medium text-gray-700">78% complete</span><button class="text-xs text-teal-600 hover:text-teal-800 font-medium">Update Progress</button></div></div><div class="border border-gray-100 rounded-lg p-4"><div class="flex justify-between items-start mb-3"><div class="flex items-center"><div class="mr-3 flex-shrink-0"><span class="text-lg">🥗</span></div><div><h3 class="font-medium text-gray-800">Lower Sodium Intake</h3><p class="text-sm text-gray-500">Reduce daily sodium intake to under 2,000mg</p></div></div></div><div class="mb-2 flex justify-between text-sm"><span class="text-gray-600">Mar 1, 2023</span><span class="text-gray-600">Jun 1, 2023</span></div><div class="h-2 w-full bg-gray-200 rounded overflow-hidden"><div class="h-full rounded bg-gradient-to-r from-green-500 to-green-300" style="width: 45%;"></div></div><div class="mt-2 flex justify-between items-center"><span class="text-sm font-medium text-gray-700">45% complete</span><button class="text-xs text-teal-600 hover:text-teal-800 font-medium">Update Progress</button></div></div></div></div></div>
+
+            <!-- My Connections -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-full"><div class="p-5 border-b border-gray-100 flex justify-between items-center"><div><h3 class="font-semibold text-gray-800">My Connections</h3><p class="text-sm text-gray-500 mt-1">People in your health network</p></div><div><button class="text-sm text-teal-600 hover:text-teal-800 font-medium">Find More</button></div></div><div class="p-5"><div class="mb-5"><div class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg><input type="text" placeholder="Search connections..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"></div></div><div class="mb-5 flex space-x-2"><button class="px-3 py-1 text-sm rounded-full bg-teal-100 text-teal-800 font-medium">All</button><button class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">Doctors</button><button class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">Mentors</button><button class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200">Patients</button></div><div class="space-y-4"><div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div><div><h4 class="font-medium text-gray-800">Dr. Michael Chen</h4><p class="text-sm text-gray-500">Cardiologist • Heart Disease</p></div></div><div class="flex items-center space-x-3"><span class="text-xs text-gray-500">Connected Mar 2023</span><button class="text-teal-600 hover:text-teal-800 text-sm font-medium">Message</button></div></div><div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/3764119/pexels-photo-3764119.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div><div><h4 class="font-medium text-gray-800">Emma Wilson</h4><p class="text-sm text-gray-500">Recovered Patient • Diabetes Management</p></div></div><div class="flex items-center space-x-3"><span class="text-xs text-gray-500">Connected Jan 2023</span><button class="text-teal-600 hover:text-teal-800 text-sm font-medium">Message</button></div></div><div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div><div><h4 class="font-medium text-gray-800">James Peterson</h4><p class="text-sm text-gray-500">Fitness Mentor • Cardiac Rehabilitation</p></div></div><div class="flex items-center space-x-3"><span class="text-xs text-gray-500">Connected Apr 2023</span><button class="text-teal-600 hover:text-teal-800 text-sm font-medium">Message</button></div></div><div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/5214413/pexels-photo-5214413.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div><div><h4 class="font-medium text-gray-800">ramesh kumar</h4><p class="text-sm text-gray-500">Nutritionist • Diabetes Diet</p></div></div><div class="flex items-center space-x-3"><span class="text-xs text-gray-500">Connected Feb 2023</span><button class="text-teal-600 hover:text-teal-800 text-sm font-medium">Message</button></div></div><div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between"><div class="flex items-center space-x-3"><div class="w-10 h-10 rounded-full overflow-hidden border-2 border-teal-100"><img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=2" alt="User avatar" class="w-full h-full object-cover"></div><div><h4 class="font-medium text-gray-800">Robert Garcia</h4><p class="text-sm text-gray-500">Physical Therapist • Joint Rehabilitation</p></div></div><div class="flex items-center space-x-3"><span class="text-xs text-gray-500">Connected May 2023</span><button class="text-teal-600 hover:text-teal-800 text-sm font-medium">Message</button></div></div></div></div></div>
+        </div>
     </div>
-    </div>
+    <script id="script">
+        document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+            const sidebar = document.getElementById('logo-sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        document.getElementById('sidebar-close')?.addEventListener('click', () => {
+            const sidebar = document.getElementById('logo-sidebar');
+            sidebar.classList.add('-translate-x-full');
+        });
+    </script>
 </body>
 </html>

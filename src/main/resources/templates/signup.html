@@ -6,82 +6,85 @@
     <title>signup</title>
     <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
 </head>
-<body>
-    <div id="home">
-        <div class="grid grid-cols-12">
-            <div class="col-span-4 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                <!-- content for left side area -->
-            </div>
-            <div class="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-4">
-                <div class="block p-6 border-t-[10px] border-red-600 bg-white  rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700">
-
-                    <div data-th-replace="~{message :: messagebox}">
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div id="home" class="min-h-screen flex items-center justify-center py-12">
+        <div class="grid grid-cols-12 gap-6 container mx-auto px-4">
+            <div class="col-span-12 md:col-span-5 lg:col-span-5 xl:col-span-5">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 h-full flex flex-col justify-center animate-fade-in">
+                    <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Transform Your Health with MedTrackFit</h2>
+                    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">Join a community where real recovery stories inspire real results. Connect with mentors who’ve been where you are and get personalized guidance.</p>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-blue-500 dark:text-blue-400 mr-3 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
+                            </svg>
+                            <p class="text-gray-600 dark:text-gray-400">Guidance from recovered patients</p>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-blue-500 dark:text-blue-400 mr-3 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
+                            </svg>
+                            <p class="text-gray-600 dark:text-gray-400">Doctor-verified recovery plans</p>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-blue-500 dark:text-blue-400 mr-3 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
+                            </svg>
+                            <p class="text-gray-600 dark:text-gray-400">Affordable, accessible support</p>
+                        </div>
                     </div>
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Signup Here</h5>
-                    <p class="font-normal mb-6 text-gray-700 dark:text-gray-400">
-                        Meet the Recovered You
-                    </p>
-                    <form data-th-action="@{'/do-signup'}"
-                        method="post"
-                        data-th-object="${userForm}"
-                        class="max-w-md mx-auto"
-                        novalidate
-                        >
-                            <div class="relative z-0 w-full mb-5 group">
-                                <input type="text" data-th-field="*{name}" name="floating_first_name" id="floating_first_name" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" placeholder=" " required />
-                                <p
-                                th:if="${#fields.hasErrors('name')}"
-                                th:errors="*{name}"
-                                class="text-red-600 px-1 py-2"></p>
-                                <label for="floating_first_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-500 peer-focus:dark:text-red-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Full Name</label>
+                    <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
+                        <p class="text-gray-700 dark:text-gray-300 italic">"MedTrackFit connected me with a mentor who truly understood my struggles. Their advice changed my life!"</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">– Sarah J., Recovered Patient</p>
+                    </div>
+                    <a href="/about" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline font-medium transition duration-200">
+                        Discover More About MedTrackFit
+                        <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="col-span-12 md:col-span-7 lg:col-span-7 xl:col-span-5">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-t-[10px] border-blue-600 animate-fade-in">
+                    <div data-th-replace="~{message :: messagebox}"></div>
+                    <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Create Your Account</h5>
+                    <p class="text-gray-700 dark:text-gray-400 mb-6">Start your journey to recovery today</p>
+                    <form data-th-action="@{'/do-signup'}" method="post" data-th-object="${userForm}" class="max-w-md mx-auto space-y-4" novalidate>
+                        <div class="relative">
+                            <input type="text" data-th-field="*{name}" name="floating_first_name" id="floating_first_name" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder=" Full name" required />
+                            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-600 text-sm mt-1"></p>
+                            <label for="floating_first_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Full Name</label>
+                        </div>
+                        <div class="relative">
+                            <input type="email" data-th-field="*{email}" name="floating_email" id="floating_email" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Email Address" required />
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-600 text-sm mt-1"></p>
+                            <label for="floating_email" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email Address</label>
+                        </div>
+                        <div class="relative">
+                            <input type="password" name="floating_password" id="floating_password" th:field="*{password}" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Password" required />
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-600 text-sm mt-1"></p>
+                            <label for="floating_password" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
+                        </div>
+                        <div class="relative">
+                            <input type="tel" data-th-field="*{phoneNumber}" name="floating_phone" id="floating_phone" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Phone Number" required />
+                            <p th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-red-600 text-sm mt-1"></p>
+                            <label for="floating_phone" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone Number</label>
+                        </div>
+                        <div class="relative">
+                            <input type="text" data-th-gold="*{about}" name="about" id="about" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="About Yourself" required />
+                            <p th:if="${#fields.hasErrors('about')}" th:errors="*{about}" class="text-red-600 text-sm mt-1"></p>
+                            <label for="about" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">About Yourself</label>
+                        </div>
+                        <div class="grid grid-cols-12 gap-4 items-center">
+                            <div class="col-span-8">
+                                <button type="submit" class="w-full bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 font-bold py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300">Signup</button>
                             </div>
-                        <div class="relative z-0 w-full mb-5 group">
-                            <input type="email" data-th-field="*{email}" name="floating_email"  id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" placeholder=" " required />
-                            <p
-                            th:if="${#fields.hasErrors('email')}"
-                            th:errors="*{email}"
-                            class="text-red-600 px-1 py-2"></p>
-                            <label for="email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-red-500 peer-focus:dark:text-red-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email address</label>
-                        </div>
-                        <div class="relative z-0 w-full mb-5 group">
-                            <input type="password" name="floating_password" id="floating_password" th:field="*{password}" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" placeholder=" " required />
-                            <p
-                                th:if="${#fields.hasErrors('password')}"
-                                th:errors="*{password}"
-                                class="text-red-600 px-1 py-2"></p>
-                            <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-500 peer-focus:dark:text-red-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
-                        </div>
-                        <div class="relative z-0 w-full mb-10 group">
-                            <input type="tel" data-th-field="*{phoneNumber}" name="floating_phone" id="floating_phone" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" placeholder=" " required />
-                            <p
-                                th:if="${#fields.hasErrors('phoneNumber')}"
-                                th:errors="*{phoneNumber}"
-                                class="text-red-600 px-1 py-2"></p>
-                            <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-500 peer-focus:dark:text-red-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone number</label>
-                        </div>
-                        <div class="relative z-0 w-full mb-5 group">
-                            <input type="text" data-th-field="*{about}" name="about" id="about" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-red-400 focus:outline-none focus:ring-0 focus:border-red-500 peer" placeholder=" " required />
-                            <p
-                                th:if="${#fields.hasErrors('about')}"
-                                th:errors="*{about}"
-                                class="text-red-600 px-1 py-2"></p>
-                            <label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-red-500 peer-focus:dark:text-red-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-10">About yourself</label>
-                        </div>
-                        <div class="grid grid-cols-10 gap-4 items-center">
-                            <div class="mb-3 col-span-7">
-                                <button type="submit" class="mt-5 w-full bg-gray-800  text-white  hover:bg-gray-500/50 hover:shadow-lg dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline transition duration-300">Signup</button>
-                            </div>
-                            <div class="col-span-3">
-                                <button
-                                type="reset"
-                                class="mt-3 w-full bg-gray-800 text-white hover:bg-orange-500 hover:shadow-lg hover:shadow-orange-500/50 dark:bg-orange-800 dark:hover:bg-red-400 dark:hover:shadow-red-400 font-bold py-2 px-3 rounded transition duration-300">
-                                Reset
-                            </button>
+                            <div class="col-span-4">
+                                <button type="reset" class="w-full bg-gray-600 text-white hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300">Reset</button>
                             </div>
                         </div>
-                        <div class="mb-0">
-                            <button type="button" onclick="window.location.href='/login'" class="mt-5 w-full bg-gray-800  text-white  hover:bg-gray-500/50 hover:shadow-lg dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline transition duration-300">Already have an account? Login</button>
-                        </div>
+                        <button type="button" onclick="window.location.href='/login'" class="w-full bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 mt-4">Already have an account? Login</button>
                     </form>
                 </div>
             </div>

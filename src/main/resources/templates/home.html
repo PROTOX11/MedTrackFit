@@ -1,111 +1,376 @@
 <!DOCTYPE html>
-<html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
+<html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{}, )}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>homepage</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
 </head>
-<body class="overflow-x-hidden"> <!-- Prevent horizontal scroll -->
-    <div id="home">
-        <div class="grid grid-cols-12">
-            <div class="col-span-7 md:col-span-7 lg:col-span-7 xl:col-span-6">
-                <div class="items-start">
-                <h1 class="text-4xl lg:text-5xl xl:text-7xl font-bold text-red-600 dark:text-red-600">
-                    MedTrackFit - Your Health, Your Support System
-                </h1>
-                <br>
-                <br>
-                <button type="button" class="text-red-700 hover:text-white border border-red-500 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-8 py-4 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-300 dark:focus:ring-red-600">Find Help</button><br><br>
-                </div>
-                
-            </div>
-            <div class="col-span-1 md:col-span-1 lg:col-span-1"></div>
-            <div class="relative w-full max-w-md col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-4">
-                <div>
-                    <img th:src="@{'/images/topright.png'}" alt="medical" class="w-auto h-auto">
-                    <div class="absolute top-0 right-0 w-1/2 h-1/2 bg-white opacity-40 rounded-bl-full"></div>
-                    <div class="absolute bottom-0 left-0 w-1/2 h-1/2 bg-white opacity-60 rounded-tr-full"></div>
-                </div>
-            </div>
-        </div>
-        <br>
-        <div class="grid col-span-12">
-                <div class=" col-span-10 md:col-span-10 lg:col-span-10 xl:col-span-10 p-6 bg-red-50 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-                    <a href="#">
-                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Affordable Health Guidance for Everyone</h5>
-                    </a>
-                    <div class="flex justify-end">
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Struggling with an illness? Can't afford expensive doctor consultations? You're not alone. Many middle-class and lower-class patients face the same challenge. Med Track Fit connects you with people who have successfully recovered from the same condition—because real-life experience matters.</p>
+
+<body class="overflow-x-hidden bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-100"> <!-- Prevent horizontal scroll, set dark background -->
+    <div id="home" class="animate-fade-in !ml=0">
+        <section class="bg-gradient-to-br  relative overflow-hidden">
+            <div class="container mx-auto py-16 md:py-24 relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex flex-col space-y-6 md:pr-12">
+                        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 leading-tight">Your Health, <span
+                                class="text-blue-600">Your Support System</span></h1>
+                        <p class="text-xl text-gray-800 dark:text-gray-300 leading-relaxed">MedTrackFit connects you with people who
+                            have successfully recovered from the same condition—because real-life experience
+                            matters.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                            <a class="btn-primary text-center px-6 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-800 transition-colors duration-200 font-medium"
+                                href="/signup">Get Started</a>
+                            <a class="btn-outline text-center px-6 py-2 rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors duration-200 font-medium"
+                                href="/about">Learn More</a>
+                        </div>
+                        <div class="pt-4 flex items-center space-x-2 text-gray-400"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-shield-check text-green-400">
+                                <path
+                                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                </path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg><span>Trusted by thousands of patients worldwide</span></div>
                     </div>
-                    <div class="col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1 p-6  rounded-lg">
-                        <div class="flex justify-end">
-                            <a href="#" class="inline-flex items-center px-8 py-4 text-sm font-large text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                                Read more
-                                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                                </svg>
+                    <div class="hidden md:block">
+                        <div class="relative">
+                            <div class="relative rounded-lg overflow-hidden shadow-xl"><img
+                                    src="https://images.pexels.com/photos/7089401/pexels-photo-7089401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                                    alt="Healthcare professionals discussing patient care"
+                                    class="w-full h-auto rounded-lg">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-tr from-gray-200 dark:from-gray-400 to-transparent rounded-lg">
+                                </div>
+                            </div>
+                            <div
+                                class="absolute -right-4 -top-4 bg-blue-600 text-white p-2 rounded-lg shadow-lg transform rotate-6 z-10">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div><span
+                                        class="font-medium">92% Success Rate</span>
+                                </div>
+                            </div>
+                            <div
+                                class="absolute -left-6 bottom-10 bg-gray-800 p-3 rounded-lg shadow-lg transform -rotate-3 z-10">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 bg-green-500 rounded-full"></div><span
+                                        class="font-medium text-gray-200">10k+ Mentors</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t  to-transparent"></div>
+        </section>
+        <section class="section bg-white dark:bg-gray-800">
+            <div class="container mx-auto py-8">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">How MedTrackFit Works</h2>
+                    <p class="text-xl text-gray-400">Our platform connects those in need with those who can help,
+                        creating a supportive community for better health outcomes.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="card p-6 flex flex-col items-center text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div class="w-16 h-16 bg-gray-200 dark:bg-blue-900 rounded-full flex items-center justify-center mb-4"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-users text-blue-400">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Patients</h3>
+                        <p class="text-gray-400">Connect with recovered patients who understand your condition and
+                            can offer guidance.</p>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div class="w-16 h-16 bg-gray-200 dark:bg-green-900 rounded-full flex items-center justify-center mb-4"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-heart text-green-400">
+                                <path
+                                    d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                </path>
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Recovered Patients</h3>
+                        <p class="text-gray-400">Share your journey and earn by mentoring others through their
+                            recovery.</p>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div class="w-16 h-16 bg-gray-200 dark:bg-purple-900 rounded-full flex items-center justify-center mb-4"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-activity text-purple-400">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Mentors/Trainers</h3>
+                        <p class="text-gray-400">Ensure patients follow their recovery plan and provide ongoing
+                            support.</p>
+                    </div>
+                    <div class="card p-6 flex flex-col items-center text-center bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div class="w-16 h-16 bg-gray-200 dark:bg-yellow-900 rounded-full flex items-center justify-center mb-4"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-shield-check text-yellow-400">
+                                <path
+                                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                </path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg></div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Senior Doctors</h3>
+                        <p class="text-gray-400">Validate recovery plans to ensure they're safe and effective for
+                            patients.</p>
+                    </div>
+                </div>
+                <div class="mt-12 text-center">
+                    <a class="btn-primary px-6 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 font-medium inline-flex items-center space-x-2" href="/register">
+                        <span>Join Our Community</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </section>
+            <section class="section bg-gray-100 dark:bg-gray-800 py-20">
+                <div class="container mx-auto px-4">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">Why Choose MedTrackFit?</h2>
+                        <p class="text-xl text-gray-400">Our platform offers unique benefits that traditional healthcare
+                            often can't provide.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-users text-blue-400">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Affordable & Accessible
+                                    </h3>
+                                    <p class="text-gray-400">Get guidance without costly hospital visits. Our platform
+                                        makes health advice accessible to everyone.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-sparkles text-green-400">
+                                            <path
+                                                d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z">
+                                            </path>
+                                            <path d="M5 3v4"></path>
+                                            <path d="M19 17v4"></path>
+                                            <path d="M3 5h4"></path>
+                                            <path d="M17 19h4"></path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Real-World Solutions</h3>
+                                    <p class="text-gray-400">Learn from those who have actually recovered, not just
+                                        theoretical advice.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-activity text-purple-400">
+                                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Mentor Support</h3>
+                                    <p class="text-gray-400">Stay on track with a dedicated trainer who ensures you
+                                        follow your recovery plan.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-shield-check text-yellow-400">
+                                            <path
+                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                            </path>
+                                            <path d="m9 12 2 2 4-4"></path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Doctor-Verified Plans</h3>
+                                    <p class="text-gray-400">All recovery plans are validated by medical professionals
+                                        for your safety.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-heart text-pink-400">
+                                            <path
+                                                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
+                                            </path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Community Support</h3>
+                                    <p class="text-gray-400">Join a community of people who understand exactly what
+                                        you're going through.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-10 h-10 bg-gray-100 dark:bg-blue-900 rounded-full flex items-center justify-center"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="lucide lucide-arrow-right text-blue-400">
+                                            <path d="M5 12h14"></path>
+                                            <path d="m12 5 7 7-7 7"></path>
+                                        </svg></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Ongoing Guidance</h3>
+                                    <p class="text-gray-400">Get continuous support throughout your health journey, not
+                                        just one-off advice.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="section bg-gray-200 dark:bg-gray-800 py-20">
+                <div class="container mx-auto px-4">
+                    <div class="text-center max-w-3xl mx-auto mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">Success Stories</h2>
+                        <p class="text-xl text-gray-400">Hear from people who have transformed their health journey with
+                            MedTrackFit.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card p-6 flex flex-col h-full hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-quote text-blue-400">
+                                    <path
+                                        d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z">
+                                    </path>
+                                    <path
+                                        d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z">
+                                    </path>
+                                </svg></div>
+                            <p class="text-gray-800 dark:text-gray-300 mb-6 flex-grow">After years of expensive treatments that didn't
+                                work, connecting with someone who had overcome the same back issues changed everything.
+                                My mentor's practical advice was more valuable than all the doctor visits combined.</p>
+                            <div class="flex items-center"><img src="https://randomuser.me/api/portraits/women/44.jpg"
+                                    alt="Sarah Johnson" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800 dark:text-gray-100">Sarah Johnson</h4>
+                                    <p class="text-sm text-gray-400">Recovered from Chronic Back Pain</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex flex-col h-full hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-quote text-blue-400">
+                                    <path
+                                        d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z">
+                                    </path>
+                                    <path
+                                        d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z">
+                                    </path>
+                                </svg></div>
+                            <p class="text-gray-800 dark:text-gray-300 mb-6 flex-grow">When I was diagnosed with diabetes, I felt lost. My
+                                MedTrackFit mentor showed me how to actually live with this condition day-to-day. The
+                                doctors told me what to do, but my mentor showed me how to do it.</p>
+                            <div class="flex items-center"><img src="https://randomuser.me/api/portraits/men/67.jpg"
+                                    alt="Michael Chen" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800 dark:text-gray-100">Michael Chen</h4>
+                                    <p class="text-sm text-gray-400">Diabetes Management</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6 flex flex-col h-full hover:translate-y-[-5px] bg-gray-100 dark:bg-gray-700 rounded-lg">
+                            <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="lucide lucide-quote text-blue-400">
+                                    <path
+                                        d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z">
+                                    </path>
+                                    <path
+                                        d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z">
+                                    </path>
+                                </svg></div>
+                            <p class="text-gray-800 dark:text-gray-300 mb-6 flex-grow">Finding someone who had overcome anxiety and
+                                depression was life-changing. My mentor understood exactly what I was going through and
+                                provided practical coping strategies that actually worked for me.</p>
+                            <div class="flex items-center"><img src="https://randomuser.me/api/portraits/women/28.jpg"
+                                    alt="Elena Rodriguez" class="w-12 h-12 rounded-full mr-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800 dark:text-gray-100">Elena Rodriguez</h4>
+                                    <p class="text-sm text-gray-400">Mental Health Recovery</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-12 text-center">
+                        <a class="btn-outline px-6 py-2 rounded-md border border-gray-600 text-gray-800 dark:text-gray-300 hover:bg-gray-700 transition-colors duration-200 font-medium inline-flex items-center space-x-2" href="/testimonials">
+                            <span>Read More Stories</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <section class="section bg-blue-700 text-white py-16">
+                <div class="container mx-auto px-4">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Health Journey?</h2>
+                        <p class="text-xl mb-8 text-blue-200">Join thousands of others who have found support, guidance, and hope on MedTrackFit.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
+                            <a class="btn-primary rounded-md px-6 py-2 bg-white text-blue-700 hover:bg-blue-100 transition-colors duration-200 font-medium focus:ring-2 focus:ring-white focus:ring-opacity-50" href="/register">
+                                Sign Up Now
+                            </a>
+                            <a class="btn-outline rounded-md px-6 py-2 border-2 border-white text-white hover:bg-blue-800 hover:bg-opacity-20 transition-colors duration-200 font-medium focus:ring-2 focus:ring-white focus:ring-opacity-50" href="/find-mentor">
+                                Find a Mentor
                             </a>
                         </div>
                     </div>
                 </div>
-                <div class="col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-2">
-
-                </div>
-            </div>
-        <br>
-        <br>
-        <br>
-        <div class="grid grid-cols-12 gap-12 px-12">
-            
-            <!-- Right-aligned Card (Why Choose Med Track Fit) -->
-            <div class="col-span-12 md:col-span-12 lg:col-span-12 flex justify-start">
-                <a href="#" class="flex h-[700px] md:h-[550px] flex-col md:flex-row items-center bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 overflow-hidden">
-                    <div class="w-full md:w-48 lg:w-55 xl:w-60 h-full flex-shrink-0">
-                        <img class="object-cover w-full h-full" src="/images/why.png" alt="Why Choose Med Track Fit">
-                    </div>
-                    <div class="flex flex-col justify-between p-6 w-full">
-                        <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Why Choose Med Track Fit?</h5>
-                        <ul class="list-inside text-gray-800 dark:text-gray-400 space-y-3">
-                            <li>✅ <strong>Affordable & Accessible</strong> – No costly hospital visits.</li>
-                            <li>✅ <strong>Real-World Solutions</strong> – Learn from those who have recovered.</li>
-                            <li>✅ <strong>Mentor Support</strong> – Stay on track with a trainer.</li>
-                            <li>✅ <strong>Doctor-Verified Plans</strong> – Ensure expert validation.</li>
-                        </ul>
-                        <div class="text-center mt-4">
-                            <p class="text-lg font-semibold text-gray-900 dark:text-white">💙 Recover. Guide. Earn. Heal. 💙</p>
-                        </div>
-                        <div class="flex flex-wrap justify-center gap-4 mt-4">
-                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition">🔹 Sign Up Now</button>
-                            <button class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700 transition">🔹 Learn More</button>
-                            <button class="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition">🔹 Connect with a Mentor</button>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- Left-aligned Card (How It Works) -->
-            <div class="col-span-12 md:col-span-12 lg:col-span-12 flex justify-end">
-                <a href="#" class="flex flex-col md:flex-row items-center bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 overflow-hidden">
-                    <div class="w-full md:w-48 h-90">
-                        <img class="object-cover w-full h-full" src="/images/how.jpg" alt="How It Works">
-                    </div>
-                    <div class="flex flex-col justify-between p-6 w-full">
-                        <h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">How It Works?</h5>
-                        <ul class="list-inside text-gray-800 dark:text-gray-400 space-y-3">
-                            <li>✔ <strong>Sufferers (Patients in Need)</strong> – Connect with recovered patients for guidance.</li>
-                            <li>✔ <strong>Recovered Patients</strong> – Share your journey and earn by mentoring.</li>
-                            <li>✔ <strong>Mentors/Trainers</strong> – Ensure sufferers follow the recovery plan.</li>
-                            <li>✔ <strong>Senior Doctors</strong> – Validate recovery plans for safety.</li>
-                        </ul>
-                    </div>
-                </a>
-            </div>
+            </section>
         </div>
-        
-</div>
-
-
-    </div>
 </body>
+
 </html>
