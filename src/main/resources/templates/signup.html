@@ -7,7 +7,7 @@
     <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
 </head>
 <body class="bg-gray-100 dark:bg-gray-900">
-    <div id="home" class="min-h-screen flex items-center justify-center py-12">
+    <div id="home" class="min-h-screen flex items-center justify-center py-2">
         <div class="grid grid-cols-12 gap-6 container mx-auto px-4">
             <div class="col-span-12 md:col-span-5 lg:col-span-5 xl:col-span-5">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 h-full flex flex-col justify-center animate-fade-in">
@@ -52,27 +52,36 @@
                     <p class="text-gray-700 dark:text-gray-400 mb-6">Start your journey to recovery today</p>
                     <form data-th-action="@{'/do-signup'}" method="post" data-th-object="${userForm}" class="max-w-md mx-auto space-y-4" novalidate>
                         <div class="relative">
-                            <input type="text" data-th-field="*{name}" name="floating_first_name" id="floating_first_name" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder=" Full name" required />
+                            <input type="text" data-th-field="*{name}" name="floating_first_name" id="floating_first_name" class="block w-full px-3 py-2 rounded text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder=" Full name" required />
                             <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-red-600 text-sm mt-1"></p>
                             <label for="floating_first_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Full Name</label>
                         </div>
                         <div class="relative">
-                            <input type="email" data-th-field="*{email}" name="floating_email" id="floating_email" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Email Address" required />
+                            <input type="email" data-th-field="*{email}" name="floating_email" id="floating_email" class="block w-full px-3 py-2 rounded text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Email Address" required />
                             <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-red-600 text-sm mt-1"></p>
                             <label for="floating_email" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email Address</label>
                         </div>
                         <div class="relative">
-                            <input type="password" name="floating_password" id="floating_password" th:field="*{password}" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Password" required />
+                            <input type="password" name="floating_password" id="floating_password" th:field="*{password}" class="block w-full px-3 py-2 rounded text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Password" required />
                             <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-red-600 text-sm mt-1"></p>
                             <label for="floating_password" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
                         </div>
                         <div class="relative">
-                            <input type="tel" data-th-field="*{phoneNumber}" name="floating_phone" id="floating_phone" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Phone Number" required />
+                            <input type="tel" data-th-field="*{phoneNumber}" name="floating_phone" id="floating_phone" class="block w-full px-3 py-2 rounded text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="Phone Number" required />
                             <p th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-red-600 text-sm mt-1"></p>
                             <label for="floating_phone" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone Number</label>
                         </div>
                         <div class="relative">
-                            <input type="text" data-th-gold="*{about}" name="about" id="about" class="block w-full px-3 py-2 text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="About Yourself" required />
+                            <select name="userRole" data-th-field="*{role}" id="floating_role" class="block w-full px-3 py-2 rounded text-sm text-gray-800 bg-transparent border-b-2 border-gray-300 dark:text-gray-500 dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" required>
+                                <option class="dark:text-gray-200 dark:bg-gray-800 bg-white text-gray-900" value="" disabled selected >Select your role</option>
+                                <option class="dark:text-gray-200 dark:bg-gray-800 bg-white text-gray-900" value="Doctor">Doctor</option>
+                                <option class="dark:text-gray-200 dark:bg-gray-800 bg-white text-gray-900" value="SufferingPatient">Suffering Patient</option>
+                                <option class="dark:text-gray-200 dark:bg-gray-800 bg-white text-gray-900" value="HealthMentor">Health Mentor</option>
+                                <option class="dark:text-gray-200 dark:bg-gray-800 bg-white text-gray-900" value="RecoveredPatient">Recovered Patient</option>
+                            </select>
+                        </div>
+                        <div class="relative">
+                            <input type="text" data-th-gold="*{about}" name="about" id="about" class="block w-full px-3 py-2 rounded text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:border-blue-500 transition duration-200 peer" placeholder="About Yourself" required />
                             <p th:if="${#fields.hasErrors('about')}" th:errors="*{about}" class="text-red-600 text-sm mt-1"></p>
                             <label for="about" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2 -z-10 origin-[0] peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">About Yourself</label>
                         </div>
@@ -85,6 +94,28 @@
                             </div>
                         </div>
                         <button type="button" onclick="window.location.href='/login'" class="w-full bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 font-medium py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-300 mt-4">Already have an account? Login</button>
+                        <div class="mt-6 space-y-3">
+                            <a th:href="@{'/oauth2/authorization/google'}" aria-label="Sign in with Google"
+                                class="flex items-center justify-between bg-blue-500 text-white hover:bg-blue-600 rounded-lg p-2.5 transition-colors duration-300 focus:ring-4 focus:ring-blue-300 w-full">
+                                <svg class="w-5 h-5 ml-2" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                    <path fill="currentColor"
+                                        d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z">
+                                    </path>
+                                </svg>
+                                Login with Google
+                                <span></span>
+                            </a>
+                            <a th:href="@{'/oauth2/authorization/github'}" aria-label="Sign in with Github"
+                                class="flex items-center justify-between bg-gray-600 text-white hover:bg-gray-700 rounded-lg p-2.5 transition-colors duration-300 focus:ring-4 focus:ring-gray-300 w-full">
+                                <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 1792 1792">
+                                    <path
+                                        d="M896 128q209 0 385.5 103t279.5 279.5 103 385.5q0 251-146.5 451.5t-378.5 277.5q-27 5-40-7t-13-30q0-3 .5-76.5t.5-134.5q0-97-52-142 57-6 102.5-18t94-39 81-66.5 53-105 20.5-150.5q0-119-79-206 37-91-8-204-28-9-81 11t-92 44l-38 24q-93-26-192-26t-192 26q-16-11-42.5-27t-83.5-38.5-85-13.5q-45 113-8 204-79 87-79 206 0 85 20.5 150t52.5 105 80.5 67 94 39 102.5 18q-39 36-49 103-21 10-45 15t-57 5-65.5-21.5-55.5-62.5q-19-32-48.5-52t-49.5-24l-20-3q-21 0-29 4.5t-5 11.5 9 14 13 12l7 5q22 10 43.5 38t31.5 51l10 23q13 38 44 61.5t67 30 69.5 7 55.5-3.5l23-4q0 38 .5 88.5t.5 54.5q0 18-13 30t-40 7q-232-77-378.5-277.5t-146.5-451.5q0-209 103-385.5t279.5-279.5 385.5-103zm-477 1103q3-7-7-12-10-3-13 2-3 7 7 12 9 6 13-2zm31 34q7-5-2-16-10-9-16-3-7 5 2 16 10 10 16 3zm30 45q9-7 0-19-8-13-17-6-9 5 0 18t17 7zm42 42q8-8-4-19-12-12-20-3-9 8 4 19 12 12 20 3zm57 25q3-11-13-16-15-4-19 7t13 15q15 6 19-6zm63 5q0-13-17-11-16 0-16 11 0 13 17 11 16 0 16-11zm58-10q-2-11-18-9-16 3-14 15t18 8 14-14z">
+                                    </path>
+                                </svg>
+                                Login with Github
+                                <span></span>
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>

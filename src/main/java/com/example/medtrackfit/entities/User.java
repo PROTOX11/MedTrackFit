@@ -31,7 +31,10 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Getter(AccessLevel.NONE)  // Lombok will not generate a getter
+    @Column(unique = false, nullable = false)
+    private String role;
+
+    @Getter(AccessLevel.NONE)
     private String password;
 
     @Column(length = 1000)
@@ -74,6 +77,10 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    public String getProfilePicture() {
+        return this.profilePicture;
     }
 
     @Override

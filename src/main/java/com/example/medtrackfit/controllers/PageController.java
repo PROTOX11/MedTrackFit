@@ -78,6 +78,7 @@ public class PageController {
     public String signup(Model model) {
         UserForm userForm = new UserForm();
         userForm.setName("");
+        userForm.setRole("");
         userForm.setEmail("");
         userForm.setPhoneNumber("");
         userForm.setAbout("");
@@ -97,6 +98,7 @@ public class PageController {
 
         User user = new User();
         user.setName(userForm.getName());
+        user.setRole(userForm.getRole());
         user.setEmail(userForm.getEmail());
         user.setPassword(userForm.getPassword());
         user.setAbout(userForm.getAbout());

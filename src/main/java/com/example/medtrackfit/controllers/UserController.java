@@ -5,11 +5,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.medtrackfit.entities.User;
 import com.example.medtrackfit.services.UserService;
 import com.medtrackfit.helper.Helper;
+
+import jakarta.persistence.criteria.Path;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +70,63 @@ public class UserController {
         return "user/profile";
     }
 
+    @PostMapping("/update-profile-picture")
+    public String updateProfilePicture(
+            @RequestParam("profilePicture") MultipartFile file,
+            Authentication authentication,
+            Model model) {
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        User user = userService.getUserByEmail(username);
+
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        try {
+            if (!file.isEmpty()) {
+                // Validate file type
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    model.addAttribute("error", "Only image files are allowed");
+                    model.addAttribute("loggedInUser", user);
+                    return "user/profile";
+                }
+
+                // Define upload directory
+                String uploadDir = "src/main/resources/static/uploads/";
+                File uploadDirFile = new File(uploadDir);
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs();
+                }
+
+                // Generate unique file name
+                String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                java.nio.file.Path filePath = Paths.get(uploadDir, fileName);
+
+                // Save the file
+                Files.write(filePath, file.getBytes(), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
+
+                // Update user's profile picture path
+                String profilePicturePath = "/uploads/" + fileName;
+                user.setProfilePicture(profilePicturePath);
+                userService.saveUser(user);
+
+                logger.info("Profile picture updated for user: {}", username);
+            } else {
+                model.addAttribute("error", "No file uploaded");
+                model.addAttribute("loggedInUser", user);
+                return "user/profile";
+            }
+        } catch (IOException e) {
+            logger.error("Failed to upload profile picture for user: {}", username, e);
+            model.addAttribute("error", "Failed to upload profile picture");
+            model.addAttribute("loggedInUser", user);
+            return "user/profile";
+        }
+
+        return "redirect:/user/profile";
+    }
     @RequestMapping("/settings")
     public String settings() {
         return "user/settings";

@@ -28,6 +28,9 @@ public class UserForm {
     @NotBlank(message = "Phone number is required")
     @Size(min = 8, max = 12, message = "Invalid Phone Number")
     private String phoneNumber;
+    @NotBlank()
+    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
+    private String role;
     @NotBlank(message = "about is required")
     @Size(max = 100, message = "About must be less than 100 characters")
     private String about;
