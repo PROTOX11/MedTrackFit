@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class User implements UserDetails, org.apache.catalina.User {
 
     @Id
+    @Column(name = "user_id")
     private String userId;
 
     @Column(name = "user_name", nullable = false)
@@ -43,6 +44,7 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Column(length = 1000)
     private String phoneNumber;
 
+    @Column(name = "profile_picture")
     private String profilePicture;
 
     @Builder.Default

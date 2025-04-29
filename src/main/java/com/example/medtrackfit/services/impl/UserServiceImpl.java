@@ -1,4 +1,5 @@
 package com.example.medtrackfit.services.impl;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,8 +9,10 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.medtrackfit.entities.User;
+import com.example.medtrackfit.services.CloudinaryService;
 import com.example.medtrackfit.services.UserService;
 import com.example.medtrackfit.repo.UserRepo;
 import com.medtrackfit.helper.AppConstants;
@@ -23,6 +26,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
     
     @Override
     public User saveUser(User user) {
@@ -97,5 +103,18 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) {
 
         return userRepo.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public User updateProfilePicture(String userId, MultipartFile file) throws IOException {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Upload image to Cloudinary and get the URL
+        String imageUrl = cloudinaryService.uploadImage(file);
+
+        // Update user's profile picture URL
+        user.setProfilePicture(imageUrl);
+        return userRepo.save(user);
     }
 }

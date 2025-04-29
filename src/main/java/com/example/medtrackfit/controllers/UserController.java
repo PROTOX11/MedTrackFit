@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,14 +59,10 @@ public class UserController {
     public String userProfile(Model model, Authentication authentication)
     {
         String username = Helper.getEmailOfLoggedInUser(authentication);
-        
         logger.info("User logged in: {}", username);
-
         User user=userService.getUserByEmail(username);
-
         System.out.println(user.getName());
         System.out.println(user.getEmail());
-
         model.addAttribute("loggedInUser", user);
         return "user/profile";
     }
@@ -93,38 +90,22 @@ public class UserController {
                     return "user/profile";
                 }
 
-                // Define upload directory
-                String uploadDir = "src/main/resources/static/uploads/";
-                File uploadDirFile = new File(uploadDir);
-                if (!uploadDirFile.exists()) {
-                    uploadDirFile.mkdirs();
-                }
+                userService.updateProfilePicture((user.getUserId()), file);
 
-                // Generate unique file name
-                String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-                java.nio.file.Path filePath = Paths.get(uploadDir, fileName);
+                logger.info("profile picture updated for user: {}", username);
 
-                // Save the file
-                Files.write(filePath, file.getBytes(), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
-
-                // Update user's profile picture path
-                String profilePicturePath = "/uploads/" + fileName;
-                user.setProfilePicture(profilePicturePath);
-                userService.saveUser(user);
-
-                logger.info("Profile picture updated for user: {}", username);
             } else {
                 model.addAttribute("error", "No file uploaded");
                 model.addAttribute("loggedInUser", user);
                 return "user/profile";
-            }
-        } catch (IOException e) {
-            logger.error("Failed to upload profile picture for user: {}", username, e);
-            model.addAttribute("error", "Failed to upload profile picture");
+            } 
+        } catch (Exception e) {
+            logger.error("Failed to update profile picture for user: {}", username, e);
+            model.addAttribute("error", "Failed to update profile picture: ");
             model.addAttribute("loggedInUser", user);
             return "user/profile";
-        }
-
+        } 
+        
         return "redirect:/user/profile";
     }
     @RequestMapping("/settings")

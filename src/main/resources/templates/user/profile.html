@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    
     <style>
         :root {
             --bg: #f7f8fa;
@@ -154,7 +155,7 @@
                     <div class="flex flex-col md:flex-row md:items-end -mt-16 md:-mt-24 mb-4 md:mb-6">
                         <div class="md:mr-6">
                             <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-teal-100">
-                                <img th:src="${loggedInUser?.profilePicture} ?: '/images/default-avatar.png'" 
+                                <img th:src="${loggedInUser?.profilePicture}" 
                                      alt="User avatar" 
                                      class="w-full h-full object-cover">
                             </div>
@@ -167,7 +168,7 @@
                                 </div>
                                 <div class="profile-menu">
                                     <form method="post" th:action="@{/user/update-profile-picture}" enctype="multipart/form-data" id="profilePictureForm">
-                                        <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" class="hidden" />
+                                        <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" class="hidden"onchange="this.form.submit()"/>
                                         <button type="button" 
                                                 onclick="document.getElementById('profilePictureInput').click()"
                                                 class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:bg-gray-400 dark:text-white bg-white hover:bg-gray-50 transition-colors">
