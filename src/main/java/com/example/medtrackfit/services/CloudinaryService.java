@@ -28,7 +28,7 @@ public class CloudinaryService {
             throw new IllegalArgumentException("File must be an image");
         }
         try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), null);
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "user_profile_picture"));
             String imageUrl = (String) uploadResult.get("url");
             logger.info("Image uploaded to Cloudinary successfully. URL: {}", imageUrl);
             return imageUrl;

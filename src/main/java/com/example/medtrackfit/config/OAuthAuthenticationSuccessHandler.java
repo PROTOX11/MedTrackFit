@@ -83,7 +83,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             user.setName(oauthUser.getAttribute("name").toString());
             user.setProviderUserId(oauthUser.getName());
             user.setProvider(Providers.GOOGLE);
-            user.setAbout(authorizedClientRegistrationId+" account created using google");
+            user.setAbout(authorizedClientRegistrationId+"Hey there! I am New Here");
         }
         else if(authorizedClientRegistrationId.equalsIgnoreCase("github")) {
 
