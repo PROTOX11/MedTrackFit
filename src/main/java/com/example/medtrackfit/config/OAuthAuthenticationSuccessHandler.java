@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.experimental.var;
 
 @Component
 public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -64,7 +63,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         logger.info(authorizedClientRegistrationId);
 
-        var oauthUser = (DefaultOAuth2User)authentication.getPrincipal();
+        DefaultOAuth2User oauthUser = (DefaultOAuth2User)authentication.getPrincipal();
 
         oauthUser.getAttributes().forEach((key, value) -> {
             logger.info("{} => {}", key, value);
