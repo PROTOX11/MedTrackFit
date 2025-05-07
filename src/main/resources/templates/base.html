@@ -40,5 +40,24 @@
     <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script th:src="@{'/js/script.js'}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('logo-sidebar');
+            const toggleButton = document.getElementById('sidebar-toggle'); // You may need to add this to your layout
+            const closeButton = document.getElementById('sidebar-close');
+    
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+            }
+    
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

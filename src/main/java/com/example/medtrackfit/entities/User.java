@@ -32,7 +32,7 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = false, nullable = false)
+    @Column(unique = false, nullable = true)
     private String role;
 
     @Getter(AccessLevel.NONE)
@@ -68,6 +68,10 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Builder.Default
     private List<String> roleList = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private UsersPerformance usersPerformance;
+
+    
     // Fix: Convert roles into GrantedAuthority
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
