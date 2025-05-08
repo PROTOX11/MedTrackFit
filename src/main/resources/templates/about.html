@@ -69,24 +69,31 @@
 
         <hr class="my-8 border-gray-300 dark:border-gray-700">
 
-        <section class="mb-12">
-            <h2 class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white underline">Our Team</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <article class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-center">
-                    <img class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" src="https://picsum.photos/60/60?random=9" alt="Team member">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Dr. Jane Smith</h3>
-                    <p class="text-gray-700 dark:text-gray-400">Chief Medical Officer</p>
-                </article>
-                <article class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-center">
-                    <img class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" src="https://picsum.photos/60/60?random=9" alt="Team member">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Alex Johnson</h3>
-                    <p class="text-gray-700 dark:text-gray-400">Community Director</p>
-                </article>
-                <article class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-center">
-                    <img class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" src="https://picsum.photos/60/60?random=9" alt="Team member">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Sarah Lee</h3>
-                    <p class="text-gray-700 dark:text-gray-400">Technology Lead</p>
-                </article>
+        <section class="mb-12 flex flex-col items-center justify-center">
+            <div class="max-w-4xl w-full px-8 md:px-16 lg:px-24">
+                <h2 class="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white underline text-center">Our Team</h2>
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Left blank white rectangle -->
+                    <article class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-center w-full">
+                        <img class="w-24 h-24 rounded-full mx-auto mb-4 object-cover" th:src="@{/images/about/self.jpg}" alt="Team member">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Prakash kumar</h3>
+                        <p class="text-gray-700 dark:text-gray-400">Founder & CEO</p>
+                    </article>
+                    <article class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 text-center w-full h-[200px] flex items-center justify-center">
+                        <div class="text-gray-400">Next You</div>
+                    </article>
+                    
+                </div>
+                <div class="mt-8 text-center">
+                    <a th:href="'https://docs.google.com/forms/d/e/1FAIpQLScuNKxo2RCjmTpXV8cEwQk9jb1nquatc6ejZcM3rG0_jHILzg/viewform?usp=dialog'" target="_blank">
+                        <button class="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all duration-300 transform hover:scale-105">
+                            Join Our Team
+                            <svg class="rtl:rotate-180 w-4 h-4 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                            </svg>
+                        </button>
+                    </a>
+                </div>
             </div>
         </section>
 

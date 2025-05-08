@@ -2,6 +2,7 @@ package com.example.medtrackfit.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import com.example.medtrackfit.entities.Providers;
 import com.example.medtrackfit.entities.User;
@@ -52,6 +53,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         // Prepare the User entity
         User user = User.builder()
+                .userId(UUID.randomUUID().toString())
                 .roleList(List.of(AppConstants.ROLE_USER))
                 .emailVerified(true)
                 .enabled(true)
@@ -63,6 +65,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             user.setName(oauthUser.getAttribute("name").toString());
             user.setProviderUserId(oauthUser.getName());
             user.setProvider(Providers.GOOGLE);
+            user.setPassword("dummy");
             user.setAbout("Hey there! I am new here, signed up via Google");
         } else if (authorizedClientRegistrationId.equalsIgnoreCase("github")) {
             String email = oauthUser.getAttribute("email") != null

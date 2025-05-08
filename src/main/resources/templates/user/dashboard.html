@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
             --progress-bg: #e0e0e0;
             --progress-color: #1976d2;
         }
+
         [data-theme="dark"] {
             --bg: #1e293b;
             --text: #d1d5db;
@@ -32,54 +34,156 @@
             --progress-bg: #4b5563;
             --progress-color: #60a5fa;
         }
-        body { background: var(--bg); color: var(--text); }
-        .progress { position: relative; width: 80px; height: 80px; margin: 0 auto; }
-        .progress-circle { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .progress-circle-bg, .progress-circle-fg { fill: none; stroke-width: 8; }
-        .progress-circle-bg { stroke: var(--progress-bg); }
-        .progress-circle-fg { stroke: var(--progress-color); stroke-dasharray: 201; stroke-dashoffset: calc(201 - (201 * var(--progress)) / 100); transition: stroke-dashoffset 0.3s; }
-        .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1rem; color: var(--text); }
-        button.today { background: var(--card-bg); color: var(--text); border: 1px solid var(--card-border); }
-        button.time { background: var(--purple); color: var(--btn-text); }
-        button.join { background: var(--btn-bg); }
-        button.schedule { background: var(--green); }
-        a { color: var(--link); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .progress {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle-bg,
+        .progress-circle-fg {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-circle-bg {
+            stroke: var(--progress-bg);
+        }
+
+        .progress-circle-fg {
+            stroke: var(--progress-color);
+            stroke-dasharray: 201;
+            stroke-dashoffset: calc(201 - (201 * var(--progress)) / 100);
+            transition: stroke-dashoffset 0.3s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        button.today {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--card-border);
+        }
+
+        button.time {
+            background: var(--purple);
+            color: var(--btn-text);
+        }
+
+        button.join {
+            background: var(--btn-bg);
+        }
+
+        button.schedule {
+            background: var(--green);
+        }
+
+        a {
+            color: var(--link);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 640px) {
-            .progress { width: 60px; height: 60px; }
-            .progress-text { font-size: 0.875rem; }
-            .progress-circle-bg, .progress-circle-fg { stroke-width: 6; }
-            .appointment-item button { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
-            .header h2 { font-size: 1.5rem; }
-            .header p { font-size: 0.875rem; }
+            .progress {
+                width: 60px;
+                height: 60px;
+            }
+
+            .progress-text {
+                font-size: 0.875rem;
+            }
+
+            .progress-circle-bg,
+            .progress-circle-fg {
+                stroke-width: 6;
+            }
+
+            .appointment-item button {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
+
+            .header h2 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.875rem;
+            }
         }
+
         @media (max-width: 768px) {
-            .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
+
         @media (max-width: 480px) {
-            .grid-cols-4 { grid-template-columns: 1fr; }
-            .recommendation-item img { width: 48px; height: 48px; }
-            .recommendation-item button { font-size: 0.875rem; }
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-item img {
+                width: 48px;
+                height: 48px;
+            }
+
+            .recommendation-item button {
+                font-size: 0.875rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div id="home" class="sm:ml-64">
         <!-- Hamburger Menu for Mobile -->
-        <button id="sidebar-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md" aria-label="Open sidebar">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <button id="sidebar-open-toggle"
+            class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Open sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
         </button>
         <div class="container mx-auto px-4 pt-12 sm:pt-4">
-            <div class="header text-center bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2" th:text="'Welcome back, ' + ${loggedInUser?.name} + '!'"></h2>
+            <div
+                class="header text-center bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2"
+                    th:text="'Welcome back, ' + ${loggedInUser?.name} + '!'"></h2>
                 <p class="text-lg text-gray-600 dark:text-gray-300" th:text="'Here\'s your health overview'"></p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div
+                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity w-6 h-6 text-blue-600 dark:text-blue-400 mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-activity w-6 h-6 text-blue-600 dark:text-blue-400 mr-2">
                             <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                         </svg>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Health Score</h3>
@@ -89,16 +193,24 @@
                         <p class="ml-1 text-xl font-medium text-gray-500 dark:text-gray-400">/100</p>
                     </div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                         </svg>
                         <span>~ 5% vs last week</span>
                     </div>
                 </div>
-                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div
+                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-blue-600">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-users text-blue-600">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Active Connections</h3>
                     </div>
@@ -106,16 +218,26 @@
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">24</p>
                     </div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                         </svg>
                         <span>~ 2% vs last week</span>
                     </div>
                 </div>
-                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div
+                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock text-purple-600">
-                            <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h5"></path><path d="M17.5 17.5 16 16.3V14"></path><circle cx="16" cy="16" r="6"></circle>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-calendar-clock text-purple-600">
+                            <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path>
+                            <path d="M16 2v4"></path>
+                            <path d="M8 2v4"></path>
+                            <path d="M3 10h5"></path>
+                            <path d="M17.5 17.5 16 16.3V14"></path>
+                            <circle cx="16" cy="16" r="6"></circle>
                         </svg>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Appointments</h3>
                     </div>
@@ -123,16 +245,22 @@
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">3</p>
                     </div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                         </svg>
                         <span>~ 5% vs last week</span>
                     </div>
                 </div>
-                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div
+                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                     <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up text-green-600">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-trending-up text-green-600">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                            <polyline points="16 7 22 7 22 13"></polyline>
                         </svg>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Goal Progress</h3>
                     </div>
@@ -140,22 +268,28 @@
                         <p class="text-3xl font-bold text-gray-900 dark:text-white">70%</p>
                     </div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
                         </svg>
                         <span>~ 15% vs last week</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+            <div
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
                 <h3 class="text-lg font-medium mb-2">Health Metrics</h3>
                 <p class="text-sm mb-4">Today's progress towards your goals</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
                             <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#1976d2" stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 78.23) / 100)" style="transition: stroke-dashoffset 0.3s;"></circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
+                                </circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#1976d2"
+                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 78.23) / 100)"
+                                    style="transition: stroke-dashoffset 0.3s;"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <span class="text-2xl font-bold text-gray-800 dark:text-white">7823</span>
@@ -167,8 +301,11 @@
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
                             <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#7be5ff" stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 42) / 100)" style="transition: stroke-dashoffset 0.3s;"></circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
+                                </circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#7be5ff"
+                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 42) / 100)"
+                                    style="transition: stroke-dashoffset 0.3s;"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <span class="text-2xl font-bold text-gray-800 dark:text-white">42</span>
@@ -180,8 +317,11 @@
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
                             <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#a855f7" stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 6.5) / 100)" style="transition: stroke-dashoffset 0.3s;"></circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
+                                </circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#a855f7"
+                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 6.5) / 100)"
+                                    style="transition: stroke-dashoffset 0.3s;"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <span class="text-2xl font-bold text-gray-800 dark:text-white">1</span>
@@ -193,8 +333,11 @@
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
                             <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#6df573" stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 75) / 100)" style="transition: stroke-dashoffset 0.3s;"></circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
+                                </circle>
+                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#6df573"
+                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 75) / 100)"
+                                    style="transition: stroke-dashoffset 0.3s;"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
                                 <span class="text-2xl font-bold text-gray-800 dark:text-white">1500</span>
@@ -205,10 +348,12 @@
                     </div>
                 </div>
                 <div class="text-right mt-4">
-                    <a href="#" class="text-green-500 dark:text-green-400 hover:underline text-sm font-medium">View All →</a>
+                    <a href="#" class="text-green-500 dark:text-green-400 hover:underline text-sm font-medium">View All
+                        →</a>
                 </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+            <div
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
                 <div class="flex justify-between items-center mb-4">
                     <div>
                         <h3 class="text-lg font-medium mb-2">Upcoming Appointments</h3>
@@ -217,37 +362,71 @@
                     <a href="#" class="text-green-500 dark:text-green-400 hover:underline">Schedule New</a>
                 </div>
                 <div class="appointment-item flex items-center flex-wrap gap-2 mb-3">
-                    <img src="https://picsum.photos/40/40?random=1" alt="Deepak kumar" class="w-10 h-10 rounded-full mr-3">
-                    <span class="font-bold">Deepak kumar<br><span class="text-gray-600 dark:text-gray-400 font-normal">Nutritionist</span></span>
+                    <img src="https://picsum.photos/40/40?random=1" alt="Deepak kumar"
+                        class="w-10 h-10 rounded-full mr-3">
+                    <span class="font-bold">Deepak kumar<br><span
+                            class="text-gray-600 dark:text-gray-400 font-normal">Nutritionist</span></span>
                     <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-calendar mr-1">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
                         Today
                     </button>
                     <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-calendar mr-1">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
                         2:30 PM
                     </button>
                     <button class="join px-2 py-1 rounded text-sm">Join Call</button>
                 </div>
                 <div class="appointment-item flex items-center flex-wrap gap-2">
-                    <img src="https://picsum.photos/40/40?random=2" alt="Rajkumar Rao" class="w-10 h-10 rounded-full mr-3">
-                    <span class="font-bold">Rajkumar Rao<br><span class="text-gray-600 dark:text-gray-400 font-normal">Physical Therapist</span></span>
+                    <img src="https://picsum.photos/40/40?random=2" alt="Rajkumar Rao"
+                        class="w-10 h-10 rounded-full mr-3">
+                    <span class="font-bold">Rajkumar Rao<br><span
+                            class="text-gray-600 dark:text-gray-400 font-normal">Physical Therapist</span></span>
                     <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-calendar mr-1">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
                         Tomorrow
                     </button>
                     <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar mr-1"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-calendar mr-1">
+                            <path d="M8 2v4"></path>
+                            <path d="M16 2v4"></path>
+                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                            <path d="M3 10h18"></path>
+                        </svg>
                         10:00 AM
                     </button>
                     <button class="join px-2 py-1 rounded text-sm" style="background: var(--purple);">In Person</button>
                 </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+            <div
+                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
                 <h3 class="text-lg font-medium mb-2">Activity Feed</h3>
                 <p class="text-sm mb-4">Recent updates and notifications</p>
                 <div class="activity-item flex items-center mb-2">
-                    <img src="https://picsum.photos/40/40?random=3" alt="Rohan kumar" class="w-10 h-10 rounded-full mr-3">
+                    <img src="https://picsum.photos/40/40?random=3" alt="Rohan kumar"
+                        class="w-10 h-10 rounded-full mr-3">
                     <span>Rohan kumar accepted your connection request</span>
                     <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">2 hours ago</span>
                 </div>
@@ -257,41 +436,56 @@
                     <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">4 hours ago</span>
                 </div>
                 <div class="activity-item flex items-center mb-2">
-                    <img src="https://picsum.photos/40/40?random=5" alt="Roushan kumar" class="w-10 h-10 rounded-full mr-3">
+                    <img src="https://picsum.photos/40/40?random=5" alt="Roushan kumar"
+                        class="w-10 h-10 rounded-full mr-3">
                     <span>Roushan kumar sent you a message</span>
                     <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
                 </div>
                 <div class="activity-item flex items-center">
-                    <img src="https://picsum.photos/40/40?random=6" alt="Manoj kumar" class="w-10 h-10 rounded-full mr-3">
+                    <img src="https://picsum.photos/40/40?random=6" alt="Manoj kumar"
+                        class="w-10 h-10 rounded-full mr-3">
                     <span>Manoj kumar confirmed your appointment for tomorrow</span>
                     <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
                 </div>
                 <div class="text-right mt-2"><a href="#" class="hover:underline">View All Activity</a></div>
             </div>
-            <div class="recommendations grid gap-4 bg-gradient-to-br from-white to-yellow-300 dark:from-gray-800 dark:to-red-300 p-6 rounded-lg shadow-lg">
+            <div
+                class="recommendations grid gap-4 bg-gradient-to-br from-white to-yellow-300 dark:from-gray-800 dark:to-red-300 p-6 rounded-lg shadow-lg">
                 <div>
                     <h3 class="text-xl font-semibold text-green-500 dark:text-green-400 mb-2">Recommended for You</h3>
                     <p class="text-sm mb-4">Based on your health profile and goals</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=8" alt="Sanoj kumar" class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Sanoj kumar<br><span class="text-purple-600 dark:text-purple-400">Cardiologist</span></span>
+                        <div
+                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+                            <img src="https://picsum.photos/60/60?random=8" alt="Sanoj kumar"
+                                class="mx-auto border-2 border-blue-500 rounded-full">
+                            <span class="block font-bold text-gray-900 dark:text-gray-100">Sanoj kumar<br><span
+                                    class="text-purple-600 dark:text-purple-400">Cardiologist</span></span>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Heart Disease Recovery</p>
-                            <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
+                            <button
+                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
                             <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
                         </div>
-                        <div class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=8" alt="Gauri kumari" class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Gauri kumari<br><span class="text-purple-600 dark:text-purple-400">Recovered Patient</span></span>
+                        <div
+                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+                            <img src="https://picsum.photos/60/60?random=8" alt="Gauri kumari"
+                                class="mx-auto border-2 border-blue-500 rounded-full">
+                            <span class="block font-bold text-gray-900 dark:text-gray-100">Gauri kumari<br><span
+                                    class="text-purple-600 dark:text-purple-400">Recovered Patient</span></span>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Diabetes Management</p>
-                            <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
+                            <button
+                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
                             <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
                         </div>
-                        <div class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=9" alt="Muskan kumari" class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Muskan kumari<br><span class="text-purple-600 dark:text-purple-400">Fitness Mentor</span></span>
+                        <div
+                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+                            <img src="https://picsum.photos/60/60?random=9" alt="Muskan kumari"
+                                class="mx-auto border-2 border-blue-500 rounded-full">
+                            <span class="block font-bold text-gray-900 dark:text-gray-100">Muskan kumari<br><span
+                                    class="text-purple-600 dark:text-purple-400">Fitness Mentor</span></span>
                             <p class="text-sm text-gray-600 dark:text-gray-300">Cardiac Rehabilitation</p>
-                            <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
+                            <button
+                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
                             <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
                         </div>
                     </div>
@@ -300,20 +494,22 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/js/script.js}"></script>
     <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.toggleAttribute('data-theme');
-            localStorage.setItem('theme', html.hasAttribute('data-theme') ? 'dark' : 'light');
-        }
-        if (localStorage.getItem('theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-        document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-        });
-        document.getElementById('sidebar-close')?.addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.add('-translate-x-full');
+        // Ensure the sidebar toggle is initialized
+        document.addEventListener('DOMContentLoaded', function() {
+            const openButton = document.getElementById('sidebar-open-toggle');
+            const sidebar = document.getElementById('logo-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if (openButton && sidebar && backdrop) {
+                openButton.addEventListener('click', function() {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('open');
+                    backdrop.classList.add('visible');
+                    openButton.classList.add('hidden');
+                });
+            }
         });
     </script>
 </body>
