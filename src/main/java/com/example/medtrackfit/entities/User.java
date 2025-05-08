@@ -6,6 +6,8 @@ import lombok.*;
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.UserDatabase;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ public class User implements UserDetails, org.apache.catalina.User {
 
     @Id
     @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
 
     @Column(name = "user_name", nullable = false)
@@ -32,7 +35,7 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = false, nullable = false)
+    @Column(unique = false, nullable = true)
     private String role;
 
     @Getter(AccessLevel.NONE)
@@ -68,6 +71,10 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Builder.Default
     private List<String> roleList = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private UsersPerformance usersPerformance;
+
+    
     // Fix: Convert roles into GrantedAuthority
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,7 +1,6 @@
-<aside data-th-fragment="sidebar" id="logo-sidebar" class="w-full sm:w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 fixed top-0 left-0 z-40 -translate-x-full sm:translate-x-0 sm:static">
-    <div class="h-full px-3 py-4 overflow-y-auto">
-        <!-- Close Button for Mobile -->
-        <button id="sidebar-close" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400" aria-label="Close sidebar">
+<aside data-th-fragment="sidebar" id="logo-sidebar" class="w-full sm:w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 fixed top-0 left-0 z-40 sm:static">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <button id="sidebar-close-toggle" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400" aria-label="Close sidebar">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -9,7 +8,7 @@
         <a th:href="@{'/user/dashboard'}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <img th:src="@{'/images/logo.png'}" class="w-8 h-8" alt="Flowbite logo">
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">MTF</span>
-        </a>
+        </a>     
         <ul class="space-y-2 font-medium mt-6">
             <li>
                 <a href="/user/dashboard" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">

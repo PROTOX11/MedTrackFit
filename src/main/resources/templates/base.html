@@ -1,11 +1,61 @@
 <!DOCTYPE html>
-<html class="light" lang="en" th:fragment="parent(content,title,script,power)" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:fragment="parent(content,title,script,power)" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{'/css/output.css'}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <title th:replace="${title}">Base page</title>
+    <style>
+        #logo-sidebar {
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+            background-color: rgb(249 250 251);
+            width: 16rem;
+        }
+        #sidebar-open-toggle {
+            z-index: 50;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+        }
+        #sidebar-open-toggle.hidden {
+            display: none;
+        }
+        #sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 30;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        #sidebar-backdrop.visible {
+            display: block;
+        }
+        @media (min-width: 640px) {
+            #logo-sidebar {
+                position: static;
+            }
+            #sidebar-backdrop {
+                display: none !important;
+            }
+            #sidebar-open-toggle {
+                display: none;
+            }
+            #sidebar-close-toggle {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800 min-h-screen flex flex-col">
     <header th:if="${loggedInUser}">
@@ -16,15 +66,14 @@
     </header>
     
     <div class="flex flex-1">
-        <aside th:if="${loggedInUser}" id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 sm:static sm:w-64 sm:min-h-screen">
+        <aside th:if="${loggedInUser}" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:static sm:w-64 sm:min-h-screen">
             <div th:replace="~{user/sidebar :: sidebar}"></div>
         </aside>
         <aside th:unless="${loggedInUser}">
-            <div>
-                
-            </div>
+            <div></div>
         </aside>
-        <main class="flex-grow p-4 w-full " id="main-content">
+        <div id="sidebar-backdrop"></div>
+        <main class="flex-grow p-4 w-full" id="main-content">
             <section th:replace="${content}"></section>
             <section th:replace="${power}"></section>
         </main>
@@ -39,6 +88,6 @@
 
     <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-    <script th:src="@{'/js/script.js'}"></script>
+    <script th:src="@{'/js/script.js'}"></script> 
 </body>
 </html>
