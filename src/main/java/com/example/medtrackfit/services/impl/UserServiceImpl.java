@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User saveUser(User user) {
+        
         // Check if a user with this email already exists
         if (userRepo.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalStateException("User with email " + user.getEmail() + " already exists");

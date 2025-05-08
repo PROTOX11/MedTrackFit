@@ -53,7 +53,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         // Prepare the User entity
         User user = User.builder()
-                .userId(UUID.randomUUID().toString())
                 .roleList(List.of(AppConstants.ROLE_USER))
                 .emailVerified(true)
                 .enabled(true)

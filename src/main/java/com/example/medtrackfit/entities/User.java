@@ -6,6 +6,8 @@ import lombok.*;
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.UserDatabase;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ public class User implements UserDetails, org.apache.catalina.User {
 
     @Id
     @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
 
     @Column(name = "user_name", nullable = false)
