@@ -41,6 +41,17 @@
         #sidebar-backdrop.visible {
             display: block;
         }
+        /* Ensure sidebar and related elements are hidden when logged out */
+        body:not([data-logged-in="true"]) #logo-sidebar,
+        body:not([data-logged-in="true"]) #sidebar-open-toggle,
+        body:not([data-logged-in="true"]) #sidebar-backdrop {
+            display: none !important;
+        }
+        /* Ensure sidebar doesn't capture clicks when closed */
+        #logo-sidebar[style*="translateX(-100%)"] {
+            pointer-events: none !important;
+            z-index: -1 !important;
+        }
         @media (min-width: 640px) {
             #logo-sidebar {
                 position: static;
@@ -57,7 +68,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-100 text-gray-900 dark:text-white dark:bg-gray-800 min-h-screen flex flex-col" th:attr="data-logged-in=${loggedInUser != null ? 'true' : 'false'}">
     <header th:if="${loggedInUser}">
         <div th:replace="user/user_navbar::user-navbar"></div>
     </header>
@@ -66,12 +77,8 @@
     </header>
     
     <div class="flex flex-1">
-        <aside th:if="${loggedInUser}" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform sm:static sm:w-64 sm:min-h-screen">
-            <div th:replace="~{user/sidebar :: sidebar}"></div>
-        </aside>
-        <aside th:unless="${loggedInUser}">
-            <div></div>
-        </aside>
+        <!-- Include the sidebar fragment only if logged in -->
+        <div th:if="${loggedInUser}" th:replace="~{user/sidebar :: sidebar}"></div>
         <div id="sidebar-backdrop"></div>
         <main class="flex-grow p-4 w-full" id="main-content">
             <section th:replace="${content}"></section>
@@ -86,6 +93,10 @@
         <div th:replace="footer :: footer"></div>
     </footer>
 
+    <!-- Pass loggedInUser to JavaScript -->
+    <script th:inline="javascript">
+        window.loggedInUser = /*[[${loggedInUser != null}]]*/ false;
+    </script>
     <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script th:src="@{'/js/script.js'}"></script> 

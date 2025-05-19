@@ -61,6 +61,24 @@ function getTheme() {
 
 // Sidebar toggle functionality
 function setupSidebarToggle() {
+    // Skip if user is logged out
+    if (!window.loggedInUser) {
+        console.log('User is logged out, skipping sidebar initialization');
+        const sidebar = document.querySelector('#logo-sidebar');
+        const openButton = document.getElementById('sidebar-open-toggle');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (sidebar) {
+            sidebar.style.display = 'none'; // Ensure sidebar is hidden
+        }
+        if (openButton) {
+            openButton.style.display = 'none'; // Hide the toggle button
+        }
+        if (backdrop) {
+            backdrop.style.display = 'none'; // Hide the backdrop
+        }
+        return;
+    }
+
     const sidebar = document.querySelector('#logo-sidebar');
     const openButton = document.getElementById('sidebar-open-toggle');
     const closeButton = document.getElementById('sidebar-close-toggle');
@@ -79,10 +97,14 @@ function setupSidebarToggle() {
     // Initialize sidebar state
     if (window.innerWidth < 640) {
         sidebar.style.transform = 'translateX(-100%)';
+        sidebar.style.pointerEvents = 'none'; // Disable interaction when closed
+        sidebar.style.zIndex = '-1'; // Move behind other elements
         backdrop.style.display = 'none';
         openButton.classList.remove('hidden');
     } else {
         sidebar.style.transform = 'translateX(0)';
+        sidebar.style.pointerEvents = 'auto'; // Enable interaction
+        sidebar.style.zIndex = '40'; // Default z-index
         backdrop.style.display = 'none';
         openButton.classList.add('hidden');
     }
@@ -91,6 +113,8 @@ function setupSidebarToggle() {
     const openSidebar = () => {
         console.log('Opening sidebar');
         sidebar.style.transform = 'translateX(0)';
+        sidebar.style.pointerEvents = 'auto'; // Enable interaction
+        sidebar.style.zIndex = '40'; // Bring to front
         backdrop.style.display = 'block';
         backdrop.style.opacity = '1';
         openButton.classList.add('hidden');
@@ -100,6 +124,8 @@ function setupSidebarToggle() {
     const closeSidebar = () => {
         console.log('Closing sidebar');
         sidebar.style.transform = 'translateX(-100%)';
+        sidebar.style.pointerEvents = 'none'; // Disable interaction
+        sidebar.style.zIndex = '-1'; // Move behind other elements
         backdrop.style.opacity = '0';
         setTimeout(() => {
             backdrop.style.display = 'none';
@@ -114,13 +140,25 @@ function setupSidebarToggle() {
 
     // Handle window resize
     window.addEventListener('resize', () => {
+        if (!window.loggedInUser) {
+            // Ensure sidebar remains hidden on resize if logged out
+            if (sidebar) sidebar.style.display = 'none';
+            if (openButton) openButton.style.display = 'none';
+            if (backdrop) backdrop.style.display = 'none';
+            return;
+        }
+
         if (window.innerWidth >= 640) {
             sidebar.style.transform = 'translateX(0)';
+            sidebar.style.pointerEvents = 'auto';
+            sidebar.style.zIndex = '40';
             backdrop.style.display = 'none';
             openButton.classList.add('hidden');
         } else {
             if (sidebar.style.transform !== 'translateX(0)') {
                 sidebar.style.transform = 'translateX(-100%)';
+                sidebar.style.pointerEvents = 'none';
+                sidebar.style.zIndex = '-1';
                 backdrop.style.display = 'none';
                 openButton.classList.remove('hidden');
             }

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" 
-      th:replace="~{base :: parent(~{::#home}, ~{::title}, ~{::script}, ~{})}" 
-      class="light" 
-      data-theme="light" 
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{base :: parent(~{::#home}, ~{::title}, ~{::script}, ~{})}" class="light"
+    data-theme="light" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +19,7 @@
             --gradient-start: #a7f3d0;
             --gradient-end: #60a5fa;
         }
+
         [data-theme="dark"] {
             --bg: #1e293b;
             --text: #d1d5db;
@@ -32,73 +31,90 @@
             --gradient-start: #4b5563;
             --gradient-end: #1e40af;
         }
+
         body {
             background: var(--bg);
             color: var(--text);
             transition: all 0.2s ease;
         }
+
         .patient-card {
             background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
             color: #1f2937;
         }
+
         [data-theme="dark"] .patient-card {
             color: #e5e7eb;
         }
+
         .info-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
         }
+
         .btn-primary {
             background: var(--btn-bg);
             color: var(--btn-text);
         }
+
         .btn-primary:hover {
             background: #1d4ed8;
         }
+
         .btn-secondary {
             background: #e5e7eb;
             color: #374151;
         }
+
         .btn-secondary:hover {
             background: #d1d5db;
         }
+
         [data-theme="dark"] .btn-secondary {
             background: #4b5563;
             color: #d1d5db;
         }
+
         [data-theme="dark"] .btn-secondary:hover {
             background: #6b7280;
         }
+
         a {
             color: var(--link);
         }
+
         a:hover {
             text-decoration: underline;
         }
+
         @media (max-width: 640px) {
             .patient-card img {
                 width: 64px;
                 height: 64px;
             }
+
             .patient-card h4 {
                 font-size: 1.25rem;
             }
+
             .info-card h3 {
                 font-size: 1.125rem;
             }
+
             .info-card p {
                 font-size: 0.875rem;
             }
         }
     </style>
 </head>
+
 <body class="overflow-x-hidden bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
-    <div id="home" class="sm:ml-64">
+    <div id="home" class="w-full">
         <button id="sidebar-open-toggle"
-                class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md"
-                aria-label="Open sidebar">
+            class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md"
+            aria-label="Open sidebar">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                 xmlns="http://www.w3.org/2000/svg">
+                xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
         </button>
@@ -118,21 +134,26 @@
             <div class="info-card rounded-xl p-6 mb-6">
                 <div class="relative mb-4">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400" 
-                             aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input type="text" 
-                           class="w-full pl-10 pr-4 py-2 rounded-lg border bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base transition-colors duration-200" 
-                           placeholder="Search by name or condition..."/>
+                    <input type="text"
+                        class="w-full pl-10 pr-4 py-2 rounded-lg border bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base transition-colors duration-200"
+                        placeholder="Search by name or condition..." />
                 </div>
                 <div class="flex space-x-2 overflow-x-auto mb-4">
-                    <button class="px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 border border-blue-300 dark:border-blue-700">All</button>
-                    <button class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Diabetes</button>
-                    <button class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Heart Disease</button>
-                    <button class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Cancer</button>
+                    <button
+                        class="px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 border border-blue-300 dark:border-blue-700">All</button>
+                    <button
+                        class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Diabetes</button>
+                    <button
+                        class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Heart
+                        Disease</button>
+                    <button
+                        class="px-3 py-1 rounded-full text-sm bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-100 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500">Cancer</button>
                 </div>
             </div>
 
@@ -140,8 +161,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Patient 1 -->
                 <div class="patient-card rounded-xl p-4 flex flex-col items-center text-center">
-                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo" 
-                         class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4"/>
+                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo"
+                        class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4" />
                     <h4 class="text-xl font-semibold">Emma Wilson</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Recovered from Diabetes</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Recovered: June 2022</p>
@@ -149,8 +170,8 @@
                 </div>
                 <!-- Patient 2 -->
                 <div class="patient-card rounded-xl p-4 flex flex-col items-center text-center">
-                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo" 
-                         class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4"/>
+                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo"
+                        class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4" />
                     <h4 class="text-xl font-semibold">James Carter</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Recovered from Heart Disease</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Recovered: March 2023</p>
@@ -158,8 +179,8 @@
                 </div>
                 <!-- Patient 3 -->
                 <div class="patient-card rounded-xl p-4 flex flex-col items-center text-center">
-                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo" 
-                         class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4"/>
+                    <img src="https://picsum.photos/60/60?random=9" alt="Patient Photo"
+                        class="w-24 h-24 rounded-full object-cover border-2 border-white dark:border-gray-600 mb-4" />
                     <h4 class="text-xl font-semibold">Lisa Nguyen</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Recovered from Cancer</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Recovered: October 2022</p>
