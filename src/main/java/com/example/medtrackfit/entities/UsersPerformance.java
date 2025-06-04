@@ -1,5 +1,5 @@
 package com.example.medtrackfit.entities;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +18,7 @@ public class UsersPerformance {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @Column(name = "health_score")
@@ -32,8 +33,8 @@ public class UsersPerformance {
     @Column(name = "sleep_score")
     private int sleepScore;
 
-    @Column(name = "exercise_score")
-    private int exerciseScore;
+    @Column(name = "meditation_score")
+    private int meditationScore;
 
     @Column(name = "hydration_score")
     private int hydrationScore;
