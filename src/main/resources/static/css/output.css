@@ -2997,16 +2997,8 @@ input:checked + .toggle-bg {
     margin-left: 1.5rem;
   }
 
-  .sm\:ml-64 {
-    margin-left: 16rem;
-  }
-
   .sm\:mt-0 {
     margin-top: 0px;
-  }
-
-  .sm\:block {
-    display: block;
   }
 
   .sm\:flex {
@@ -3015,10 +3007,6 @@ input:checked + .toggle-bg {
 
   .sm\:hidden {
     display: none;
-  }
-
-  .sm\:min-h-screen {
-    min-height: 100vh;
   }
 
   .sm\:w-20 {
