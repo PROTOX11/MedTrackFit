@@ -38,6 +38,34 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
     @Autowired
     private usersPerformanceRepository usersPerformanceRepository; // Corrected to match interface name
 
+    @Autowired
+    private com.example.medtrackfit.services.FoodService foodService;
+
+    @GetMapping("/food/search")
+    public ResponseEntity<?> searchFoods(@RequestParam("query") String query, Authentication authentication) {
+        logger.info("Received food search request with query: {}", query);
+
+        if (authentication == null) {
+            logger.error("Authentication is null");
+            return ResponseEntity.status(401).body("Unauthorized: Not logged in");
+        }
+
+        String loggedInUsername = Helper.getEmailOfLoggedInUser(authentication);
+        User loggedInUser = userService.getUserByEmail(loggedInUsername);
+        if (loggedInUser == null) {
+            logger.error("Logged in user not found for email: {}", loggedInUsername);
+            return ResponseEntity.status(401).body("Unauthorized: User not found");
+        }
+
+        try {
+            var results = foodService.searchFoods(query);
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            logger.error("Error searching foods for query: {}", query, e);
+            return ResponseEntity.status(500).body("Error searching foods: " + e.getMessage());
+        }
+    }
+
     @ModelAttribute
     public void addLoggedinUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -96,6 +124,48 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
         } catch (Exception e) {
             logger.error("Error updating meditation time for userId: {}", userId, e);
             return ResponseEntity.status(500).body("Error updating meditation time: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{userId}/nutrition")
+    public ResponseEntity<String> updateNutritionScore(
+            @PathVariable String userId,
+            @RequestBody Map<String, Integer> payload,
+            Authentication authentication) {
+        logger.info("Received request to update nutrition score for userId: {}", userId);
+
+        if (authentication == null) {
+            logger.error("Authentication is null");
+            return ResponseEntity.status(401).body("Unauthorized: Not logged in");
+        }
+
+        String loggedInUsername = Helper.getEmailOfLoggedInUser(authentication);
+        User loggedInUser = userService.getUserByEmail(loggedInUsername);
+        if (loggedInUser == null) {
+            logger.error("Logged in user not found for email: {}", loggedInUsername);
+            return ResponseEntity.status(401).body("Unauthorized: User not found");
+        }
+
+        if (!loggedInUser.getUserId().equals(userId)) {
+            logger.warn("Unauthorized attempt to update nutrition score for userId: {} by user: {}",
+                    userId, loggedInUser.getUserId());
+            return ResponseEntity.status(403).body("Unauthorized: You can only update your own nutrition score");
+        }
+
+        try {
+            Integer nutritionScore = payload.get("nutritionScore");
+            if (nutritionScore == null) {
+                logger.warn("Invalid nutrition score: {}", nutritionScore);
+                return ResponseEntity.badRequest().body("Invalid nutrition score");
+            }
+
+            userService.updateNutritionScore(userId, nutritionScore);
+            logger.info("Nutrition score updated successfully for userId: {}, new nutritionScore: {}", 
+                    userId, nutritionScore);
+            return ResponseEntity.ok("Nutrition score updated successfully");
+        } catch (Exception e) {
+            logger.error("Error updating nutrition score for userId: {}", userId, e);
+            return ResponseEntity.status(500).body("Error updating nutrition score: " + e.getMessage());
         }
     }
 

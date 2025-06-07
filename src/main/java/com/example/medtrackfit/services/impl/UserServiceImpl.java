@@ -277,4 +277,38 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional
+    public void updateNutritionScore(String userId, int nutritionScore) {
+        logger.info("Updating nutrition score for userId: {}, score: {}", userId, nutritionScore);
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+        UsersPerformance performance = user.getUsersPerformance();
+        if (performance == null) {
+            logger.info("Creating new UsersPerformance for userId: {}", userId);
+            performance = UsersPerformance.builder()
+                    .user(user)
+                    .healthScore(0)
+                    .goalProgress(0)
+                    .nutritionScore(0)
+                    .breatheScore(0)
+                    .meditationScore(0)
+                    .hydrationScore(0)
+                    .build();
+            user.setUsersPerformance(performance);
+        }
+
+        performance.setNutritionScore(nutritionScore);
+        try {
+            userRepo.flush();
+            User savedUser = userRepo.save(user);
+            logger.info("User and performance saved for userId: {}, nutritionScore: {}", 
+                        userId, savedUser.getUsersPerformance().getNutritionScore());
+        } catch (Exception e) {
+            logger.error("Error saving nutrition score to database for userId: {}", userId, e);
+            throw new RuntimeException("Failed to save nutrition score to database", e);
+        }
+    }
+
 }
