@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .healthScore(0)
                     .goalProgress(0)
-                    .stepsScore(0)
+                    .nutritionScore(0)
                     .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
                 UsersPerformance updatedPerformance = user.getUsersPerformance();
                 existingPerformance.setHealthScore(updatedPerformance.getHealthScore());
                 existingPerformance.setGoalProgress(updatedPerformance.getGoalProgress());
-                existingPerformance.setStepsScore(updatedPerformance.getStepsScore());
+                existingPerformance.setNutritionScore(updatedPerformance.getNutritionScore());
                 existingPerformance.setBreatheScore(updatedPerformance.getBreatheScore());
                 existingPerformance.setMeditationScore(updatedPerformance.getMeditationScore());
                 existingPerformance.setHydrationScore(updatedPerformance.getHydrationScore());
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
                         .user(user2)
                         .healthScore(user.getUsersPerformance().getHealthScore())
                         .goalProgress(user.getUsersPerformance().getGoalProgress())
-                        .stepsScore(user.getUsersPerformance().getStepsScore())
+                        .nutritionScore(user.getUsersPerformance().getNutritionScore())
                         .breatheScore(user.getUsersPerformance().getBreatheScore())
                         .meditationScore(user.getUsersPerformance().getMeditationScore())
                         .hydrationScore(user.getUsersPerformance().getHydrationScore())
@@ -227,7 +227,7 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .healthScore(0)
                     .goalProgress(0)
-                    .stepsScore(0)
+                    .nutritionScore(0)
                     .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .healthScore(0)
                     .goalProgress(0)
-                    .stepsScore(0)
+                    .nutritionScore(0)
                     .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)

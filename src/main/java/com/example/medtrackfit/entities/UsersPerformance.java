@@ -27,8 +27,8 @@ public class UsersPerformance {
     @Column(name = "goal_progress")
     private int goalProgress;
 
-    @Column(name = "steps_score")
-    private int stepsScore;
+    @Column(name = "nutrition_score")
+    private int nutritionScore;
     
     @Column(name = "breathe_score")
     private int breatheScore;
