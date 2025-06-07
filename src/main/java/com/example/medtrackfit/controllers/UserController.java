@@ -134,6 +134,51 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
         }
     }
 
+    @PostMapping("/{userId}/breathescore")
+    public ResponseEntity<String> updateBreatheScore(
+            @PathVariable String userId,
+            @RequestBody Map<String, Integer> payload,
+            Authentication authentication) {
+        logger.info("Received request to update breathe score for userId: {}", userId);
+
+        if (authentication == null) {
+            logger.error("Authentication is null");
+            return ResponseEntity.status(401).body("Unauthorized: Not logged in");
+        }
+
+        String loggedInUsername = Helper.getEmailOfLoggedInUser(authentication);
+        User loggedInUser = userService.getUserByEmail(loggedInUsername);
+        if (loggedInUser == null) {
+            logger.error("Logged in user not found for email: {}", loggedInUsername);
+            return ResponseEntity.status(401).body("Unauthorized: User not found");
+        }
+
+        if (!loggedInUser.getUserId().equals(userId)) {
+            logger.warn("Unauthorized attempt to update breathe score for userId: {} by user: {}",
+                    userId, loggedInUser.getUserId());
+            return ResponseEntity.status(403).body("Unauthorized: You can only update your own breathe score");
+        }
+
+        try {
+            Integer breatheScore = payload.get("breatheScore");
+            if (breatheScore == null) {
+                logger.warn("Invalid breathe score: {}", breatheScore);
+                return ResponseEntity.badRequest().body("Invalid breathe score");
+            }
+
+            UsersPerformance performance = usersPerformanceRepository.findByUserUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Performance data not found for user: " + userId));
+            performance.setBreatheScore(breatheScore);
+            usersPerformanceRepository.save(performance);
+            logger.info("Breathe score updated successfully for userId: {}, new breatheScore: {}", 
+                    userId, performance.getBreatheScore());
+            return ResponseEntity.ok("Breathe score updated successfully");
+        } catch (Exception e) {
+            logger.error("Error updating breathe score for userId: {}", userId, e);
+            return ResponseEntity.status(500).body("Error updating breathe score: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/{userId}/hydration")
     public ResponseEntity<Void> updateHydration(
             @PathVariable String userId,

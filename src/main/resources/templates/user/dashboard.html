@@ -535,22 +535,470 @@
                         });
                     </script>
                     <!-- to here -->
+                    <!-- Breathwork code area -->
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
                             <svg class="w-full h-full transform -rotate-90">
+                                <!-- Background outer circle -->
                                 <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
                                 </circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#a855f7"
-                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 6.5) / 100)"
-                                    style="transition: stroke-dashoffset 0.3s;"></circle>
+                                <!-- Outer circle for total progress (5 minutes) -->
+                                <circle id="total-progress" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8"
+                                    stroke="#6366f1" stroke-dasharray="283" stroke-dashoffset="283"
+                                    style="transition: stroke-dashoffset 1s linear;"></circle>
+                                <!-- Background inner circle -->
+                                <circle cx="50%" cy="50%" r="35%" fill="none" stroke-width="6" stroke="#e0e0e0">
+                                </circle>
+                                <!-- Inner circle for inhale/exhale lap -->
+                                <circle id="breath-progress" cx="50%" cy="50%" r="35%" fill="none" stroke-width="6"
+                                    stroke="#a855f7" stroke-dasharray="220" stroke-dashoffset="220"
+                                    style="transition: stroke-dashoffset 1s linear;"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span class="text-2xl font-bold text-gray-800 dark:text-white">1</span>
-                                <span class="text-xs text-gray-500 mt-1">hours</span>
+                                <div class="flex flex-col items-center">
+                                    <span id="breath-phase"
+                                        class="text-lg font-bold text-gray-800 dark:text-white">Ready</span>
+                                    <span id="countdown"
+                                        class="text-2xl font-bold text-gray-800 dark:text-white"></span>
+                                </div>
                             </div>
                         </div>
-                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Sleep<br>Target: 8 hrs</p>
+                        <p id="breath-instruction" class="text-sm mt-2 text-gray-600 dark:text-gray-300">Press Start to
+                            begin</p>
+                        <p id="breath-timer" class="text-xs mt-1 text-gray-500 dark:text-gray-400">5:00</p>
+                        <div class="mt-4 flex justify-center gap-2">
+                            <button id="start-btn"
+                                class="flex items-center justify-center border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                <span id="start-text">Start</span>
+                                <svg id="play-icon" class="hidden w-5 h-5 ml-1 text-gray-700 dark:text-gray-300"
+                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.5" d="M8 18V6l8 6-8 6Z" />
+                                </svg>
+                            </button>
+                            <button id="stop-btn" disabled
+                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                Pause
+                            </button>
+                            <button id="reset-btn" disabled
+                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                Reset
+                            </button>
+                        </div>
                     </div>
+
+                    <script>
+                        const phases = [
+                            { name: "Stress Relief", inhale: 4, exhale: 6, duration: 10, transition: 1 }, // Exercise A: 10s + 1s transition
+                            { name: "Energy Boost", inhale: 3, exhale: 2, duration: 5, transition: 1 },  // Exercise B: 5s + 1s transition
+                            { name: "Stop Breathe", inhale: 0, exhale: 0, hold: 10, transition: 0 }  // Exercise C: 10s hold, no transition after
+                        ];
+
+                        let currentPhase = 0;
+                        let isInhaling = true;
+                        let isHolding = false;
+                        let isTransition = false;
+                        let timeLeft = 0;
+                        let totalElapsed = 0;
+                        let sessionElapsed = 0;
+                        let timerInterval = null;
+                        let cycleCount = 0;
+                        let isFirstStart = true;
+                        const totalCycles = 11; // Adjusted for new timing: 300s / (11s + 6s + 10s) = ~11 cycles
+                        const totalDuration = 300; // 5 minutes in seconds
+                        const totalCircumference = 283;
+                        const innerCircumference = 220;
+
+                        // DOM Elements
+                        const startBtn = document.getElementById('start-btn');
+                        const stopBtn = document.getElementById('stop-btn');
+                        const resetBtn = document.getElementById('reset-btn');
+                        const startText = document.getElementById('start-text');
+                        const playIcon = document.getElementById('play-icon');
+                        const phaseText = document.getElementById('breath-phase');
+                        const timerText = document.getElementById('breath-timer');
+                        const instructionText = document.getElementById('breath-instruction');
+                        const totalProgressCircle = document.getElementById('total-progress');
+                        const progressCircle = document.getElementById('breath-progress');
+                        const userIdElement = document.getElementById('loggedInUserId');
+
+                        function startSession() {
+                            startBtn.disabled = true;
+                            stopBtn.disabled = false;
+                            resetBtn.disabled = false;
+
+                            startText.textContent = "Start";
+                            playIcon.classList.add('hidden');
+
+                            if (isFirstStart) {
+                                currentPhase = 0;
+                                cycleCount = 0;
+                                isInhaling = true;
+                                isHolding = false;
+                                isTransition = false;
+                                timeLeft = phases[currentPhase].inhale;
+                                totalElapsed = 0;
+                                sessionElapsed = 0;
+
+                                totalProgressCircle.style.strokeDashoffset = totalCircumference;
+                                progressCircle.style.strokeDashoffset = innerCircumference;
+
+                                isFirstStart = false;
+                            }
+
+                            timerInterval = setInterval(updateTimer, 1000);
+                            updateUI();
+                        }
+
+                            async function stopSession() {
+                                clearInterval(timerInterval);
+                                timerInterval = null;
+                                startBtn.disabled = false;
+                                stopBtn.disabled = true;
+                                resetBtn.disabled = false;
+                                phaseText.textContent = "Paused";
+
+                                startText.textContent = "Play";
+                                playIcon.classList.remove('hidden');
+
+                                const userId = userIdElement.value;
+                                console.log('Attempting to save breathescore:', sessionElapsed, 'for userId:', userId);
+
+                                if (userId && sessionElapsed > 0) {
+                                    try {
+                                        // First get current breatheScore
+                                        const getResponse = await fetch(`/user/performance/${userId}`, {
+                                            method: 'GET',
+                                            credentials: 'include',
+                                        });
+
+                                        if (!getResponse.ok) {
+                                            throw new Error(`Failed to fetch current breathescore: ${getResponse.status}`);
+                                        }
+
+                                        const performanceData = await getResponse.json();
+                                        const currentScore = performanceData.breatheScore || 0;
+                                        const newScore = currentScore + sessionElapsed;
+
+                                        // Update with new total
+                                        const response = await fetch(`/user/${userId}/breathescore`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            credentials: 'include',
+                                            body: JSON.stringify({ breatheScore: newScore }),
+                                        });
+
+                                        const responseText = await response.text();
+                                        console.log('Save response status:', response.status, 'Response text:', responseText);
+
+                                        if (!response.ok) {
+                                            throw new Error(`Failed to save breathescore: ${response.status}`);
+                                        }
+
+                                        console.log('Breathescore saved successfully to database');
+                                        totalElapsed = newScore;
+                                        sessionStorage.setItem('breatheScore', newScore.toString());
+                                        sessionElapsed = 0;
+                                    } catch (error) {
+                                        console.error('Error saving breathescore to database:', error);
+                                        sessionStorage.setItem('breatheScore', totalElapsed.toString());
+                                    }
+                                } else {
+                                    console.log('No new session data to save or user ID missing');
+                                    sessionStorage.setItem('breatheScore', totalElapsed.toString());
+                                }
+                            }
+
+                        async function resetSession() {
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            startBtn.disabled = false;
+                            stopBtn.disabled = true;
+                            resetBtn.disabled = true;
+                            phaseText.textContent = "Ready";
+                            timerText.textContent = "5:00";
+                            instructionText.textContent = "Press Start to begin";
+                            totalProgressCircle.style.strokeDashoffset = totalCircumference;
+                            progressCircle.style.strokeDashoffset = innerCircumference;
+
+                            startText.textContent = "Start";
+                            playIcon.classList.add('hidden');
+
+                            currentPhase = 0;
+                            cycleCount = 0;
+                            isInhaling = true;
+                            isHolding = false;
+                            isTransition = false;
+                            timeLeft = 0;
+                            totalElapsed = 0;
+                            sessionElapsed = 0;
+                            isFirstStart = true;
+
+                            const userId = userIdElement.value;
+                            if (userId) {
+                                try {
+                                    const response = await fetch(`/user/${userId}/breathescore`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        credentials: 'include',
+                                        body: JSON.stringify({ breatheScore: 0 }),
+                                    });
+
+                                    if (!response.ok) {
+                                        throw new Error(`Failed to reset breathescore: ${response.status} ${response.statusText}`);
+                                    }
+
+                                    console.log('Breathescore reset successfully in database');
+                                    sessionStorage.setItem('breatheScore', '0');
+                                } catch (error) {
+                                    console.error('Error resetting breathescore in database:', error);
+                                }
+                            }
+                        }
+
+                        function updateTimer() {
+                            if (timeLeft > 0) {
+                                timeLeft--;
+                                totalElapsed++;
+                                sessionElapsed++;
+                            }
+
+                            // Check for session completion
+                            if (totalElapsed >= totalDuration) {
+                                clearInterval(timerInterval);
+                                timerInterval = null;
+                                phaseText.textContent = "Completed!";
+                                instructionText.textContent = "Great job! You've completed 5 minutes of breathwork!";
+                                startBtn.disabled = true;
+                                stopBtn.disabled = true;
+                                resetBtn.disabled = false;
+                                updateUI();
+                                return;
+                            }
+
+                            // Phase transitions
+                            if (timeLeft <= 0) {
+                                const currentExercise = phases[currentPhase];
+                                
+                                if (currentPhase === 2) { // Stop Breathe phase
+                                    if (!isHolding) {
+                                        // Start the hold
+                                        isHolding = true;
+                                        timeLeft = currentExercise.hold;
+                                    } else {
+                                        // End of Stop Breathe, move to next cycle
+                                        currentPhase = 0;
+                                        cycleCount++;
+                                        isHolding = false;
+                                        isInhaling = true;
+                                        timeLeft = phases[0].inhale;
+                                    }
+                                } else {
+                                    // Regular breathing phases
+                                    if (isInhaling && currentExercise.exhale > 0) {
+                                        // Switch from inhale to exhale
+                                        isInhaling = false;
+                                        timeLeft = currentExercise.exhale;
+                                    } else {
+                                        // Move to next phase
+                                        currentPhase++;
+                                        if (currentPhase >= phases.length) {
+                                            currentPhase = 0;
+                                            cycleCount++;
+                                        }
+                                        
+                                        const nextExercise = phases[currentPhase];
+                                        if (currentPhase === 2) {
+                                            isHolding = true;
+                                            isInhaling = false;
+                                            timeLeft = nextExercise.hold;
+                                        } else {
+                                            isInhaling = true;
+                                            timeLeft = nextExercise.inhale;
+                                        }
+                                    }
+                                }
+                            }
+                            updateUI();
+                        }
+
+                        function updateUI() {
+                            const phase = phases[currentPhase];
+                            const remainingTime = totalDuration - totalElapsed;
+
+                            // Update text - only update phase text if timer is running
+                            if (timerInterval) {
+                                if (currentPhase === 2) { // Stop Breathe phase
+                                    phaseText.textContent = "Hold";
+                                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')} left`;
+                                } else {
+                                    phaseText.textContent = isInhaling ? "Inhale" : "Exhale";
+                                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')} left`;
+                                }
+                            }
+                            
+                            // Always update timer display
+                            if (timerText) {
+                                timerText.textContent = `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')}`;
+                            }
+
+                            // Update total progress (outer circle)
+                            const totalProgressPercent = (totalElapsed / totalDuration) * 100;
+                            const totalDashOffset = totalCircumference - (totalCircumference * totalProgressPercent) / 100;
+                            totalProgressCircle.style.strokeDashoffset = totalDashOffset;
+
+                            // Update lap progress (inner circle)
+                            const countdownDisplay = document.getElementById('countdown');
+                            if (currentPhase === 2) { // Stop Breathe phase
+                                // Show hold progress
+                                const holdProgress = (1 - timeLeft / phase.hold) * 100;
+                                const dashOffset = innerCircumference - (innerCircumference * holdProgress) / 100;
+                                progressCircle.style.strokeDashoffset = dashOffset;
+                                countdownDisplay.textContent = timeLeft;
+                            } else {
+                                // Show inhale/exhale progress
+                                if (isInhaling) {
+                                    // For inhale: go from full circle to half circle (0% to 50%)
+                                    const progress = (1 - timeLeft / phase.inhale) * 50; // Only go up to 50%
+                                    const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
+                                    progressCircle.style.strokeDashoffset = dashOffset;
+                                    countdownDisplay.textContent = timeLeft;
+                                } else {
+                                    // For exhale: continue from half circle to full circle (50% to 100%)
+                                    const progress = 50 + ((1 - timeLeft / phase.exhale) * 50); // Start at 50% and go to 100%
+                                    const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
+                                    progressCircle.style.strokeDashoffset = dashOffset;
+                                    countdownDisplay.textContent = timeLeft;
+                                }
+                            }
+                        }
+
+                        async function fetchSavedBreatheScore() {
+                            const userId = userIdElement.value;
+                            console.log('Fetching saved breathescore for userId:', userId);
+
+                            if (!userId) {
+                                console.warn('User ID not found. Starting breathescore from 0.');
+                                const savedSeconds = sessionStorage.getItem('breatheScore');
+                                totalElapsed = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                                sessionElapsed = 0;
+                                updateUI();
+                                return;
+                            }
+
+                            try {
+                                const response = await fetch(`/user/performance/${userId}`, {
+                                    method: 'GET',
+                                    credentials: 'include',
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(`Failed to fetch breathescore: ${response.status} ${response.statusText}`);
+                                }
+
+                                const performanceData = JSON.parse(await response.text());
+                                console.log('Parsed performance data:', performanceData);
+
+                                if (performanceData && typeof performanceData.breatheScore === 'number') {
+                                    totalElapsed = performanceData.breatheScore;
+                                    console.log('totalElapsed set to database value:', totalElapsed);
+
+                                    // Check if session is complete
+                                    if (totalElapsed >= totalDuration) {
+                                        totalElapsed = totalDuration;
+                                        phaseText.textContent = "Complete!";
+                                        totalProgressCircle.style.strokeDashoffset = "0";
+                                        progressCircle.style.strokeDashoffset = "0";
+                                        instructionText.textContent = "Session Complete!";
+                                        startBtn.disabled = true;
+                                        stopBtn.disabled = true;
+                                        resetBtn.disabled = false;
+                                        return;
+                                    }
+
+                                    // Reconstruct state based on totalElapsed
+                                    const cycleDuration = 27; // 11s + 6s + 10s
+                                    cycleCount = Math.floor(totalElapsed / cycleDuration);
+                                    const elapsedInCycle = totalElapsed % cycleDuration;
+
+                                    // Determine current phase and timeLeft
+                                    let accumulatedTime = 0;
+                                    for (let i = 0; i < phases.length; i++) {
+                                        const phaseTime = phases[i].duration + (phases[i].transition || 0);
+                                        accumulatedTime += phaseTime;
+                                        if (elapsedInCycle < accumulatedTime) {
+                                            currentPhase = i;
+                                            const timeIntoPhase = elapsedInCycle - (accumulatedTime - phaseTime);
+                                            
+                                            if (timeIntoPhase >= phases[i].duration) {
+                                                // In transition period
+                                                isTransition = true;
+                                                isHolding = false;
+                                                isInhaling = false;
+                                                timeLeft = phases[i].transition - (timeIntoPhase - phases[i].duration);
+                                            } else if (currentPhase === 2) {
+                                                // Stop Breathe phase
+                                                isTransition = false;
+                                                isHolding = timeIntoPhase > 0;
+                                                isInhaling = false;
+                                                timeLeft = phases[i].hold - timeIntoPhase;
+                                            } else if (timeIntoPhase < phases[i].inhale) {
+                                                // In inhale
+                                                isTransition = false;
+                                                isHolding = false;
+                                                isInhaling = true;
+                                                timeLeft = phases[i].inhale - timeIntoPhase;
+                                            } else {
+                                                // In exhale
+                                                isTransition = false;
+                                                isHolding = false;
+                                                isInhaling = false;
+                                                timeLeft = phases[i].exhale - (timeIntoPhase - phases[i].inhale);
+                                            }
+                                            break;
+                                        }
+                                    }
+
+                                    // Set UI state based on saved progress
+                                    if (totalElapsed > 0) {
+                                        startText.textContent = "Play";
+                                        playIcon.classList.remove('hidden');
+                                        startBtn.disabled = false;
+                                        stopBtn.disabled = true;
+                                        resetBtn.disabled = false;
+                                        phaseText.textContent = "Paused";
+                                        instructionText.textContent = `Resume your breathwork session • ${Math.floor((totalDuration - totalElapsed) / 60)}:${((totalDuration - totalElapsed) % 60).toString().padStart(2, '0')} left`;
+                                        isFirstStart = false;
+                                    }
+                                } else {
+                                    console.warn('breatheScore is invalid or missing:', performanceData);
+                                    totalElapsed = 0;
+                                    sessionStorage.setItem('breatheScore', '0');
+                                }
+
+                                sessionElapsed = 0;
+                                updateUI();
+                            } catch (error) {
+                                console.error('Error fetching breathescore:', error.message);
+                                totalElapsed = 0;
+                                sessionElapsed = 0;
+                                updateUI();
+                            }
+                        }
+
+                        // Event listeners
+                        startBtn.addEventListener('click', startSession);
+                        stopBtn.addEventListener('click', stopSession);
+                        resetBtn.addEventListener('click', resetSession);
+
+                        // Initialize on page load
+                        document.addEventListener('DOMContentLoaded', fetchSavedBreatheScore);
+                    </script>
                     <!-- Hydration tracker code area -->
                     <div class="text-center">
                         <div class="relative w-24 h-24 mx-auto">
@@ -593,9 +1041,6 @@
                         </div>
                         <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Water Target: 4,000 ml</p>
                     </div>
-
-                    <!-- Hidden input to store userId (populated via Thymeleaf) -->
-                    <input type="hidden" id="loggedInUserId" th:value="${LoggedInUser.userId}" />
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {

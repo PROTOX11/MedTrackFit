@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
                     .healthScore(0)
                     .goalProgress(0)
                     .stepsScore(0)
-                    .sleepScore(0)
+                    .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
                     .build();
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
                 existingPerformance.setHealthScore(updatedPerformance.getHealthScore());
                 existingPerformance.setGoalProgress(updatedPerformance.getGoalProgress());
                 existingPerformance.setStepsScore(updatedPerformance.getStepsScore());
-                existingPerformance.setSleepScore(updatedPerformance.getSleepScore());
+                existingPerformance.setBreatheScore(updatedPerformance.getBreatheScore());
                 existingPerformance.setMeditationScore(updatedPerformance.getMeditationScore());
                 existingPerformance.setHydrationScore(updatedPerformance.getHydrationScore());
             } else {
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
                         .healthScore(user.getUsersPerformance().getHealthScore())
                         .goalProgress(user.getUsersPerformance().getGoalProgress())
                         .stepsScore(user.getUsersPerformance().getStepsScore())
-                        .sleepScore(user.getUsersPerformance().getSleepScore())
+                        .breatheScore(user.getUsersPerformance().getBreatheScore())
                         .meditationScore(user.getUsersPerformance().getMeditationScore())
                         .hydrationScore(user.getUsersPerformance().getHydrationScore())
                         .build();
@@ -220,7 +220,6 @@ public class UserServiceImpl implements UserService {
         logger.info("Fetching performance for userId: {}", userId);
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
         UsersPerformance performance = user.getUsersPerformance();
         if (performance == null) {
             logger.warn("User performance not found for userId: {}. Creating new performance.", userId);
@@ -229,7 +228,7 @@ public class UserServiceImpl implements UserService {
                     .healthScore(0)
                     .goalProgress(0)
                     .stepsScore(0)
-                    .sleepScore(0)
+                    .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
                     .build();
@@ -247,7 +246,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Updating meditation time for userId: {}, time: {}", userId, meditationTime);
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
-
+        
         UsersPerformance performance = user.getUsersPerformance();
         if (performance == null) {
             logger.info("Creating new UsersPerformance for userId: {}", userId);
@@ -256,7 +255,7 @@ public class UserServiceImpl implements UserService {
                     .healthScore(0)
                     .goalProgress(0)
                     .stepsScore(0)
-                    .sleepScore(0)
+                    .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
                     .build();
@@ -266,12 +265,12 @@ public class UserServiceImpl implements UserService {
         int currentMeditationScore = performance.getMeditationScore();
         performance.setMeditationScore(currentMeditationScore + meditationTime); // Add to existing value
         logger.info("Meditation score updated to: {} for userId: {}", performance.getMeditationScore(), userId);
-
+        
         try {
             userRepo.flush();
             User savedUser = userRepo.save(user);
-            logger.info("User and performance saved for userId: {}, meditationScore: {}",
-                    userId, savedUser.getUsersPerformance().getMeditationScore());
+            logger.info("User and performance saved for userId: {}, meditationScore: {}", 
+                        userId, savedUser.getUsersPerformance().getMeditationScore());
         } catch (Exception e) {
             logger.error("Error saving meditation time to database for userId: {}", userId, e);
             throw new RuntimeException("Failed to save meditation time to database", e);

@@ -30,8 +30,8 @@ public class UsersPerformance {
     @Column(name = "steps_score")
     private int stepsScore;
     
-    @Column(name = "sleep_score")
-    private int sleepScore;
+    @Column(name = "breathe_score")
+    private int breatheScore;
 
     @Column(name = "meditation_score")
     private int meditationScore;
