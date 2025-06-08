@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateNutritionScore(String userId, int nutritionScore) {
-        logger.info("Updating nutrition score for userId: {}, score: {}", userId, nutritionScore);
+        logger.info("Updating nutrition score for userId: {}, score to add: {}", userId, nutritionScore);
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
@@ -291,20 +291,23 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .healthScore(0)
                     .goalProgress(0)
-                    .nutritionScore(0)
+                    .nutritionScore(nutritionScore)  // Set initial score
                     .breatheScore(0)
                     .meditationScore(0)
                     .hydrationScore(0)
                     .build();
             user.setUsersPerformance(performance);
+        } else {
+            // Add new score to existing score
+            int currentScore = performance.getNutritionScore();
+            int newScore = currentScore + nutritionScore;
+            performance.setNutritionScore(newScore);
+            logger.info("Updated nutrition score from {} to {} for userId: {}", currentScore, newScore, userId);
         }
 
-        performance.setNutritionScore(nutritionScore);
         try {
-            userRepo.flush();
-            User savedUser = userRepo.save(user);
-            logger.info("User and performance saved for userId: {}, nutritionScore: {}", 
-                        userId, savedUser.getUsersPerformance().getNutritionScore());
+            userRepo.save(user);  // Save user which will cascade to performance
+            logger.info("Successfully saved nutrition score for userId: {}", userId);
         } catch (Exception e) {
             logger.error("Error saving nutrition score to database for userId: {}", userId, e);
             throw new RuntimeException("Failed to save nutrition score to database", e);

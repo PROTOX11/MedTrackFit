@@ -1,1561 +1,2394 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" th:replace="~{base :: parent(~{::#home},~{::title},~{},~{})}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${loggedInUser?.name} + ' | Dashboard'">Dashboard</title>
-    <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    <link rel="stylesheet" th:href="@{'/css/output.css'}" />
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <style>
-        :root {
-            --bg: #f7f8fa;
-            --text: #6b7280;
-            --card-bg: #ffffff;
-            --card-border: #e5e7eb;
-            --btn-bg: #26a69a;
-            --btn-text: #ffffff;
-            --link: #10b981;
-            --purple: #a855f7;
-            --green: #10b981;
-            --progress-bg: #e0e0e0;
-            --progress-color: #1976d2;
-        }
+      :root {
+        --bg: #f7f8fa;
+        --text: #6b7280;
+        --card-bg: #ffffff;
+        --card-border: #e5e7eb;
+        --btn-bg: #26a69a;
+        --btn-text: #ffffff;
+        --link: #10b981;
+        --purple: #a855f7;
+        --green: #10b981;
+        --progress-bg: #e0e0e0;
+        --progress-color: #1976d2;
+      }
 
-        [data-theme="dark"] {
-            --bg: #1e293b;
-            --text: #d1d5db;
-            --card-bg: #2d3748;
-            --card-border: #4b5563;
-            --btn-bg: #26a69a;
-            --btn-text: #ffffff;
-            --link: #34d399;
-            --purple: #c084fc;
-            --green: #34d399;
-            --progress-bg: #4b5563;
-            --progress-color: #60a5fa;
-        }
+      [data-theme="dark"] {
+        --bg: #1e293b;
+        --text: #d1d5db;
+        --card-bg: #2d3748;
+        --card-border: #4b5563;
+        --btn-bg: #26a69a;
+        --btn-text: #ffffff;
+        --link: #34d399;
+        --purple: #c084fc;
+        --green: #34d399;
+        --progress-bg: #4b5563;
+        --progress-color: #60a5fa;
+      }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-        }
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
 
+      .progress {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+      }
+
+      .progress-circle {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+      }
+
+      .progress-circle-bg,
+      .progress-circle-fg {
+        fill: none;
+        stroke-width: 8;
+      }
+
+      .progress-circle-bg {
+        stroke: var(--progress-bg);
+      }
+
+      .progress-circle-fg {
+        stroke: var(--progress-color);
+        stroke-dasharray: 201;
+        stroke-dashoffset: calc(201 - (201 * var(--progress)) / 100);
+        transition: stroke-dashoffset 0.3s;
+      }
+
+      .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      button.today {
+        background: var(--card-bg);
+        color: var(--text);
+        border: 1px solid var(--card-border);
+      }
+
+      button.time {
+        background: var(--purple);
+        color: var(--btn-text);
+      }
+
+      button.join {
+        background: var(--btn-bg);
+      }
+
+      button.schedule {
+        background: var(--green);
+      }
+
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 640px) {
         .progress {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
+          width: 60px;
+          height: 60px;
         }
 
-        .progress-circle {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
+        .progress-text {
+          font-size: 0.875rem;
         }
 
         .progress-circle-bg,
         .progress-circle-fg {
-            fill: none;
-            stroke-width: 8;
+          stroke-width: 6;
         }
 
-        .progress-circle-bg {
-            stroke: var(--progress-bg);
+        .appointment-item button {
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
         }
 
-        .progress-circle-fg {
-            stroke: var(--progress-color);
-            stroke-dasharray: 201;
-            stroke-dashoffset: calc(201 - (201 * var(--progress)) / 100);
-            transition: stroke-dashoffset 0.3s;
+        .header h2 {
+          font-size: 1.5rem;
         }
 
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1rem;
-            color: var(--text);
+        .header p {
+          font-size: 0.875rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .grid-cols-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        .grid-cols-4 {
+          grid-template-columns: 1fr;
         }
 
-        button.today {
-            background: var(--card-bg);
-            color: var(--text);
-            border: 1px solid var(--card-border);
+        .recommendation-item img {
+          width: 48px;
+          height: 48px;
         }
 
-        button.time {
-            background: var(--purple);
-            color: var(--btn-text);
+        .recommendation-item button {
+          font-size: 0.875rem;
         }
-
-        button.join {
-            background: var(--btn-bg);
-        }
-
-        button.schedule {
-            background: var(--green);
-        }
-
-        a {
-            color: var(--link);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 640px) {
-            .progress {
-                width: 60px;
-                height: 60px;
-            }
-
-            .progress-text {
-                font-size: 0.875rem;
-            }
-
-            .progress-circle-bg,
-            .progress-circle-fg {
-                stroke-width: 6;
-            }
-
-            .appointment-item button {
-                font-size: 0.75rem;
-                padding: 0.25rem 0.5rem;
-            }
-
-            .header h2 {
-                font-size: 1.5rem;
-            }
-
-            .header p {
-                font-size: 0.875rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .grid-cols-4 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 480px) {
-            .grid-cols-4 {
-                grid-template-columns: 1fr;
-            }
-
-            .recommendation-item img {
-                width: 48px;
-                height: 48px;
-            }
-
-            .recommendation-item button {
-                font-size: 0.875rem;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="home" class="w-full">
-        <!-- Hamburger Menu for Mobile -->
-        <button id="sidebar-open-toggle"
-            class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            aria-label="Open sidebar">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-        </button>
-        <div class="container mx-auto px-4 pt-12 sm:pt-4">
-            <div
-                class="header text-center bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
-                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2"
-                    th:text="'Welcome back, ' + ${loggedInUser?.name} + '!'"></h2>
-                <p class="text-lg text-gray-600 dark:text-gray-300" th:text="'Here\'s your health overview'"></p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div
-                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-activity w-6 h-6 text-blue-600 dark:text-blue-400 mr-2">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                        </svg>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Health Score</h3>
-                    </div>
-                    <div class="flex items-baseline mb-2">
-                        <p class="text-3xl font-bold text-gray-900 dark:text-white">76</p>
-                        <p class="ml-1 text-xl font-medium text-gray-500 dark:text-gray-400">/100</p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                        <span>~ 5% vs last week</span>
-                    </div>
-                </div>
-                <div
-                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-users text-blue-600">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Active Connections</h3>
-                    </div>
-                    <div class="flex items-baseline mb-2">
-                        <p class="text-3xl font-bold text-gray-900 dark:text-white">24</p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                        <span>~ 2% vs last week</span>
-                    </div>
-                </div>
-                <div
-                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar-clock text-purple-600">
-                            <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path>
-                            <path d="M16 2v4"></path>
-                            <path d="M8 2v4"></path>
-                            <path d="M3 10h5"></path>
-                            <path d="M17.5 17.5 16 16.3V14"></path>
-                            <circle cx="16" cy="16" r="6"></circle>
-                        </svg>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Appointments</h3>
-                    </div>
-                    <div class="flex items-baseline mb-2">
-                        <p class="text-3xl font-bold text-gray-900 dark:text-white">3</p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                        <span>~ 5% vs last week</span>
-                    </div>
-                </div>
-                <div
-                    class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                    <div class="flex items-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-trending-up text-green-600">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-                            <polyline points="16 7 22 7 22 13"></polyline>
-                        </svg>
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Goal Progress</h3>
-                    </div>
-                    <div class="flex items-baseline mb-2">
-                        <p class="text-3xl font-bold text-gray-900 dark:text-white">70%</p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <svg class="w-4 h-4 mr-1 text-green-500 dark:text-green-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                        </svg>
-                        <span>~ 15% vs last week</span>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
-                <h3 class="text-lg font-medium mb-2">Health Metrics</h3>
-                <p class="text-sm mb-4">Today's progress towards your goals</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                    <!-- Nutrition tracking starts here -->
-                    <div class="text-center">
-                        <div class="relative w-24 h-24 mx-auto">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
-                                </circle>
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#1976d2"
-                                    stroke-dasharray="283" stroke-dashoffset="calc(283 - (283 * 78.23) / 100)"
-                                    style="transition: stroke-dashoffset 0.3s;"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
-                                <span class="text-xs text-gray-500 mt-1">cal</span>
-                            </div>
-                        </div>
-                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Nutrition Tracking<br>Target: 2000
-                            calorie</p>
-
-
-                        <!-- Modal toggle -->
-                        <div class="flex justify-center mt-2">
-                            <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal"
-                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
-                                type="button">
-                                <span>Find Food</span>
-                            </button>
-                        </div>
-                        <div class="flex justify-center">
-                            <button id="" disabled
-                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 mt-1 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                Reset
-                            </button>
-                        </div>
-
-                        <!-- Main modal -->
-                        <div id="timeline-modal" tabindex="-1" aria-hidden="true"
-                            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                            <div class="relative p-4 w-full max-w-4xl max-h-[80vh]">
-                                <!-- Modal content -->
-                                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-                                    <!-- Modal header -->
-                                    <div
-                                        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            Search Food
-                                        </h3>
-                                        <button type="button"
-                                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                            data-modal-toggle="timeline-modal">
-                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 14 14">
-                                                <path stroke="currentColor" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2"
-                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                            </svg>
-                                            <span class="sr-only">Close modal</span>
-                                        </button>
-                                    </div>
-<!-- open find food body -->
-<div>
-    <div class="p-4 md:p-5">
-        <form id="food-search-form" class="max-w-md mx-auto mb-6 flex items-center space-x-2">
-            <label for="food-search-input"
-                class="sr-only">Search Food</label>
-            <input type="text" id="food-search-input" name="query" placeholder="Search for food..."
-                class="flex-grow p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                autocomplete="off" />
-            <button type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Search
-            </button>
-        </form>
-        <div id="food-search-results" class="max-w-md mx-auto mb-6 max-h-60 overflow-y-auto border border-gray-300 rounded-md dark:border-gray-600">
-            <!-- Search results will be appended here -->
+      <!-- Hamburger Menu for Mobile -->
+      <button
+        id="sidebar-open-toggle"
+        class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        aria-label="Open sidebar"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7"
+          ></path>
+        </svg>
+      </button>
+      <div class="container mx-auto px-4 pt-12 sm:pt-4">
+        <div
+          class="header text-center bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 mb-6"
+        >
+          <h2
+            class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2"
+            th:text="'Welcome back, ' + ${loggedInUser?.name} + '!'"
+          ></h2>
+          <p
+            class="text-lg text-gray-600 dark:text-gray-300"
+            th:text="'Here\'s your health overview'"
+          ></p>
         </div>
-        <h4 class="text-lg font-semibold mb-4 dark:text-white">Selected Food Items</h4>
-        <ul id="selected-food-list" class="max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-700 mb-6 max-h-48 overflow-y-auto">
-            <!-- Selected food items will be appended here -->
-        </ul>
-        <div class="text-right max-w-md mx-auto mb-4">
-            <span class="font-semibold dark:text-white">Total Calories: </span><span id="total-calories" class="font-bold dark:text-white">0</span>
-        </div>
-        <button id="confirm-food-selection"
-            class="text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-            Yes I've Eaten Today
-        </button>
-    </div>
-</div>
-<!-- open find body ends here -->
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('food-search-input');
-    const searchResultsContainer = document.getElementById('food-search-results');
-    const selectedFoodList = document.getElementById('selected-food-list');
-    const totalCaloriesSpan = document.getElementById('total-calories');
-    const confirmButton = document.getElementById('confirm-food-selection');
-
-    let selectedFoods = [];
-
-    function renderSearchResults(foods) {
-        searchResultsContainer.innerHTML = '';
-        if (foods.length === 0) {
-            searchResultsContainer.innerHTML = '<p class="p-2 text-gray-500 dark:text-gray-400">No results found.</p>';
-            return;
-        }
-        foods.forEach(food => {
-            const item = document.createElement('div');
-            item.className = 'p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center';
-            item.textContent = food.description + ' (' + (food.calories ? food.calories.toFixed(2) : '0') + ' cal)';
-            item.addEventListener('click', () => {
-                addFoodItem(food);
-            });
-            searchResultsContainer.appendChild(item);
-        });
-    }
-
-    function renderSelectedFoods() {
-        selectedFoodList.innerHTML = '';
-        selectedFoods.forEach((food, index) => {
-            const li = document.createElement('li');
-            li.className = 'flex justify-between items-center py-2 px-4 dark:text-white';
-            li.textContent = food.description + ' - ' + (food.calories ? food.calories.toFixed(2) : '0') + ' cal';
-
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600';
-            removeBtn.textContent = 'Remove';
-            removeBtn.addEventListener('click', () => {
-                removeFoodItem(index);
-            });
-
-            li.appendChild(removeBtn);
-            selectedFoodList.appendChild(li);
-        });
-        updateTotalCalories();
-    }
-
-    function updateTotalCalories() {
-        const total = selectedFoods.reduce((sum, food) => sum + (food.calories || 0), 0);
-        totalCaloriesSpan.textContent = total.toFixed(2);
-    }
-
-    function addFoodItem(food) {
-        if (!selectedFoods.some(f => f.fdcId === food.fdcId)) {
-            selectedFoods.push(food);
-            renderSelectedFoods();
-        }
-    }
-
-    function removeFoodItem(index) {
-        selectedFoods.splice(index, 1);
-        renderSelectedFoods();
-    }
-
-    async function searchFoods(query) {
-        if (!query || query.trim().length === 0) {
-            renderSearchResults([]);
-            return;
-        }
-        try {
-            const response = await fetch(`/user/food/search?query=${encodeURIComponent(query)}`, {
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch food search results');
-            }
-            const data = await response.json();
-            renderSearchResults(data);
-        } catch (error) {
-            console.error('Error searching foods:', error);
-            renderSearchResults([]);
-        }
-    }
-
-    let debounceTimeout = null;
-    searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-            searchFoods(searchInput.value);
-        }, 300);
-    });
-
-    document.getElementById('food-search-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        searchFoods(searchInput.value);
-    });
-
-    confirmButton.addEventListener('click', () => {
-        // TODO: Implement what happens when user confirms food selection
-        // For example, send selectedFoods to backend or update UI accordingly
-        console.log('Selected foods confirmed:', selectedFoods);
-        // Close modal programmatically if needed
-        const modal = document.getElementById('timeline-modal');
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-    });
-});
-</script>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- nutrition score ends here  -->
-
-                    </div>
-                    <!-- Nutrition tracking ends here -->
-
-                    <!-- Meditation tracking starts here -->
-                    <div class="text-center">
-                        <div class="relative w-24 h-24 mx-auto">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
-                                </circle>
-                                <circle id="progressCircle" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8"
-                                    stroke="#7be5ff" stroke-dasharray="283" stroke-dashoffset="283"
-                                    style="transition: stroke-dashoffset 1s linear;"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span id="timerMinutes"
-                                    class="text-2xl font-bold text-gray-800 dark:text-white">00:00</span>
-                                <span class="text-xs text-gray-500">minutes</span>
-                                <div class="flex flex-row gap-0"></div>
-                            </div>
-                        </div>
-                        <div id="pl_pause" class="flex justify-center gap-2">
-                            <button id="playButton" class="flex items-center justify-center">
-                                <svg id="play-but"
-                                    class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
-                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="0.9" d="M8 18V6l8 6-8 6Z" />
-                                </svg>
-                            </button>
-                            <button id="pauseButton" class="flex items-center justify-center">
-                                <svg id="pause-but"
-                                    class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
-                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="0.9"
-                                        d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Meditation<br>Target: 30 min</p>
-                    </div>
-
-                    <!-- Hidden input to store userId (populated via Thymeleaf) -->
-                    <input type="hidden" id="loggedInUserId" th:value="${LoggedInUser.userId}" />
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            console.log('Meditation timer script loaded at:', new Date().toISOString());
-
-                            const timerDisplay = document.getElementById('timerMinutes');
-                            const playButton = document.getElementById('playButton');
-                            const pauseButton = document.getElementById('pauseButton');
-                            const playSvg = document.getElementById('play-but');
-                            const pauseSvg = document.getElementById('pause-but');
-                            const userIdElement = document.getElementById('loggedInUserId');
-                            const progressCircle = document.getElementById('progressCircle');
-
-                            console.log('timerDisplay:', timerDisplay);
-                            console.log('playButton:', playButton);
-                            console.log('pauseButton:', pauseButton);
-                            console.log('playSvg:', playSvg);
-                            console.log('pauseSvg:', pauseSvg);
-                            console.log('userIdElement:', userIdElement);
-                            console.log('progressCircle:', progressCircle);
-
-                            if (!timerDisplay || !playButton || !pauseButton || !playSvg || !pauseSvg || !userIdElement || !progressCircle) {
-                                console.error('One or more DOM elements not found. Meditation timer will not work.');
-                                return;
-                            }
-
-                            let seconds = 0;
-                            let sessionSeconds = 0;
-                            let timerInterval = null;
-                            const targetMinutes = 30;
-                            const totalSeconds = targetMinutes * 60; // 1800 seconds
-                            const circumference = 283; // stroke-dasharray value
-
-                            function updateTimerDisplay() {
-                                const displayMinutes = Math.floor(seconds / 60);
-                                const displaySeconds = seconds % 60;
-                                timerDisplay.textContent =
-                                    displayMinutes.toString().padStart(2, '0') + ':' +
-                                    displaySeconds.toString().padStart(2, '0');
-                                console.log('Timer display updated to:', timerDisplay.textContent);
-
-                                // Update the progress circle
-                                const progress = (seconds / totalSeconds) * 100;
-                                const dashOffset = circumference - (circumference * progress) / 100;
-                                progressCircle.setAttribute('stroke-dashoffset', dashOffset);
-                                console.log('Progress:', progress, '%', 'Dash offset:', dashOffset);
-                            }
-
-                            async function fetchSavedMeditationTime() {
-                                const userId = userIdElement.value;
-                                console.log('Fetching saved meditation time for userId:', userId);
-
-                                if (!userId) {
-                                    console.warn('User ID not found. Starting timer from 0.');
-                                    const savedSeconds = sessionStorage.getItem('meditationTime');
-                                    seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
-                                    sessionSeconds = 0;
-                                    updateTimerDisplay();
-                                    return;
-                                }
-
-                                try {
-                                    const response = await fetch(`/user/performance/${userId}`, {
-                                        method: 'GET',
-                                        credentials: 'include',
-                                    });
-
-                                    console.log('Fetch response status:', response.status, 'Status text:', response.statusText);
-
-                                    if (!response.ok) {
-                                        const errorText = await response.text();
-                                        console.error('Fetch failed. Response text:', errorText);
-                                        throw new Error(`Failed to fetch meditation time: ${response.status} ${response.statusText}`);
-                                    }
-
-                                    const rawResponseText = await response.text();
-                                    console.log('Raw response text:', rawResponseText);
-
-                                    const performanceData = JSON.parse(rawResponseText);
-                                    console.log('Parsed performance data:', performanceData);
-
-                                    if (performanceData && typeof performanceData.meditationScore === 'number') {
-                                        seconds = performanceData.meditationScore;
-                                        console.log('Seconds set to database value:', seconds);
-                                    } else {
-                                        console.warn('meditationScore is invalid or missing, using sessionStorage:', performanceData);
-                                        const savedSeconds = sessionStorage.getItem('meditationTime');
-                                        seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
-                                    }
-                                    sessionSeconds = 0;
-                                    sessionStorage.setItem('meditationTime', seconds.toString());
-                                    updateTimerDisplay();
-                                } catch (error) {
-                                    console.error('Error fetching meditation time:', error.message);
-                                    const savedSeconds = sessionStorage.getItem('meditationTime');
-                                    seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
-                                    sessionSeconds = 0;
-                                    console.log('Falling back to sessionStorage value:', seconds);
-                                    updateTimerDisplay();
-                                }
-                            }
-
-                            function startTimer() {
-                                console.log('Play button clicked');
-                                console.log('Starting with seconds:', seconds, 'Target seconds:', totalSeconds);
-
-                                if (!timerInterval && seconds < totalSeconds) {
-                                    console.log('Starting timer...');
-                                    playSvg.classList.remove('text-gray-800');
-                                    playSvg.classList.add('text-gray-500');
-                                    playSvg.classList.remove('w-[39px]', 'h-[39px]');
-                                    playSvg.classList.add('w-[31px]', 'h-[31px]');
-                                    pauseSvg.classList.remove('w-[39px]', 'h-[39px]');
-                                    pauseSvg.classList.add('w-[51px]', 'h-[51px]');
-
-                                    timerInterval = setInterval(() => {
-                                        sessionSeconds++;
-                                        seconds = (seconds - (sessionSeconds - 1)) + sessionSeconds;
-                                        console.log('Timer tick: sessionSeconds:', sessionSeconds, 'Total seconds:', seconds);
-                                        sessionStorage.setItem('meditationTime', seconds.toString());
-                                        updateTimerDisplay();
-                                        if (seconds >= totalSeconds) {
-                                            console.log('Target reached, stopping timer');
-                                            clearInterval(timerInterval);
-                                            timerInterval = null;
-                                            playSvg.classList.remove('text-gray-500');
-                                            playSvg.classList.add('text-gray-800');
-                                            playSvg.classList.remove('w-[31px]', 'h-[31px]');
-                                            playSvg.classList.add('w-[39px]', 'h-[39px]');
-                                            pauseSvg.classList.remove('w-[51px]', 'h-[51px]');
-                                            pauseSvg.classList.add('w-[39px]', 'h-[39px]');
-                                        }
-                                    }, 1000);
-                                } else {
-                                    console.log('Timer not started: timerInterval exists or target reached');
-                                }
-                            }
-
-                            async function pauseTimer() {
-                                console.log('Pause button clicked');
-                                clearInterval(timerInterval);
-                                timerInterval = null;
-                                playSvg.classList.remove('text-gray-500');
-                                playSvg.classList.add('text-gray-800');
-                                playSvg.classList.remove('w-[31px]', 'h-[31px]');
-                                playSvg.classList.add('w-[39px]', 'h-[39px]');
-                                pauseSvg.classList.remove('w-[51px]', 'h-[51px]');
-                                pauseSvg.classList.add('w-[47px]', 'h-[47px]');
-
-                                const userId = userIdElement.value;
-                                console.log('Attempting to save meditation time:', sessionSeconds, 'for userId:', userId);
-
-                                if (userId) {
-                                    try {
-                                        const response = await fetch(`/user/${userId}/meditation`, {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            credentials: 'include',
-                                            body: JSON.stringify({ meditationTime: sessionSeconds }),
-                                        });
-
-                                        const responseText = await response.text();
-                                        console.log('Save response status:', response.status, 'Response text:', responseText);
-
-                                        if (!response.ok) {
-                                            throw new Error(`Failed to save meditation time: ${response.status} ${response.statusText}`);
-                                        }
-
-                                        console.log('Meditation time saved successfully to database');
-                                        sessionStorage.setItem('meditationTime', seconds.toString());
-                                        seconds = seconds;
-                                        sessionSeconds = 0;
-                                    } catch (error) {
-                                        console.error('Error saving meditation time to database:', error);
-                                        sessionStorage.setItem('meditationTime', seconds.toString());
-                                    }
-                                } else {
-                                    console.warn('User ID not found. Skipping meditation time save.');
-                                    sessionStorage.setItem('meditationTime', seconds.toString());
-                                }
-                            }
-
-                            playButton.addEventListener('click', startTimer);
-                            pauseButton.addEventListener('click', pauseTimer);
-                            console.log('Event listeners attached');
-
-                            fetchSavedMeditationTime();
-                        });
-                    </script>
-                    <!-- to here -->
-                    <!-- Breathwork code area -->
-                    <div class="text-center">
-                        <div class="relative w-24 h-24 mx-auto">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <!-- Background outer circle -->
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
-                                </circle>
-                                <!-- Outer circle for total progress (5 minutes) -->
-                                <circle id="total-progress" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8"
-                                    stroke="#6366f1" stroke-dasharray="283" stroke-dashoffset="283"
-                                    style="transition: stroke-dashoffset 1s linear;"></circle>
-                                <!-- Background inner circle -->
-                                <circle cx="50%" cy="50%" r="35%" fill="none" stroke-width="6" stroke="#e0e0e0">
-                                </circle>
-                                <!-- Inner circle for inhale/exhale lap -->
-                                <circle id="breath-progress" cx="50%" cy="50%" r="35%" fill="none" stroke-width="6"
-                                    stroke="#a855f7" stroke-dasharray="220" stroke-dashoffset="220"
-                                    style="transition: stroke-dashoffset 1s linear;"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <div class="flex flex-col items-center">
-                                    <span id="breath-phase"
-                                        class="text-lg font-bold text-gray-800 dark:text-white">Ready</span>
-                                    <span id="countdown"
-                                        class="text-2xl font-bold text-gray-800 dark:text-white"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <p id="breath-instruction" class="text-sm mt-2 text-gray-600 dark:text-gray-300">Press Start
-                            to
-                            begin</p>
-                        <p id="breath-timer" class="text-xs mt-1 text-gray-500 dark:text-gray-400">5:00</p>
-                        <div class="mt-4 flex flex-col items-center gap-2">
-                            <div class="flex justify-center gap-2">
-                                <button id="start-btn"
-                                    class="flex items-center justify-center border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                    <span id="start-text">Start</span>
-                                    <svg id="play-icon" class="hidden w-5 h-5 ml-1 text-gray-700 dark:text-gray-300"
-                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="1.5" d="M8 18V6l8 6-8 6Z" />
-                                    </svg>
-                                </button>
-                                <button id="stop-btn" disabled
-                                    class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                    Pause
-                                </button>
-                            </div>
-                            <div class="flex justify-center">
-                                <button id="reset-btn" disabled
-                                    class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                    Reset
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <script>
-                        const phases = [
-                            { name: "Stress Relief", inhale: 4, exhale: 6, duration: 10, transition: 0.3 }, // Exercise A: 10s + 0.3s transition
-                            { name: "Energy Boost", inhale: 3, exhale: 2, duration: 5, transition: 0.3 },  // Exercise B: 5s + 0.3s transition
-                            { name: "Stop Breathe", inhale: 0, exhale: 0, hold: 10, transition: 0 }  // Exercise C: 10s hold, no transition after
-                        ];
-
-                        let currentPhase = 0;
-                        let isInhaling = true;
-                        let isHolding = false;
-                        let isTransition = false;
-                        let timeLeft = 0;
-                        let totalElapsed = 0;
-                        let sessionElapsed = 0;
-                        let timerInterval = null;
-                        let cycleCount = 0;
-                        let isFirstStart = true;
-                        const totalCycles = 11; // Adjusted for new timing: 300s / (11s + 6s + 10s) = ~11 cycles
-                        const totalDuration = 300; // 5 minutes in seconds
-                        const totalCircumference = 283;
-                        const innerCircumference = 220;
-
-                        // DOM Elements
-                        const startBtn = document.getElementById('start-btn');
-                        const stopBtn = document.getElementById('stop-btn');
-                        const resetBtn = document.getElementById('reset-btn');
-                        const startText = document.getElementById('start-text');
-                        const playIcon = document.getElementById('play-icon');
-                        const phaseText = document.getElementById('breath-phase');
-                        const timerText = document.getElementById('breath-timer');
-                        const instructionText = document.getElementById('breath-instruction');
-                        const totalProgressCircle = document.getElementById('total-progress');
-                        const progressCircle = document.getElementById('breath-progress');
-                        const userIdElement = document.getElementById('loggedInUserId');
-
-                        function startSession() {
-                            startBtn.disabled = true;
-                            stopBtn.disabled = false;
-                            resetBtn.disabled = false;
-
-                            startText.textContent = "Start";
-                            playIcon.classList.add('hidden');
-
-                            if (isFirstStart) {
-                                currentPhase = 0;
-                                cycleCount = 0;
-                                isInhaling = true;
-                                isHolding = false;
-                                isTransition = false;
-                                timeLeft = phases[currentPhase].inhale;
-                                totalElapsed = 0;
-                                sessionElapsed = 0;
-
-                                totalProgressCircle.style.strokeDashoffset = totalCircumference;
-                                progressCircle.style.strokeDashoffset = innerCircumference;
-
-                                isFirstStart = false;
-                            }
-
-                            timerInterval = setInterval(updateTimer, 1000);
-                            updateUI();
-                        }
-
-                        async function stopSession() {
-                            clearInterval(timerInterval);
-                            timerInterval = null;
-                            startBtn.disabled = false;
-                            stopBtn.disabled = true;
-                            resetBtn.disabled = false;
-                            phaseText.textContent = "Paused";
-
-                            startText.textContent = "Play";
-                            playIcon.classList.remove('hidden');
-
-                            const userId = userIdElement.value;
-                            console.log('Attempting to save breathescore:', sessionElapsed, 'for userId:', userId);
-
-                            if (userId && sessionElapsed > 0) {
-                                try {
-                                    // First get current breatheScore
-                                    const getResponse = await fetch(`/user/performance/${userId}`, {
-                                        method: 'GET',
-                                        credentials: 'include',
-                                    });
-
-                                    if (!getResponse.ok) {
-                                        throw new Error(`Failed to fetch current breathescore: ${getResponse.status}`);
-                                    }
-
-                                    const performanceData = await getResponse.json();
-                                    const currentScore = performanceData.breatheScore || 0;
-                                    const newScore = currentScore + sessionElapsed;
-
-                                    // Update with new total
-                                    const response = await fetch(`/user/${userId}/breathescore`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        credentials: 'include',
-                                        body: JSON.stringify({ breatheScore: newScore }),
-                                    });
-
-                                    const responseText = await response.text();
-                                    console.log('Save response status:', response.status, 'Response text:', responseText);
-
-                                    if (!response.ok) {
-                                        throw new Error(`Failed to save breathescore: ${response.status}`);
-                                    }
-
-                                    console.log('Breathescore saved successfully to database');
-                                    totalElapsed = newScore;
-                                    sessionStorage.setItem('breatheScore', newScore.toString());
-                                    sessionElapsed = 0;
-                                } catch (error) {
-                                    console.error('Error saving breathescore to database:', error);
-                                    sessionStorage.setItem('breatheScore', totalElapsed.toString());
-                                }
-                            } else {
-                                console.log('No new session data to save or user ID missing');
-                                sessionStorage.setItem('breatheScore', totalElapsed.toString());
-                            }
-                        }
-
-                        async function resetSession() {
-                            clearInterval(timerInterval);
-                            timerInterval = null;
-                            startBtn.disabled = false;
-                            stopBtn.disabled = true;
-                            resetBtn.disabled = true;
-                            phaseText.textContent = "Ready";
-                            timerText.textContent = "5:00";
-                            instructionText.textContent = "Press Start to begin";
-                            totalProgressCircle.style.strokeDashoffset = totalCircumference;
-                            progressCircle.style.strokeDashoffset = innerCircumference;
-
-                            startText.textContent = "Start";
-                            playIcon.classList.add('hidden');
-
-                            currentPhase = 0;
-                            cycleCount = 0;
-                            isInhaling = true;
-                            isHolding = false;
-                            isTransition = false;
-                            timeLeft = 0;
-                            totalElapsed = 0;
-                            sessionElapsed = 0;
-                            isFirstStart = true;
-
-                            const userId = userIdElement.value;
-                            if (userId) {
-                                try {
-                                    const response = await fetch(`/user/${userId}/breathescore`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        credentials: 'include',
-                                        body: JSON.stringify({ breatheScore: 0 }),
-                                    });
-
-                                    if (!response.ok) {
-                                        throw new Error(`Failed to reset breathescore: ${response.status} ${response.statusText}`);
-                                    }
-
-                                    console.log('Breathescore reset successfully in database');
-                                    sessionStorage.setItem('breatheScore', '0');
-                                } catch (error) {
-                                    console.error('Error resetting breathescore in database:', error);
-                                }
-                            }
-                        }
-
-                        function updateTimer() {
-                            if (timeLeft > 0) {
-                                timeLeft--;
-                                totalElapsed++;
-                                sessionElapsed++;
-                            }
-
-                            // Check for session completion
-                            if (totalElapsed >= totalDuration) {
-                                clearInterval(timerInterval);
-                                timerInterval = null;
-                                phaseText.textContent = "Completed!";
-                                instructionText.textContent = "Great job! You've completed 5 minutes of breathwork!";
-                                startBtn.disabled = true;
-                                stopBtn.disabled = true;
-                                resetBtn.disabled = false;
-                                updateUI();
-                                return;
-                            }
-
-                            // Phase transitions
-                            if (timeLeft <= 0) {
-                                const currentExercise = phases[currentPhase];
-
-                                if (currentPhase === 2) { // Stop Breathe phase
-                                    if (!isHolding) {
-                                        // Start the hold
-                                        isHolding = true;
-                                        timeLeft = currentExercise.hold;
-                                    } else {
-                                        // End of Stop Breathe, move to next cycle
-                                        currentPhase = 0;
-                                        cycleCount++;
-                                        isHolding = false;
-                                        isInhaling = true;
-                                        timeLeft = phases[0].inhale;
-                                    }
-                                } else {
-                                    // Regular breathing phases
-                                    if (isInhaling && currentExercise.exhale > 0) {
-                                        // Switch from inhale to exhale
-                                        isInhaling = false;
-                                        timeLeft = currentExercise.exhale;
-                                    } else {
-                                        // Move to next phase
-                                        currentPhase++;
-                                        if (currentPhase >= phases.length) {
-                                            currentPhase = 0;
-                                            cycleCount++;
-                                        }
-
-                                        const nextExercise = phases[currentPhase];
-                                        if (currentPhase === 2) {
-                                            isHolding = true;
-                                            isInhaling = false;
-                                            timeLeft = nextExercise.hold;
-                                        } else {
-                                            isInhaling = true;
-                                            timeLeft = nextExercise.inhale;
-                                        }
-                                    }
-                                }
-                            }
-                            updateUI();
-                        }
-
-                        function updateUI() {
-                            const phase = phases[currentPhase];
-                            const remainingTime = totalDuration - totalElapsed;
-
-                            // Update text - only update phase text if timer is running
-                            if (timerInterval) {
-                                if (currentPhase === 2) { // Stop Breathe phase
-                                    phaseText.textContent = "Hold";
-                                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')} left`;
-                                } else {
-                                    phaseText.textContent = isInhaling ? "Inhale" : "Exhale";
-                                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')} left`;
-                                }
-                            }
-
-                            // Always update timer display
-                            if (timerText) {
-                                timerText.textContent = `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, '0')}`;
-                            }
-
-                            // Update total progress (outer circle)
-                            const totalProgressPercent = (totalElapsed / totalDuration) * 100;
-                            const totalDashOffset = totalCircumference - (totalCircumference * totalProgressPercent) / 100;
-                            totalProgressCircle.style.strokeDashoffset = totalDashOffset;
-
-                            // Update lap progress (inner circle)
-                            const countdownDisplay = document.getElementById('countdown');
-                            if (currentPhase === 2) { // Stop Breathe phase
-                                // Show hold progress
-                                const holdProgress = (1 - timeLeft / phase.hold) * 100;
-                                const dashOffset = innerCircumference - (innerCircumference * holdProgress) / 100;
-                                progressCircle.style.strokeDashoffset = dashOffset;
-                                countdownDisplay.textContent = timeLeft;
-                            } else {
-                                // Show inhale/exhale progress
-                                if (isInhaling) {
-                                    // For inhale: go from full circle to half circle (0% to 50%)
-                                    const progress = (1 - timeLeft / phase.inhale) * 50; // Only go up to 50%
-                                    const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
-                                    progressCircle.style.strokeDashoffset = dashOffset;
-                                    countdownDisplay.textContent = timeLeft;
-                                } else {
-                                    // For exhale: continue from half circle to full circle (50% to 100%)
-                                    const progress = 50 + ((1 - timeLeft / phase.exhale) * 50); // Start at 50% and go to 100%
-                                    const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
-                                    progressCircle.style.strokeDashoffset = dashOffset;
-                                    countdownDisplay.textContent = timeLeft;
-                                }
-                            }
-                        }
-
-                        async function fetchSavedBreatheScore() {
-                            const userId = userIdElement.value;
-                            console.log('Fetching saved breathescore for userId:', userId);
-
-                            if (!userId) {
-                                console.warn('User ID not found. Starting breathescore from 0.');
-                                const savedSeconds = sessionStorage.getItem('breatheScore');
-                                totalElapsed = savedSeconds ? parseInt(savedSeconds, 10) : 0;
-                                sessionElapsed = 0;
-                                updateUI();
-                                return;
-                            }
-
-                            try {
-                                const response = await fetch(`/user/performance/${userId}`, {
-                                    method: 'GET',
-                                    credentials: 'include',
-                                });
-
-                                if (!response.ok) {
-                                    throw new Error(`Failed to fetch breathescore: ${response.status} ${response.statusText}`);
-                                }
-
-                                const performanceData = JSON.parse(await response.text());
-                                console.log('Parsed performance data:', performanceData);
-
-                                if (performanceData && typeof performanceData.breatheScore === 'number') {
-                                    totalElapsed = performanceData.breatheScore;
-                                    console.log('totalElapsed set to database value:', totalElapsed);
-
-                                    // Check if session is complete
-                                    if (totalElapsed >= totalDuration) {
-                                        totalElapsed = totalDuration;
-                                        phaseText.textContent = "Complete!";
-                                        totalProgressCircle.style.strokeDashoffset = "0";
-                                        progressCircle.style.strokeDashoffset = "0";
-                                        instructionText.textContent = "Session Complete!";
-                                        startBtn.disabled = true;
-                                        stopBtn.disabled = true;
-                                        resetBtn.disabled = false;
-                                        return;
-                                    }
-
-                                    // Reconstruct state based on totalElapsed
-                                    const cycleDuration = 27; // 11s + 6s + 10s
-                                    cycleCount = Math.floor(totalElapsed / cycleDuration);
-                                    const elapsedInCycle = totalElapsed % cycleDuration;
-
-                                    // Determine current phase and timeLeft
-                                    let accumulatedTime = 0;
-                                    for (let i = 0; i < phases.length; i++) {
-                                        const phaseTime = phases[i].duration + (phases[i].transition || 0);
-                                        accumulatedTime += phaseTime;
-                                        if (elapsedInCycle < accumulatedTime) {
-                                            currentPhase = i;
-                                            const timeIntoPhase = elapsedInCycle - (accumulatedTime - phaseTime);
-
-                                            if (timeIntoPhase >= phases[i].duration) {
-                                                // In transition period
-                                                isTransition = true;
-                                                isHolding = false;
-                                                isInhaling = false;
-                                                timeLeft = phases[i].transition - (timeIntoPhase - phases[i].duration);
-                                            } else if (currentPhase === 2) {
-                                                // Stop Breathe phase
-                                                isTransition = false;
-                                                isHolding = timeIntoPhase > 0;
-                                                isInhaling = false;
-                                                timeLeft = phases[i].hold - timeIntoPhase;
-                                            } else if (timeIntoPhase < phases[i].inhale) {
-                                                // In inhale
-                                                isTransition = false;
-                                                isHolding = false;
-                                                isInhaling = true;
-                                                timeLeft = phases[i].inhale - timeIntoPhase;
-                                            } else {
-                                                // In exhale
-                                                isTransition = false;
-                                                isHolding = false;
-                                                isInhaling = false;
-                                                timeLeft = phases[i].exhale - (timeIntoPhase - phases[i].inhale);
-                                            }
-                                            break;
-                                        }
-                                    }
-
-                                    // Set UI state based on saved progress
-                                    if (totalElapsed > 0) {
-                                        startText.textContent = "Play";
-                                        playIcon.classList.remove('hidden');
-                                        startBtn.disabled = false;
-                                        stopBtn.disabled = true;
-                                        resetBtn.disabled = false;
-                                        phaseText.textContent = "Paused";
-                                        instructionText.textContent = `Resume your breathwork session • ${Math.floor((totalDuration - totalElapsed) / 60)}:${((totalDuration - totalElapsed) % 60).toString().padStart(2, '0')} left`;
-                                        isFirstStart = false;
-                                    }
-                                } else {
-                                    console.warn('breatheScore is invalid or missing:', performanceData);
-                                    totalElapsed = 0;
-                                    sessionStorage.setItem('breatheScore', '0');
-                                }
-
-                                sessionElapsed = 0;
-                                updateUI();
-                            } catch (error) {
-                                console.error('Error fetching breathescore:', error.message);
-                                totalElapsed = 0;
-                                sessionElapsed = 0;
-                                updateUI();
-                            }
-                        }
-
-                        // Event listeners
-                        startBtn.addEventListener('click', startSession);
-                        stopBtn.addEventListener('click', stopSession);
-                        resetBtn.addEventListener('click', resetSession);
-
-                        // Initialize on page load
-                        document.addEventListener('DOMContentLoaded', fetchSavedBreatheScore);
-                    </script>
-                    <!-- Hydration tracker code area -->
-                    <div class="text-center">
-                        <div class="relative w-24 h-24 mx-auto">
-                            <svg class="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0">
-                                </circle>
-                                <circle id="hydrationProgressCircle" cx="50%" cy="50%" r="45%" fill="none"
-                                    stroke-width="8" stroke="#6df573" stroke-dasharray="283" stroke-dashoffset="283"
-                                    style="transition: stroke-dashoffset 0.3s;"></circle>
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                <span id="hydrationMlDisplay"
-                                    class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
-                                <span class="text-xs text-gray-500 mt-1">ml</span>
-                            </div>
-                        </div>
-                        <!-- Center the glass SVG -->
-                        <div class="flex justify-center mt-2">
-                            <svg class="w-[34px] h-[34px] text-gray-800 dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-                                viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="1.2"
-                                    d="M6.31531 7c1.41852 0 1.41852 1.5 2.83703 1.5C10.5709 8.5 10.5709 7 11.9894 7s1.4185 1.5 2.837 1.5S17.6635 7 17.6635 7M6 3l1.07554 16.133C7.14558 20.1836 8.01818 21 9.07111 21h5.85779c1.0529 0 1.9255-.8164 1.9956-1.867L18 3H6Z" />
-                            </svg>
-                        </div>
-                        <div class="flex justify-center gap-2 mt-2">
-                            <button id="add50mlButton"
-                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                <span>+50ml</span>
-                            </button>
-                            <button id="add100mlButton"
-                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                <span>+100ml</span>
-                            </button>
-                            <button id="add200mlButton"
-                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
-                                <span>+200ml</span>
-                            </button>
-                        </div>
-                        <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Water Target: 4,000 ml</p>
-                    </div>
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            console.log('Hydration tracker script loaded at:', new Date().toISOString());
-
-                            const hydrationMlDisplay = document.getElementById('hydrationMlDisplay');
-                            const add50mlButton = document.getElementById('add50mlButton');
-                            const add100mlButton = document.getElementById('add100mlButton');
-                            const add200mlButton = document.getElementById('add200mlButton');
-                            const userIdElement = document.getElementById('loggedInUserId');
-                            const progressCircle = document.getElementById('hydrationProgressCircle');
-
-                            console.log('hydrationMlDisplay:', hydrationMlDisplay);
-                            console.log('add50mlButton:', add50mlButton);
-                            console.log('add100mlButton:', add100mlButton);
-                            console.log('add200mlButton:', add200mlButton);
-                            console.log('userIdElement:', userIdElement);
-                            console.log('progressCircle:', progressCircle);
-
-                            if (!hydrationMlDisplay || !add50mlButton || !add100mlButton || !add200mlButton || !userIdElement || !progressCircle) {
-                                console.error('One or more DOM elements not found. Hydration tracker will not work.');
-                                return;
-                            }
-
-                            let ml = 0; // Total water intake in ml
-                            let sessionMl = 0; // Water added in the current session
-                            const targetMl = 4000; // Target: 4000ml
-                            const circumference = 283; // stroke-dasharray value
-
-                            function updateHydrationDisplay() {
-                                hydrationMlDisplay.textContent = ml;
-                                const progress = (ml / targetMl) * 100;
-                                const dashOffset = circumference - (circumference * progress) / 100;
-                                progressCircle.setAttribute('stroke-dashoffset', dashOffset);
-                                console.log('Hydration updated: ml:', ml, 'Progress:', progress, '%', 'Dash offset:', dashOffset);
-                            }
-
-                            async function fetchSavedHydration() {
-                                const userId = userIdElement.value;
-                                console.log('Fetching saved hydration for userId:', userId);
-
-                                if (!userId) {
-                                    console.error('User ID not found. Cannot fetch hydration data.');
-                                    ml = 0;
-                                    sessionMl = 0;
-                                    sessionStorage.setItem('hydrationMl', '0');
-                                    updateHydrationDisplay();
-                                    return;
-                                }
-
-                                try {
-                                    const response = await fetch(`/user/performance/${userId}`, {
-                                        method: 'GET',
-                                        credentials: 'include',
-                                    });
-
-                                    console.log('Fetch response status:', response.status, 'Status text:', response.statusText);
-
-                                    if (!response.ok) {
-                                        const errorText = await response.text();
-                                        console.error('Fetch failed. Response text:', errorText);
-                                        throw new Error(`Failed to fetch hydration: ${response.status} ${response.statusText}`);
-                                    }
-
-                                    const rawResponseText = await response.text();
-                                    console.log('Raw response text:', rawResponseText);
-
-                                    let performanceData;
-                                    try {
-                                        performanceData = JSON.parse(rawResponseText);
-                                        console.log('Parsed performance data:', performanceData);
-                                    } catch (parseError) {
-                                        console.error('JSON parsing error:', parseError.message);
-                                        throw new Error('Invalid JSON response from server');
-                                    }
-
-                                    if (performanceData && typeof performanceData.hydrationScore === 'number') {
-                                        ml = performanceData.hydrationScore;
-                                        console.log('ml set to database hydration_score:', ml);
-                                        sessionStorage.setItem('hydrationMl', ml.toString());
-                                    } else {
-                                        console.warn('hydrationScore is missing or invalid:', performanceData);
-                                        ml = 0; // Only reset if no valid data
-                                        sessionStorage.setItem('hydrationMl', '0');
-                                    }
-
-                                    sessionMl = 0;
-                                    updateHydrationDisplay();
-                                } catch (error) {
-                                    console.error('Error fetching hydration:', error.message);
-                                    // Only fall back to sessionStorage if explicitly needed
-                                    const savedMl = sessionStorage.getItem('hydrationMl');
-                                    ml = savedMl && !isNaN(parseInt(savedMl, 10)) ? parseInt(savedMl, 10) : 0;
-                                    sessionMl = 0;
-                                    console.log('Falling back to sessionStorage value:', ml);
-                                    updateHydrationDisplay();
-                                }
-                            }
-
-                            async function saveHydrationToDatabase() {
-                                const userId = userIdElement.value;
-                                console.log('Attempting to save hydration:', sessionMl, 'for userId:', userId);
-
-                                if (userId && sessionMl > 0) {
-                                    try {
-                                        const response = await fetch(`/user/${userId}/hydration`, {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            credentials: 'include',
-                                            body: JSON.stringify({ hydrationAmount: sessionMl }),
-                                        });
-
-                                        const responseText = await response.text();
-                                        console.log('Save response status:', response.status, 'Response text:', responseText);
-
-                                        if (!response.ok) {
-                                            throw new Error(`Failed to save hydration: ${response.status} ${response.statusText}`);
-                                        }
-
-                                        console.log('Hydration saved successfully to database');
-                                        sessionStorage.setItem('hydrationMl', ml.toString());
-                                        sessionMl = 0; // Reset session after saving
-                                    } catch (error) {
-                                        console.error('Error saving hydration to database:', error);
-                                        sessionStorage.setItem('hydrationMl', ml.toString());
-                                    }
-                                } else {
-                                    console.warn('User ID not found or no hydration to save.');
-                                    sessionStorage.setItem('hydrationMl', ml.toString());
-                                }
-                            }
-
-                            function addWater(amount) {
-                                console.log(`Adding ${amount}ml of water`);
-                                sessionMl += amount;
-                                ml = (ml - (sessionMl - amount)) + sessionMl; // Update total ml
-                                if (ml > targetMl) {
-                                    ml = targetMl; // Cap at 4000ml
-                                    sessionMl = ml - (ml - sessionMl); // Adjust sessionMl accordingly
-                                }
-                                updateHydrationDisplay();
-                                saveHydrationToDatabase(); // Save to DB after each addition
-                            }
-
-                            add50mlButton.addEventListener('click', () => addWater(50));
-                            add100mlButton.addEventListener('click', () => addWater(100));
-                            add200mlButton.addEventListener('click', () => addWater(200));
-
-                            console.log('Event listeners attached');
-
-                            fetchSavedHydration();
-                        });
-                    </script>
-                </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div
+            class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-activity w-6 h-6 text-blue-600 dark:text-blue-400 mr-2"
+              >
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Health Score
+              </h3>
+            </div>
+            <div class="flex items-baseline mb-2">
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">76</p>
+              <p
+                class="ml-1 text-xl font-medium text-gray-500 dark:text-gray-400"
+              >
+                /100
+              </p>
             </div>
             <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400"
+            >
+              <svg
+                class="w-4 h-4 mr-1 text-green-500 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                ></path>
+              </svg>
+              <span>~ 5% vs last week</span>
+            </div>
+          </div>
+          <div
+            class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-users text-blue-600"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Active Connections
+              </h3>
+            </div>
+            <div class="flex items-baseline mb-2">
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">24</p>
+            </div>
+            <div
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400"
+            >
+              <svg
+                class="w-4 h-4 mr-1 text-green-500 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                ></path>
+              </svg>
+              <span>~ 2% vs last week</span>
+            </div>
+          </div>
+          <div
+            class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-calendar-clock text-purple-600"
+              >
+                <path
+                  d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"
+                ></path>
+                <path d="M16 2v4"></path>
+                <path d="M8 2v4"></path>
+                <path d="M3 10h5"></path>
+                <path d="M17.5 17.5 16 16.3V14"></path>
+                <circle cx="16" cy="16" r="6"></circle>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Upcoming Appointments
+              </h3>
+            </div>
+            <div class="flex items-baseline mb-2">
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">3</p>
+            </div>
+            <div
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400"
+            >
+              <svg
+                class="w-4 h-4 mr-1 text-green-500 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                ></path>
+              </svg>
+              <span>~ 5% vs last week</span>
+            </div>
+          </div>
+          <div
+            class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-trending-up text-green-600"
+              >
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                <polyline points="16 7 22 7 22 13"></polyline>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                Goal Progress
+              </h3>
+            </div>
+            <div class="flex items-baseline mb-2">
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">
+                70%
+              </p>
+            </div>
+            <div
+              class="flex items-center text-sm text-gray-500 dark:text-gray-400"
+            >
+              <svg
+                class="w-4 h-4 mr-1 text-green-500 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                ></path>
+              </svg>
+              <span>~ 15% vs last week</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm"
+        >
+          <h3 class="text-lg font-medium mb-2">Health Metrics</h3>
+          <p class="text-sm mb-4">Today's progress towards your goals</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <!-- Nutrition tracking starts here -->
+            <div class="text-center">
+              <div class="relative w-24 h-24 mx-auto">
+                <svg class="w-full h-full transform -rotate-90">
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#e0e0e0"
+                  ></circle>
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#1976d2"
+                    stroke-dasharray="283"
+                    stroke-dashoffset="calc(283 - (283 * 78.23) / 100)"
+                    style="transition: stroke-dashoffset 0.3s"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span class="text-2xl font-bold text-gray-800 dark:text-white"
+                    >0</span
+                  >
+                  <span class="text-xs text-gray-500 mt-1">cal</span>
+                </div>
+              </div>
+              <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                Nutrition Tracking<br />Target: 2000 calorie
+              </p>
+
+              <!-- Modal toggle -->
+              <div class="flex justify-center mt-2">
+                <button
+                  data-modal-target="timeline-modal"
+                  data-modal-toggle="timeline-modal"
+                  class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                  type="button"
+                >
+                  <span>Find Food</span>
+                </button>
+              </div>
+              <div class="flex justify-center">
+                <button
+                  id="resetFoodButton"
+                  disabled
+                  class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 mt-1 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                >
+                  Reset
+                </button>
+              </div>
+
+              <!-- Main modal -->
+              <div
+                id="timeline-modal"
+                tabindex="-1"
+                aria-hidden="true"
+                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+              >
+                <div class="relative p-4 w-full max-w-4xl max-h-[80vh]">
+                  <!-- Modal content -->
+                  <div
+                    class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700"
+                  >
+                    <!-- Modal header -->
+                    <div
+                      class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200"
+                    >
+                      <h3
+                        class="text-lg font-semibold text-gray-900 dark:text-white"
+                      >
+                        Search Food
+                      </h3>
+                      <button
+                        type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-toggle="timeline-modal"
+                      >
+                        <svg
+                          class="w-3 h-3"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 14 14"
+                        >
+                          <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                          />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                      </button>
+                    </div>
+                    <!-- open find food body -->
                     <div>
-                        <h3 class="text-lg font-medium mb-2">Upcoming Appointments</h3>
-                        <p class="text-sm">Your scheduled meetings with healthcare providers</p>
+                      <div class="p-4 md:p-5">
+                        <form
+                          id="food-search-form"
+                          class="max-w-md mx-auto mb-6 flex items-center space-x-2"
+                        >
+                          <label for="food-search-input" class="sr-only"
+                            >Search Food</label
+                          >
+                          <input
+                            type="text"
+                            id="food-search-input"
+                            name="query"
+                            placeholder="Search for food..."
+                            class="flex-grow p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                            autocomplete="off"
+                          />
+                          <button
+                            type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                          >
+                            Search
+                          </button>
+                        </form>
+                        <div
+                          id="food-search-results"
+                          class="max-w-md mx-auto mb-6 max-h-60 overflow-y-auto border border-gray-300 rounded-md dark:border-gray-600"
+                        >
+                          <!-- Search results will be appended here -->
+                        </div>
+                        <h4 class="text-lg font-semibold mb-4 dark:text-white">
+                          Selected Food Items
+                        </h4>
+                        <ul
+                          id="selected-food-list"
+                          class="max-w-md mx-auto divide-y divide-gray-200 dark:divide-gray-700 mb-6 max-h-48 overflow-y-auto"
+                        >
+                          <!-- Selected food items will be appended here -->
+                        </ul>
+                        <div class="text-right max-w-md mx-auto mb-4">
+                          <span class="font-semibold dark:text-white"
+                            >Total Calories: </span
+                          ><span
+                            id="total-calories"
+                            class="font-bold dark:text-white"
+                            >0</span
+                          >
+                        </div>
+                        <button
+                          id="confirm-food-selection"
+                          class="text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                          Yes I've Eaten Today
+                        </button>
+                      </div>
                     </div>
-                    <a href="#" class="text-green-500 dark:text-green-400 hover:underline">Schedule New</a>
+                    <!-- open find body ends here -->
+
+                    <script>
+                      document.addEventListener(
+                        "DOMContentLoaded",
+                        function () {
+                          const searchInput =
+                            document.getElementById("food-search-input");
+                          const searchResultsContainer =
+                            document.getElementById("food-search-results");
+                          const selectedFoodList =
+                            document.getElementById("selected-food-list");
+                          const totalCaloriesSpan =
+                            document.getElementById("total-calories");
+                          const confirmButton = document.getElementById(
+                            "confirm-food-selection",
+                          );
+
+                          let selectedFoods = [];
+
+                          function renderSearchResults(foods) {
+                            searchResultsContainer.innerHTML = "";
+                            if (foods.length === 0) {
+                              searchResultsContainer.innerHTML =
+                                '<p class="p-2 text-gray-500 dark:text-gray-400">No results found.</p>';
+                              return;
+                            }
+                            foods.slice(0, 6).forEach((food) => {
+                              // Limit to 6 items
+                              const item = document.createElement("div");
+                              item.className =
+                                "p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center";
+                              item.textContent =
+                                food.description +
+                                " (" +
+                                (food.calories
+                                  ? food.calories.toFixed(2)
+                                  : "0") +
+                                " cal)";
+                              item.addEventListener("click", () => {
+                                addFoodItem(food);
+                                clearSearchResults();
+                              });
+                              searchResultsContainer.appendChild(item);
+                            });
+                          }
+
+                          function renderSelectedFoods() {
+                            selectedFoodList.innerHTML = "";
+                            selectedFoods.forEach((food, index) => {
+                              const li = document.createElement("li");
+                              li.className =
+                                "flex justify-between items-center py-2 px-4 dark:text-white";
+
+                              const descriptionSpan =
+                                document.createElement("span");
+                              descriptionSpan.textContent =
+                                food.description +
+                                " - " +
+                                (food.calories
+                                  ? food.calories.toFixed(2)
+                                  : "0") +
+                                " cal";
+
+                              const quantityInput =
+                                document.createElement("input");
+                              quantityInput.type = "number";
+                              quantityInput.min = "1";
+                              quantityInput.value = food.quantity || 1;
+                              quantityInput.className =
+                                "w-16 ml-4 p-1 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white";
+                              quantityInput.addEventListener("change", (e) => {
+                                const newQuantity = parseInt(
+                                  e.target.value,
+                                  10,
+                                );
+                                if (newQuantity > 0) {
+                                  selectedFoods[index].quantity = newQuantity;
+                                  updateTotalCalories();
+                                } else {
+                                  e.target.value =
+                                    selectedFoods[index].quantity || 1;
+                                }
+                              });
+
+                              const removeBtn =
+                                document.createElement("button");
+                              removeBtn.className =
+                                "ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600";
+                              removeBtn.textContent = "Remove";
+                              removeBtn.addEventListener("click", () => {
+                                removeFoodItem(index);
+                              });
+
+                              li.appendChild(descriptionSpan);
+                              li.appendChild(quantityInput);
+                              li.appendChild(removeBtn);
+                              selectedFoodList.appendChild(li);
+                            });
+                            updateTotalCalories();
+                          }
+
+                          function updateTotalCalories() {
+                            const total = selectedFoods.reduce(
+                              (sum, food) =>
+                                sum +
+                                (food.calories || 0) * (food.quantity || 1),
+                              0,
+                            );
+                            totalCaloriesSpan.textContent = total.toFixed(2);
+                          }
+
+                          function addFoodItem(food) {
+                            if (
+                              !selectedFoods.some((f) => f.fdcId === food.fdcId)
+                            ) {
+                              selectedFoods.push(food);
+                              renderSelectedFoods();
+                            }
+                          }
+
+                          function removeFoodItem(index) {
+                            selectedFoods.splice(index, 1);
+                            renderSelectedFoods();
+                          }
+
+                          async function searchFoods(query) {
+                            if (!query || query.trim().length === 0) {
+                              renderSearchResults([]);
+                              return;
+                            }
+                            try {
+                              const response = await fetch(
+                                `/user/food/search?query=${encodeURIComponent(query)}`,
+                                {
+                                  credentials: "include",
+                                },
+                              );
+                              if (!response.ok) {
+                                throw new Error(
+                                  "Failed to fetch food search results",
+                                );
+                              }
+                              const data = await response.json();
+                              renderSearchResults(data);
+                            } catch (error) {
+                              console.error("Error searching foods:", error);
+                              renderSearchResults([]);
+                            }
+                          }
+
+                          let debounceTimeout = null;
+                          searchInput.addEventListener("input", () => {
+                            clearTimeout(debounceTimeout);
+                            debounceTimeout = setTimeout(() => {
+                              searchFoods(searchInput.value);
+                            }, 300);
+                          });
+
+                          document
+                            .getElementById("food-search-form")
+                            .addEventListener("submit", (e) => {
+                              e.preventDefault();
+                              searchFoods(searchInput.value);
+                            });
+
+                          confirmButton.addEventListener("click", () => {
+                            // TODO: Implement what happens when user confirms food selection
+                            // For example, send selectedFoods to backend or update UI accordingly
+                            console.log(
+                              "Selected foods confirmed:",
+                              selectedFoods,
+                            );
+                            // Close modal programmatically if needed
+                            const modal =
+                              document.getElementById("timeline-modal");
+                            if (modal) {
+                              modal.classList.add("hidden");
+                            }
+                          });
+                        },
+                      );
+
+                      // Hide search results when clicking outside
+                      document.addEventListener("click", (event) => {
+                        const isClickInside =
+                          document
+                            .getElementById("food-search-form")
+                            .contains(event.target) ||
+                          document
+                            .getElementById("food-search-results")
+                            .contains(event.target);
+                        if (!isClickInside) {
+                          searchResultsContainer.innerHTML = "";
+                        }
+                      });
+                    </script>
+                  </div>
                 </div>
-                <div class="appointment-item flex items-center flex-wrap gap-2 mb-3">
-                    <img src="https://picsum.photos/40/40?random=1" alt="Deepak kumar"
-                        class="w-10 h-10 rounded-full mr-3">
-                    <span class="font-bold">Deepak kumar<br><span
-                            class="text-gray-600 dark:text-gray-400 font-normal">Nutritionist</span></span>
-                    <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar mr-1">
-                            <path d="M8 2v4"></path>
-                            <path d="M16 2v4"></path>
-                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                            <path d="M3 10h18"></path>
-                        </svg>
-                        Today
-                    </button>
-                    <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar mr-1">
-                            <path d="M8 2v4"></path>
-                            <path d="M16 2v4"></path>
-                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                            <path d="M3 10h18"></path>
-                        </svg>
-                        2:30 PM
-                    </button>
-                    <button class="join px-2 py-1 rounded text-sm">Join Call</button>
-                </div>
-                <div class="appointment-item flex items-center flex-wrap gap-2">
-                    <img src="https://picsum.photos/40/40?random=2" alt="Rajkumar Rao"
-                        class="w-10 h-10 rounded-full mr-3">
-                    <span class="font-bold">Rajkumar Rao<br><span
-                            class="text-gray-600 dark:text-gray-400 font-normal">Physical Therapist</span></span>
-                    <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar mr-1">
-                            <path d="M8 2v4"></path>
-                            <path d="M16 2v4"></path>
-                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                            <path d="M3 10h18"></path>
-                        </svg>
-                        Tomorrow
-                    </button>
-                    <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar mr-1">
-                            <path d="M8 2v4"></path>
-                            <path d="M16 2v4"></path>
-                            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                            <path d="M3 10h18"></path>
-                        </svg>
-                        10:00 AM
-                    </button>
-                    <button class="join px-2 py-1 rounded text-sm" style="background: var(--purple);">In
-                        Person</button>
-                </div>
+              </div>
+              <!-- nutrition score ends here  -->
             </div>
-            <div
-                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
-                <h3 class="text-lg font-medium mb-2">Activity Feed</h3>
-                <p class="text-sm mb-4">Recent updates and notifications</p>
-                <div class="activity-item flex items-center mb-2">
-                    <img src="https://picsum.photos/40/40?random=3" alt="Rohan kumar"
-                        class="w-10 h-10 rounded-full mr-3">
-                    <span>User1 accepted your connection request</span>
-                    <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">2 hours ago</span>
+            <!-- Nutrition tracking ends here -->
+
+            <!-- Meditation tracking starts here -->
+            <div class="text-center">
+              <div class="relative w-24 h-24 mx-auto">
+                <svg class="w-full h-full transform -rotate-90">
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#e0e0e0"
+                  ></circle>
+                  <circle
+                    id="progressCircle"
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#7be5ff"
+                    stroke-dasharray="283"
+                    stroke-dashoffset="283"
+                    style="transition: stroke-dashoffset 1s linear"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span
+                    id="timerMinutes"
+                    class="text-2xl font-bold text-gray-800 dark:text-white"
+                    >00:00</span
+                  >
+                  <span class="text-xs text-gray-500">minutes</span>
+                  <div class="flex flex-row gap-0"></div>
                 </div>
-                <div class="activity-item flex items-center mb-2">
-                    <img src="https://picsum.photos/40/40?random=4" alt="System" class="w-10 h-10 rounded-full mr-3">
-                    <span>You reached your daily step goal!</span>
-                    <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">4 hours ago</span>
-                </div>
-                <div class="activity-item flex items-center mb-2">
-                    <img src="https://picsum.photos/40/40?random=5" alt="Roushan kumar"
-                        class="w-10 h-10 rounded-full mr-3">
-                    <span>Roushan kumar sent you a message</span>
-                    <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
-                </div>
-                <div class="activity-item flex items-center">
-                    <img src="https://picsum.photos/40/40?random=6" alt="Manoj kumar"
-                        class="w-10 h-10 rounded-full mr-3">
-                    <span>Manoj kumar confirmed your appointment for tomorrow</span>
-                    <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
-                </div>
-                <div class="text-right mt-2"><a href="#" class="hover:underline">View All Activity</a></div>
+              </div>
+              <div id="pl_pause" class="flex justify-center gap-2">
+                <button
+                  id="playButton"
+                  class="flex items-center justify-center"
+                >
+                  <svg
+                    id="play-but"
+                    class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="0.9"
+                      d="M8 18V6l8 6-8 6Z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  id="pauseButton"
+                  class="flex items-center justify-center"
+                >
+                  <svg
+                    id="pause-but"
+                    class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="0.9"
+                      d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                Meditation<br />Target: 30 min
+              </p>
             </div>
-            <div
-                class="recommendations grid gap-4 bg-gradient-to-br from-white to-yellow-300 dark:from-gray-800 dark:to-red-300 p-6 rounded-lg shadow-lg">
-                <div>
-                    <h3 class="text-xl font-semibold text-green-500 dark:text-green-400 mb-2">Recommended for You
-                    </h3>
-                    <p class="text-sm mb-4">Based on your health profile and goals</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div
-                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=8" alt="Sanoj kumar"
-                                class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Sanoj kumar<br><span
-                                    class="text-purple-600 dark:text-purple-400">Cardiologist</span></span>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Heart Disease Recovery</p>
-                            <button
-                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
-                            <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
-                        </div>
-                        <div
-                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=8" alt="Gauri kumari"
-                                class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Gauri kumari<br><span
-                                    class="text-purple-600 dark:text-purple-400">Recovered Patient</span></span>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Diabetes Management</p>
-                            <button
-                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
-                            <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
-                        </div>
-                        <div
-                            class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
-                            <img src="https://picsum.photos/60/60?random=9" alt="Muskan kumari"
-                                class="mx-auto border-2 border-blue-500 rounded-full">
-                            <span class="block font-bold text-gray-900 dark:text-gray-100">Muskan kumari<br><span
-                                    class="text-purple-600 dark:text-purple-400">Fitness Mentor</span></span>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Cardiac Rehabilitation</p>
-                            <button
-                                class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">Connect</button>
-                            <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
-                        </div>
-                    </div>
+
+            <!-- Hidden input to store userId (populated via Thymeleaf) -->
+            <input
+              type="hidden"
+              id="loggedInUserId"
+              th:value="${LoggedInUser.userId}"
+            />
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                console.log(
+                  "Meditation timer script loaded at:",
+                  new Date().toISOString(),
+                );
+
+                const timerDisplay = document.getElementById("timerMinutes");
+                const playButton = document.getElementById("playButton");
+                const pauseButton = document.getElementById("pauseButton");
+                const playSvg = document.getElementById("play-but");
+                const pauseSvg = document.getElementById("pause-but");
+                const userIdElement = document.getElementById("loggedInUserId");
+                const progressCircle =
+                  document.getElementById("progressCircle");
+
+                console.log("timerDisplay:", timerDisplay);
+                console.log("playButton:", playButton);
+                console.log("pauseButton:", pauseButton);
+                console.log("playSvg:", playSvg);
+                console.log("pauseSvg:", pauseSvg);
+                console.log("userIdElement:", userIdElement);
+                console.log("progressCircle:", progressCircle);
+
+                if (
+                  !timerDisplay ||
+                  !playButton ||
+                  !pauseButton ||
+                  !playSvg ||
+                  !pauseSvg ||
+                  !userIdElement ||
+                  !progressCircle
+                ) {
+                  console.error(
+                    "One or more DOM elements not found. Meditation timer will not work.",
+                  );
+                  return;
+                }
+
+                let seconds = 0;
+                let sessionSeconds = 0;
+                let timerInterval = null;
+                const targetMinutes = 30;
+                const totalSeconds = targetMinutes * 60; // 1800 seconds
+                const circumference = 283; // stroke-dasharray value
+
+                function updateTimerDisplay() {
+                  const displayMinutes = Math.floor(seconds / 60);
+                  const displaySeconds = seconds % 60;
+                  timerDisplay.textContent =
+                    displayMinutes.toString().padStart(2, "0") +
+                    ":" +
+                    displaySeconds.toString().padStart(2, "0");
+                  console.log(
+                    "Timer display updated to:",
+                    timerDisplay.textContent,
+                  );
+
+                  // Update the progress circle
+                  const progress = (seconds / totalSeconds) * 100;
+                  const dashOffset =
+                    circumference - (circumference * progress) / 100;
+                  progressCircle.setAttribute("stroke-dashoffset", dashOffset);
+                  console.log(
+                    "Progress:",
+                    progress,
+                    "%",
+                    "Dash offset:",
+                    dashOffset,
+                  );
+                }
+
+                async function fetchSavedMeditationTime() {
+                  const userId = userIdElement.value;
+                  console.log(
+                    "Fetching saved meditation time for userId:",
+                    userId,
+                  );
+
+                  if (!userId) {
+                    console.warn("User ID not found. Starting timer from 0.");
+                    const savedSeconds =
+                      sessionStorage.getItem("meditationTime");
+                    seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                    sessionSeconds = 0;
+                    updateTimerDisplay();
+                    return;
+                  }
+
+                  try {
+                    const response = await fetch(
+                      `/user/performance/${userId}`,
+                      {
+                        method: "GET",
+                        credentials: "include",
+                      },
+                    );
+
+                    console.log(
+                      "Fetch response status:",
+                      response.status,
+                      "Status text:",
+                      response.statusText,
+                    );
+
+                    if (!response.ok) {
+                      const errorText = await response.text();
+                      console.error("Fetch failed. Response text:", errorText);
+                      throw new Error(
+                        `Failed to fetch meditation time: ${response.status} ${response.statusText}`,
+                      );
+                    }
+
+                    const rawResponseText = await response.text();
+                    console.log("Raw response text:", rawResponseText);
+
+                    const performanceData = JSON.parse(rawResponseText);
+                    console.log("Parsed performance data:", performanceData);
+
+                    if (
+                      performanceData &&
+                      typeof performanceData.meditationScore === "number"
+                    ) {
+                      seconds = performanceData.meditationScore;
+                      console.log("Seconds set to database value:", seconds);
+                    } else {
+                      console.warn(
+                        "meditationScore is invalid or missing, using sessionStorage:",
+                        performanceData,
+                      );
+                      const savedSeconds =
+                        sessionStorage.getItem("meditationTime");
+                      seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                    }
+                    sessionSeconds = 0;
+                    sessionStorage.setItem(
+                      "meditationTime",
+                      seconds.toString(),
+                    );
+                    updateTimerDisplay();
+                  } catch (error) {
+                    console.error(
+                      "Error fetching meditation time:",
+                      error.message,
+                    );
+                    const savedSeconds =
+                      sessionStorage.getItem("meditationTime");
+                    seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                    sessionSeconds = 0;
+                    console.log(
+                      "Falling back to sessionStorage value:",
+                      seconds,
+                    );
+                    updateTimerDisplay();
+                  }
+                }
+
+                function startTimer() {
+                  console.log("Play button clicked");
+                  console.log(
+                    "Starting with seconds:",
+                    seconds,
+                    "Target seconds:",
+                    totalSeconds,
+                  );
+
+                  if (!timerInterval && seconds < totalSeconds) {
+                    console.log("Starting timer...");
+                    playSvg.classList.remove("text-gray-800");
+                    playSvg.classList.add("text-gray-500");
+                    playSvg.classList.remove("w-[39px]", "h-[39px]");
+                    playSvg.classList.add("w-[31px]", "h-[31px]");
+                    pauseSvg.classList.remove("w-[39px]", "h-[39px]");
+                    pauseSvg.classList.add("w-[51px]", "h-[51px]");
+
+                    timerInterval = setInterval(() => {
+                      sessionSeconds++;
+                      seconds = seconds - (sessionSeconds - 1) + sessionSeconds;
+                      console.log(
+                        "Timer tick: sessionSeconds:",
+                        sessionSeconds,
+                        "Total seconds:",
+                        seconds,
+                      );
+                      sessionStorage.setItem(
+                        "meditationTime",
+                        seconds.toString(),
+                      );
+                      updateTimerDisplay();
+                      if (seconds >= totalSeconds) {
+                        console.log("Target reached, stopping timer");
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        playSvg.classList.remove("text-gray-500");
+                        playSvg.classList.add("text-gray-800");
+                        playSvg.classList.remove("w-[31px]", "h-[31px]");
+                        playSvg.classList.add("w-[39px]", "h-[39px]");
+                        pauseSvg.classList.remove("w-[51px]", "h-[51px]");
+                        pauseSvg.classList.add("w-[39px]", "h-[39px]");
+                      }
+                    }, 1000);
+                  } else {
+                    console.log(
+                      "Timer not started: timerInterval exists or target reached",
+                    );
+                  }
+                }
+
+                async function pauseTimer() {
+                  console.log("Pause button clicked");
+                  clearInterval(timerInterval);
+                  timerInterval = null;
+                  playSvg.classList.remove("text-gray-500");
+                  playSvg.classList.add("text-gray-800");
+                  playSvg.classList.remove("w-[31px]", "h-[31px]");
+                  playSvg.classList.add("w-[39px]", "h-[39px]");
+                  pauseSvg.classList.remove("w-[51px]", "h-[51px]");
+                  pauseSvg.classList.add("w-[47px]", "h-[47px]");
+
+                  const userId = userIdElement.value;
+                  console.log(
+                    "Attempting to save meditation time:",
+                    sessionSeconds,
+                    "for userId:",
+                    userId,
+                  );
+
+                  if (userId) {
+                    try {
+                      const response = await fetch(
+                        `/user/${userId}/meditation`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                          body: JSON.stringify({
+                            meditationTime: sessionSeconds,
+                          }),
+                        },
+                      );
+
+                      const responseText = await response.text();
+                      console.log(
+                        "Save response status:",
+                        response.status,
+                        "Response text:",
+                        responseText,
+                      );
+
+                      if (!response.ok) {
+                        throw new Error(
+                          `Failed to save meditation time: ${response.status} ${response.statusText}`,
+                        );
+                      }
+
+                      console.log(
+                        "Meditation time saved successfully to database",
+                      );
+                      sessionStorage.setItem(
+                        "meditationTime",
+                        seconds.toString(),
+                      );
+                      seconds = seconds;
+                      sessionSeconds = 0;
+                    } catch (error) {
+                      console.error(
+                        "Error saving meditation time to database:",
+                        error,
+                      );
+                      sessionStorage.setItem(
+                        "meditationTime",
+                        seconds.toString(),
+                      );
+                    }
+                  } else {
+                    console.warn(
+                      "User ID not found. Skipping meditation time save.",
+                    );
+                    sessionStorage.setItem(
+                      "meditationTime",
+                      seconds.toString(),
+                    );
+                  }
+                }
+
+                playButton.addEventListener("click", startTimer);
+                pauseButton.addEventListener("click", pauseTimer);
+                console.log("Event listeners attached");
+
+                fetchSavedMeditationTime();
+              });
+            </script>
+            <!-- to here -->
+            <!-- Breathwork code area -->
+            <div class="text-center">
+              <div class="relative w-24 h-24 mx-auto">
+                <svg class="w-full h-full transform -rotate-90">
+                  <!-- Background outer circle -->
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#e0e0e0"
+                  ></circle>
+                  <!-- Outer circle for total progress (5 minutes) -->
+                  <circle
+                    id="total-progress"
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#6366f1"
+                    stroke-dasharray="283"
+                    stroke-dashoffset="283"
+                    style="transition: stroke-dashoffset 1s linear"
+                  ></circle>
+                  <!-- Background inner circle -->
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="35%"
+                    fill="none"
+                    stroke-width="6"
+                    stroke="#e0e0e0"
+                  ></circle>
+                  <!-- Inner circle for inhale/exhale lap -->
+                  <circle
+                    id="breath-progress"
+                    cx="50%"
+                    cy="50%"
+                    r="35%"
+                    fill="none"
+                    stroke-width="6"
+                    stroke="#a855f7"
+                    stroke-dasharray="220"
+                    stroke-dashoffset="220"
+                    style="transition: stroke-dashoffset 1s linear"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <div class="flex flex-col items-center">
+                    <span
+                      id="breath-phase"
+                      class="text-lg font-bold text-gray-800 dark:text-white"
+                      >Ready</span
+                    >
+                    <span
+                      id="countdown"
+                      class="text-2xl font-bold text-gray-800 dark:text-white"
+                    ></span>
+                  </div>
                 </div>
-                <div class="text-right mt-2"><a href="#" class="hover:underline">View All</a></div>
+              </div>
+              <p
+                id="breath-instruction"
+                class="text-sm mt-2 text-gray-600 dark:text-gray-300"
+              >
+                Press Start to begin
+              </p>
+              <p
+                id="breath-timer"
+                class="text-xs mt-1 text-gray-500 dark:text-gray-400"
+              >
+                5:00
+              </p>
+              <div class="mt-4 flex flex-col items-center gap-2">
+                <div class="flex justify-center gap-2">
+                  <button
+                    id="start-btn"
+                    class="flex items-center justify-center border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                  >
+                    <span id="start-text">Start</span>
+                    <svg
+                      id="play-icon"
+                      class="hidden w-5 h-5 ml-1 text-gray-700 dark:text-gray-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M8 18V6l8 6-8 6Z"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    id="stop-btn"
+                    disabled
+                    class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                  >
+                    Pause
+                  </button>
+                </div>
+                <div class="flex justify-center">
+                  <button
+                    id="reset-btn"
+                    disabled
+                    class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
             </div>
+
+            <script>
+              const phases = [
+                {
+                  name: "Stress Relief",
+                  inhale: 4,
+                  exhale: 6,
+                  duration: 10,
+                  transition: 0.3,
+                }, // Exercise A: 10s + 0.3s transition
+                {
+                  name: "Energy Boost",
+                  inhale: 3,
+                  exhale: 2,
+                  duration: 5,
+                  transition: 0.3,
+                }, // Exercise B: 5s + 0.3s transition
+                {
+                  name: "Stop Breathe",
+                  inhale: 0,
+                  exhale: 0,
+                  hold: 10,
+                  transition: 0,
+                }, // Exercise C: 10s hold, no transition after
+              ];
+
+              let currentPhase = 0;
+              let isInhaling = true;
+              let isHolding = false;
+              let isTransition = false;
+              let timeLeft = 0;
+              let totalElapsed = 0;
+              let sessionElapsed = 0;
+              let timerInterval = null;
+              let cycleCount = 0;
+              let isFirstStart = true;
+              const totalCycles = 11; // Adjusted for new timing: 300s / (11s + 6s + 10s) = ~11 cycles
+              const totalDuration = 300; // 5 minutes in seconds
+              const totalCircumference = 283;
+              const innerCircumference = 220;
+
+              // DOM Elements
+              const startBtn = document.getElementById("start-btn");
+              const stopBtn = document.getElementById("stop-btn");
+              const resetBtn = document.getElementById("reset-btn");
+              const startText = document.getElementById("start-text");
+              const playIcon = document.getElementById("play-icon");
+              const phaseText = document.getElementById("breath-phase");
+              const timerText = document.getElementById("breath-timer");
+              const instructionText =
+                document.getElementById("breath-instruction");
+              const totalProgressCircle =
+                document.getElementById("total-progress");
+              const progressCircle = document.getElementById("breath-progress");
+              const userIdElement = document.getElementById("loggedInUserId");
+
+              function startSession() {
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                resetBtn.disabled = false;
+
+                startText.textContent = "Start";
+                playIcon.classList.add("hidden");
+
+                if (isFirstStart) {
+                  currentPhase = 0;
+                  cycleCount = 0;
+                  isInhaling = true;
+                  isHolding = false;
+                  isTransition = false;
+                  timeLeft = phases[currentPhase].inhale;
+                  totalElapsed = 0;
+                  sessionElapsed = 0;
+
+                  totalProgressCircle.style.strokeDashoffset =
+                    totalCircumference;
+                  progressCircle.style.strokeDashoffset = innerCircumference;
+
+                  isFirstStart = false;
+                }
+
+                timerInterval = setInterval(updateTimer, 1000);
+                updateUI();
+              }
+
+              async function stopSession() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                resetBtn.disabled = false;
+                phaseText.textContent = "Paused";
+
+                startText.textContent = "Play";
+                playIcon.classList.remove("hidden");
+
+                const userId = userIdElement.value;
+                console.log(
+                  "Attempting to save breathescore:",
+                  sessionElapsed,
+                  "for userId:",
+                  userId,
+                );
+
+                if (userId && sessionElapsed > 0) {
+                  try {
+                    // First get current breatheScore
+                    const getResponse = await fetch(
+                      `/user/performance/${userId}`,
+                      {
+                        method: "GET",
+                        credentials: "include",
+                      },
+                    );
+
+                    if (!getResponse.ok) {
+                      throw new Error(
+                        `Failed to fetch current breathescore: ${getResponse.status}`,
+                      );
+                    }
+
+                    const performanceData = await getResponse.json();
+                    const currentScore = performanceData.breatheScore || 0;
+                    const newScore = currentScore + sessionElapsed;
+
+                    // Update with new total
+                    const response = await fetch(
+                      `/user/${userId}/breathescore`,
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({ breatheScore: newScore }),
+                      },
+                    );
+
+                    const responseText = await response.text();
+                    console.log(
+                      "Save response status:",
+                      response.status,
+                      "Response text:",
+                      responseText,
+                    );
+
+                    if (!response.ok) {
+                      throw new Error(
+                        `Failed to save breathescore: ${response.status}`,
+                      );
+                    }
+
+                    console.log("Breathescore saved successfully to database");
+                    totalElapsed = newScore;
+                    sessionStorage.setItem("breatheScore", newScore.toString());
+                    sessionElapsed = 0;
+                  } catch (error) {
+                    console.error(
+                      "Error saving breathescore to database:",
+                      error,
+                    );
+                    sessionStorage.setItem(
+                      "breatheScore",
+                      totalElapsed.toString(),
+                    );
+                  }
+                } else {
+                  console.log("No new session data to save or user ID missing");
+                  sessionStorage.setItem(
+                    "breatheScore",
+                    totalElapsed.toString(),
+                  );
+                }
+              }
+
+              async function resetSession() {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                resetBtn.disabled = true;
+                phaseText.textContent = "Ready";
+                timerText.textContent = "5:00";
+                instructionText.textContent = "Press Start to begin";
+                totalProgressCircle.style.strokeDashoffset = totalCircumference;
+                progressCircle.style.strokeDashoffset = innerCircumference;
+
+                startText.textContent = "Start";
+                playIcon.classList.add("hidden");
+
+                currentPhase = 0;
+                cycleCount = 0;
+                isInhaling = true;
+                isHolding = false;
+                isTransition = false;
+                timeLeft = 0;
+                totalElapsed = 0;
+                sessionElapsed = 0;
+                isFirstStart = true;
+
+                const userId = userIdElement.value;
+                if (userId) {
+                  try {
+                    const response = await fetch(
+                      `/user/${userId}/breathescore`,
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({ breatheScore: 0 }),
+                      },
+                    );
+
+                    if (!response.ok) {
+                      throw new Error(
+                        `Failed to reset breathescore: ${response.status} ${response.statusText}`,
+                      );
+                    }
+
+                    console.log("Breathescore reset successfully in database");
+                    sessionStorage.setItem("breatheScore", "0");
+                  } catch (error) {
+                    console.error(
+                      "Error resetting breathescore in database:",
+                      error,
+                    );
+                  }
+                }
+              }
+
+              function updateTimer() {
+                if (timeLeft > 0) {
+                  timeLeft--;
+                  totalElapsed++;
+                  sessionElapsed++;
+                }
+
+                // Check for session completion
+                if (totalElapsed >= totalDuration) {
+                  clearInterval(timerInterval);
+                  timerInterval = null;
+                  phaseText.textContent = "Completed!";
+                  instructionText.textContent =
+                    "Great job! You've completed 5 minutes of breathwork!";
+                  startBtn.disabled = true;
+                  stopBtn.disabled = true;
+                  resetBtn.disabled = false;
+                  updateUI();
+                  return;
+                }
+
+                // Phase transitions
+                if (timeLeft <= 0) {
+                  const currentExercise = phases[currentPhase];
+
+                  if (currentPhase === 2) {
+                    // Stop Breathe phase
+                    if (!isHolding) {
+                      // Start the hold
+                      isHolding = true;
+                      timeLeft = currentExercise.hold;
+                    } else {
+                      // End of Stop Breathe, move to next cycle
+                      currentPhase = 0;
+                      cycleCount++;
+                      isHolding = false;
+                      isInhaling = true;
+                      timeLeft = phases[0].inhale;
+                    }
+                  } else {
+                    // Regular breathing phases
+                    if (isInhaling && currentExercise.exhale > 0) {
+                      // Switch from inhale to exhale
+                      isInhaling = false;
+                      timeLeft = currentExercise.exhale;
+                    } else {
+                      // Move to next phase
+                      currentPhase++;
+                      if (currentPhase >= phases.length) {
+                        currentPhase = 0;
+                        cycleCount++;
+                      }
+
+                      const nextExercise = phases[currentPhase];
+                      if (currentPhase === 2) {
+                        isHolding = true;
+                        isInhaling = false;
+                        timeLeft = nextExercise.hold;
+                      } else {
+                        isInhaling = true;
+                        timeLeft = nextExercise.inhale;
+                      }
+                    }
+                  }
+                }
+                updateUI();
+              }
+
+              function updateUI() {
+                const phase = phases[currentPhase];
+                const remainingTime = totalDuration - totalElapsed;
+
+                // Update text - only update phase text if timer is running
+                if (timerInterval) {
+                  if (currentPhase === 2) {
+                    // Stop Breathe phase
+                    phaseText.textContent = "Hold";
+                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left`;
+                  } else {
+                    phaseText.textContent = isInhaling ? "Inhale" : "Exhale";
+                    instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left`;
+                  }
+                }
+
+                // Always update timer display
+                if (timerText) {
+                  timerText.textContent = `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")}`;
+                }
+
+                // Update total progress (outer circle)
+                const totalProgressPercent =
+                  (totalElapsed / totalDuration) * 100;
+                const totalDashOffset =
+                  totalCircumference -
+                  (totalCircumference * totalProgressPercent) / 100;
+                totalProgressCircle.style.strokeDashoffset = totalDashOffset;
+
+                // Update lap progress (inner circle)
+                const countdownDisplay = document.getElementById("countdown");
+                if (currentPhase === 2) {
+                  // Stop Breathe phase
+                  // Show hold progress
+                  const holdProgress = (1 - timeLeft / phase.hold) * 100;
+                  const dashOffset =
+                    innerCircumference -
+                    (innerCircumference * holdProgress) / 100;
+                  progressCircle.style.strokeDashoffset = dashOffset;
+                  countdownDisplay.textContent = timeLeft;
+                } else {
+                  // Show inhale/exhale progress
+                  if (isInhaling) {
+                    // For inhale: go from full circle to half circle (0% to 50%)
+                    const progress = (1 - timeLeft / phase.inhale) * 50; // Only go up to 50%
+                    const dashOffset =
+                      innerCircumference -
+                      (innerCircumference * progress) / 100;
+                    progressCircle.style.strokeDashoffset = dashOffset;
+                    countdownDisplay.textContent = timeLeft;
+                  } else {
+                    // For exhale: continue from half circle to full circle (50% to 100%)
+                    const progress = 50 + (1 - timeLeft / phase.exhale) * 50; // Start at 50% and go to 100%
+                    const dashOffset =
+                      innerCircumference -
+                      (innerCircumference * progress) / 100;
+                    progressCircle.style.strokeDashoffset = dashOffset;
+                    countdownDisplay.textContent = timeLeft;
+                  }
+                }
+              }
+
+              async function fetchSavedBreatheScore() {
+                const userId = userIdElement.value;
+                console.log("Fetching saved breathescore for userId:", userId);
+
+                if (!userId) {
+                  console.warn(
+                    "User ID not found. Starting breathescore from 0.",
+                  );
+                  const savedSeconds = sessionStorage.getItem("breatheScore");
+                  totalElapsed = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                  sessionElapsed = 0;
+                  updateUI();
+                  return;
+                }
+
+                try {
+                  const response = await fetch(`/user/performance/${userId}`, {
+                    method: "GET",
+                    credentials: "include",
+                  });
+
+                  if (!response.ok) {
+                    throw new Error(
+                      `Failed to fetch breathescore: ${response.status} ${response.statusText}`,
+                    );
+                  }
+
+                  const performanceData = JSON.parse(await response.text());
+                  console.log("Parsed performance data:", performanceData);
+
+                  if (
+                    performanceData &&
+                    typeof performanceData.breatheScore === "number"
+                  ) {
+                    totalElapsed = performanceData.breatheScore;
+                    console.log(
+                      "totalElapsed set to database value:",
+                      totalElapsed,
+                    );
+
+                    // Check if session is complete
+                    if (totalElapsed >= totalDuration) {
+                      totalElapsed = totalDuration;
+                      phaseText.textContent = "Complete!";
+                      totalProgressCircle.style.strokeDashoffset = "0";
+                      progressCircle.style.strokeDashoffset = "0";
+                      instructionText.textContent = "Session Complete!";
+                      startBtn.disabled = true;
+                      stopBtn.disabled = true;
+                      resetBtn.disabled = false;
+                      return;
+                    }
+
+                    // Reconstruct state based on totalElapsed
+                    const cycleDuration = 27; // 11s + 6s + 10s
+                    cycleCount = Math.floor(totalElapsed / cycleDuration);
+                    const elapsedInCycle = totalElapsed % cycleDuration;
+
+                    // Determine current phase and timeLeft
+                    let accumulatedTime = 0;
+                    for (let i = 0; i < phases.length; i++) {
+                      const phaseTime =
+                        phases[i].duration + (phases[i].transition || 0);
+                      accumulatedTime += phaseTime;
+                      if (elapsedInCycle < accumulatedTime) {
+                        currentPhase = i;
+                        const timeIntoPhase =
+                          elapsedInCycle - (accumulatedTime - phaseTime);
+
+                        if (timeIntoPhase >= phases[i].duration) {
+                          // In transition period
+                          isTransition = true;
+                          isHolding = false;
+                          isInhaling = false;
+                          timeLeft =
+                            phases[i].transition -
+                            (timeIntoPhase - phases[i].duration);
+                        } else if (currentPhase === 2) {
+                          // Stop Breathe phase
+                          isTransition = false;
+                          isHolding = timeIntoPhase > 0;
+                          isInhaling = false;
+                          timeLeft = phases[i].hold - timeIntoPhase;
+                        } else if (timeIntoPhase < phases[i].inhale) {
+                          // In inhale
+                          isTransition = false;
+                          isHolding = false;
+                          isInhaling = true;
+                          timeLeft = phases[i].inhale - timeIntoPhase;
+                        } else {
+                          // In exhale
+                          isTransition = false;
+                          isHolding = false;
+                          isInhaling = false;
+                          timeLeft =
+                            phases[i].exhale -
+                            (timeIntoPhase - phases[i].inhale);
+                        }
+                        break;
+                      }
+                    }
+
+                    // Set UI state based on saved progress
+                    if (totalElapsed > 0) {
+                      startText.textContent = "Play";
+                      playIcon.classList.remove("hidden");
+                      startBtn.disabled = false;
+                      stopBtn.disabled = true;
+                      resetBtn.disabled = false;
+                      phaseText.textContent = "Paused";
+                      instructionText.textContent = `Resume your breathwork session • ${Math.floor((totalDuration - totalElapsed) / 60)}:${((totalDuration - totalElapsed) % 60).toString().padStart(2, "0")} left`;
+                      isFirstStart = false;
+                    }
+                  } else {
+                    console.warn(
+                      "breatheScore is invalid or missing:",
+                      performanceData,
+                    );
+                    totalElapsed = 0;
+                    sessionStorage.setItem("breatheScore", "0");
+                  }
+
+                  sessionElapsed = 0;
+                  updateUI();
+                } catch (error) {
+                  console.error("Error fetching breathescore:", error.message);
+                  totalElapsed = 0;
+                  sessionElapsed = 0;
+                  updateUI();
+                }
+              }
+
+              // Event listeners
+              startBtn.addEventListener("click", startSession);
+              stopBtn.addEventListener("click", stopSession);
+              resetBtn.addEventListener("click", resetSession);
+
+              // Initialize on page load
+              document.addEventListener(
+                "DOMContentLoaded",
+                fetchSavedBreatheScore,
+              );
+            </script>
+            <!-- Hydration tracker code area -->
+            <div class="text-center">
+              <div class="relative w-24 h-24 mx-auto">
+                <svg class="w-full h-full transform -rotate-90">
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#e0e0e0"
+                  ></circle>
+                  <circle
+                    id="hydrationProgressCircle"
+                    cx="50%"
+                    cy="50%"
+                    r="45%"
+                    fill="none"
+                    stroke-width="8"
+                    stroke="#6df573"
+                    stroke-dasharray="283"
+                    stroke-dashoffset="283"
+                    style="transition: stroke-dashoffset 0.3s"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span
+                    id="hydrationMlDisplay"
+                    class="text-2xl font-bold text-gray-800 dark:text-white"
+                    >0</span
+                  >
+                  <span class="text-xs text-gray-500 mt-1">ml</span>
+                </div>
+              </div>
+              <!-- Center the glass SVG -->
+              <div class="flex justify-center mt-2">
+                <svg
+                  class="w-[34px] h-[34px] text-gray-800 dark:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.2"
+                    d="M6.31531 7c1.41852 0 1.41852 1.5 2.83703 1.5C10.5709 8.5 10.5709 7 11.9894 7s1.4185 1.5 2.837 1.5S17.6635 7 17.6635 7M6 3l1.07554 16.133C7.14558 20.1836 8.01818 21 9.07111 21h5.85779c1.0529 0 1.9255-.8164 1.9956-1.867L18 3H6Z"
+                  />
+                </svg>
+              </div>
+              <div class="flex justify-center gap-2 mt-2">
+                <button
+                  id="add50mlButton"
+                  class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                >
+                  <span>+50ml</span>
+                </button>
+                <button
+                  id="add100mlButton"
+                  class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                >
+                  <span>+100ml</span>
+                </button>
+                <button
+                  id="add200mlButton"
+                  class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
+                >
+                  <span>+200ml</span>
+                </button>
+              </div>
+              <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                Water Target: 4,000 ml
+              </p>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                console.log(
+                  "Hydration tracker script loaded at:",
+                  new Date().toISOString(),
+                );
+
+                const hydrationMlDisplay =
+                  document.getElementById("hydrationMlDisplay");
+                const add50mlButton = document.getElementById("add50mlButton");
+                const add100mlButton =
+                  document.getElementById("add100mlButton");
+                const add200mlButton =
+                  document.getElementById("add200mlButton");
+                const userIdElement = document.getElementById("loggedInUserId");
+                const progressCircle = document.getElementById(
+                  "hydrationProgressCircle",
+                );
+
+                console.log("hydrationMlDisplay:", hydrationMlDisplay);
+                console.log("add50mlButton:", add50mlButton);
+                console.log("add100mlButton:", add100mlButton);
+                console.log("add200mlButton:", add200mlButton);
+                console.log("userIdElement:", userIdElement);
+                console.log("progressCircle:", progressCircle);
+
+                if (
+                  !hydrationMlDisplay ||
+                  !add50mlButton ||
+                  !add100mlButton ||
+                  !add200mlButton ||
+                  !userIdElement ||
+                  !progressCircle
+                ) {
+                  console.error(
+                    "One or more DOM elements not found. Hydration tracker will not work.",
+                  );
+                  return;
+                }
+
+                let ml = 0; // Total water intake in ml
+                let sessionMl = 0; // Water added in the current session
+                const targetMl = 4000; // Target: 4000ml
+                const circumference = 283; // stroke-dasharray value
+
+                function updateHydrationDisplay() {
+                  hydrationMlDisplay.textContent = ml;
+                  const progress = (ml / targetMl) * 100;
+                  const dashOffset =
+                    circumference - (circumference * progress) / 100;
+                  progressCircle.setAttribute("stroke-dashoffset", dashOffset);
+                  console.log(
+                    "Hydration updated: ml:",
+                    ml,
+                    "Progress:",
+                    progress,
+                    "%",
+                    "Dash offset:",
+                    dashOffset,
+                  );
+                }
+
+                async function fetchSavedHydration() {
+                  const userId = userIdElement.value;
+                  console.log("Fetching saved hydration for userId:", userId);
+
+                  if (!userId) {
+                    console.error(
+                      "User ID not found. Cannot fetch hydration data.",
+                    );
+                    ml = 0;
+                    sessionMl = 0;
+                    sessionStorage.setItem("hydrationMl", "0");
+                    updateHydrationDisplay();
+                    return;
+                  }
+
+                  try {
+                    const response = await fetch(
+                      `/user/performance/${userId}`,
+                      {
+                        method: "GET",
+                        credentials: "include",
+                      },
+                    );
+
+                    console.log(
+                      "Fetch response status:",
+                      response.status,
+                      "Status text:",
+                      response.statusText,
+                    );
+
+                    if (!response.ok) {
+                      const errorText = await response.text();
+                      console.error("Fetch failed. Response text:", errorText);
+                      throw new Error(
+                        `Failed to fetch hydration: ${response.status} ${response.statusText}`,
+                      );
+                    }
+
+                    const rawResponseText = await response.text();
+                    console.log("Raw response text:", rawResponseText);
+
+                    let performanceData;
+                    try {
+                      performanceData = JSON.parse(rawResponseText);
+                      console.log("Parsed performance data:", performanceData);
+                    } catch (parseError) {
+                      console.error("JSON parsing error:", parseError.message);
+                      throw new Error("Invalid JSON response from server");
+                    }
+
+                    if (
+                      performanceData &&
+                      typeof performanceData.hydrationScore === "number"
+                    ) {
+                      ml = performanceData.hydrationScore;
+                      console.log("ml set to database hydration_score:", ml);
+                      sessionStorage.setItem("hydrationMl", ml.toString());
+                    } else {
+                      console.warn(
+                        "hydrationScore is missing or invalid:",
+                        performanceData,
+                      );
+                      ml = 0; // Only reset if no valid data
+                      sessionStorage.setItem("hydrationMl", "0");
+                    }
+
+                    sessionMl = 0;
+                    updateHydrationDisplay();
+                  } catch (error) {
+                    console.error("Error fetching hydration:", error.message);
+                    // Only fall back to sessionStorage if explicitly needed
+                    const savedMl = sessionStorage.getItem("hydrationMl");
+                    ml =
+                      savedMl && !isNaN(parseInt(savedMl, 10))
+                        ? parseInt(savedMl, 10)
+                        : 0;
+                    sessionMl = 0;
+                    console.log("Falling back to sessionStorage value:", ml);
+                    updateHydrationDisplay();
+                  }
+                }
+
+                async function saveHydrationToDatabase() {
+                  const userId = userIdElement.value;
+                  console.log(
+                    "Attempting to save hydration:",
+                    sessionMl,
+                    "for userId:",
+                    userId,
+                  );
+
+                  if (userId && sessionMl > 0) {
+                    try {
+                      const response = await fetch(
+                        `/user/${userId}/hydration`,
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                          body: JSON.stringify({ hydrationAmount: sessionMl }),
+                        },
+                      );
+
+                      const responseText = await response.text();
+                      console.log(
+                        "Save response status:",
+                        response.status,
+                        "Response text:",
+                        responseText,
+                      );
+
+                      if (!response.ok) {
+                        throw new Error(
+                          `Failed to save hydration: ${response.status} ${response.statusText}`,
+                        );
+                      }
+
+                      console.log("Hydration saved successfully to database");
+                      sessionStorage.setItem("hydrationMl", ml.toString());
+                      sessionMl = 0; // Reset session after saving
+                    } catch (error) {
+                      console.error(
+                        "Error saving hydration to database:",
+                        error,
+                      );
+                      sessionStorage.setItem("hydrationMl", ml.toString());
+                    }
+                  } else {
+                    console.warn("User ID not found or no hydration to save.");
+                    sessionStorage.setItem("hydrationMl", ml.toString());
+                  }
+                }
+
+                function addWater(amount) {
+                  console.log(`Adding ${amount}ml of water`);
+                  sessionMl += amount;
+                  ml = ml - (sessionMl - amount) + sessionMl; // Update total ml
+                  if (ml > targetMl) {
+                    ml = targetMl; // Cap at 4000ml
+                    sessionMl = ml - (ml - sessionMl); // Adjust sessionMl accordingly
+                  }
+                  updateHydrationDisplay();
+                  saveHydrationToDatabase(); // Save to DB after each addition
+                }
+
+                add50mlButton.addEventListener("click", () => addWater(50));
+                add100mlButton.addEventListener("click", () => addWater(100));
+                add200mlButton.addEventListener("click", () => addWater(200));
+
+                console.log("Event listeners attached");
+
+                fetchSavedHydration();
+              });
+            </script>
+          </div>
         </div>
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="text-lg font-medium mb-2">Upcoming Appointments</h3>
+              <p class="text-sm">
+                Your scheduled meetings with healthcare providers
+              </p>
+            </div>
+            <a
+              href="#"
+              class="text-green-500 dark:text-green-400 hover:underline"
+              >Schedule New</a
+            >
+          </div>
+          <div class="appointment-item flex items-center flex-wrap gap-2 mb-3">
+            <img
+              src="https://picsum.photos/40/40?random=1"
+              alt="Deepak kumar"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span class="font-bold"
+              >Deepak kumar<br /><span
+                class="text-gray-600 dark:text-gray-400 font-normal"
+                >Nutritionist</span
+              ></span
+            >
+            <button
+              class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-calendar mr-1"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              Today
+            </button>
+            <button
+              class="time px-2 py-1 rounded mr-2 text-sm flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-calendar mr-1"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              2:30 PM
+            </button>
+            <button class="join px-2 py-1 rounded text-sm">Join Call</button>
+          </div>
+          <div class="appointment-item flex items-center flex-wrap gap-2">
+            <img
+              src="https://picsum.photos/40/40?random=2"
+              alt="Rajkumar Rao"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span class="font-bold"
+              >Rajkumar Rao<br /><span
+                class="text-gray-600 dark:text-gray-400 font-normal"
+                >Physical Therapist</span
+              ></span
+            >
+            <button
+              class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-calendar mr-1"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              Tomorrow
+            </button>
+            <button
+              class="time px-2 py-1 rounded mr-2 text-sm flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-calendar mr-1"
+              >
+                <path d="M8 2v4"></path>
+                <path d="M16 2v4"></path>
+                <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+                <path d="M3 10h18"></path>
+              </svg>
+              10:00 AM
+            </button>
+            <button
+              class="join px-2 py-1 rounded text-sm"
+              style="background: var(--purple)"
+            >
+              In Person
+            </button>
+          </div>
+        </div>
+        <div
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm"
+        >
+          <h3 class="text-lg font-medium mb-2">Activity Feed</h3>
+          <p class="text-sm mb-4">Recent updates and notifications</p>
+          <div class="activity-item flex items-center mb-2">
+            <img
+              src="https://picsum.photos/40/40?random=3"
+              alt="Rohan kumar"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span>User1 accepted your connection request</span>
+            <span class="ml-auto text-sm text-gray-500 dark:text-gray-400"
+              >2 hours ago</span
+            >
+          </div>
+          <div class="activity-item flex items-center mb-2">
+            <img
+              src="https://picsum.photos/40/40?random=4"
+              alt="System"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span>You reached your daily step goal!</span>
+            <span class="ml-auto text-sm text-gray-500 dark:text-gray-400"
+              >4 hours ago</span
+            >
+          </div>
+          <div class="activity-item flex items-center mb-2">
+            <img
+              src="https://picsum.photos/40/40?random=5"
+              alt="Roushan kumar"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span>Roushan kumar sent you a message</span>
+            <span class="ml-auto text-sm text-gray-500 dark:text-gray-400"
+              >Yesterday</span
+            >
+          </div>
+          <div class="activity-item flex items-center">
+            <img
+              src="https://picsum.photos/40/40?random=6"
+              alt="Manoj kumar"
+              class="w-10 h-10 rounded-full mr-3"
+            />
+            <span>Manoj kumar confirmed your appointment for tomorrow</span>
+            <span class="ml-auto text-sm text-gray-500 dark:text-gray-400"
+              >Yesterday</span
+            >
+          </div>
+          <div class="text-right mt-2">
+            <a href="#" class="hover:underline">View All Activity</a>
+          </div>
+        </div>
+        <div
+          class="recommendations grid gap-4 bg-gradient-to-br from-white to-yellow-300 dark:from-gray-800 dark:to-red-300 p-6 rounded-lg shadow-lg"
+        >
+          <div>
+            <h3
+              class="text-xl font-semibold text-green-500 dark:text-green-400 mb-2"
+            >
+              Recommended for You
+            </h3>
+            <p class="text-sm mb-4">Based on your health profile and goals</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div
+                class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200"
+              >
+                <img
+                  src="https://picsum.photos/60/60?random=8"
+                  alt="Sanoj kumar"
+                  class="mx-auto border-2 border-blue-500 rounded-full"
+                />
+                <span class="block font-bold text-gray-900 dark:text-gray-100"
+                  >Sanoj kumar<br /><span
+                    class="text-purple-600 dark:text-purple-400"
+                    >Cardiologist</span
+                  ></span
+                >
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  Heart Disease Recovery
+                </p>
+                <button
+                  class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors"
+                >
+                  Connect
+                </button>
+                <a href="#" class="block mt-2 hover:underline text-center"
+                  >View Profile</a
+                >
+              </div>
+              <div
+                class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200"
+              >
+                <img
+                  src="https://picsum.photos/60/60?random=8"
+                  alt="Gauri kumari"
+                  class="mx-auto border-2 border-blue-500 rounded-full"
+                />
+                <span class="block font-bold text-gray-900 dark:text-gray-100"
+                  >Gauri kumari<br /><span
+                    class="text-purple-600 dark:text-purple-400"
+                    >Recovered Patient</span
+                  ></span
+                >
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  Diabetes Management
+                </p>
+                <button
+                  class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors"
+                >
+                  Connect
+                </button>
+                <a href="#" class="block mt-2 hover:underline text-center"
+                  >View Profile</a
+                >
+              </div>
+              <div
+                class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200"
+              >
+                <img
+                  src="https://picsum.photos/60/60?random=9"
+                  alt="Muskan kumari"
+                  class="mx-auto border-2 border-blue-500 rounded-full"
+                />
+                <span class="block font-bold text-gray-900 dark:text-gray-100"
+                  >Muskan kumari<br /><span
+                    class="text-purple-600 dark:text-purple-400"
+                    >Fitness Mentor</span
+                  ></span
+                >
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                  Cardiac Rehabilitation
+                </p>
+                <button
+                  class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors"
+                >
+                  Connect
+                </button>
+                <a href="#" class="block mt-2 hover:underline text-center"
+                  >View Profile</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="text-right mt-2">
+            <a href="#" class="hover:underline">View All</a>
+          </div>
+        </div>
+      </div>
     </div>
     <script th:src="@{/js/script.js}"></script>
     <script>
-        // Ensure the sidebar toggle is initialized
-        document.addEventListener('DOMContentLoaded', function () {
-            const openButton = document.getElementById('sidebar-open-toggle');
-            const sidebar = document.getElementById('logo-sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
+      // Ensure the sidebar toggle is initialized
+      document.addEventListener("DOMContentLoaded", function () {
+        const openButton = document.getElementById("sidebar-open-toggle");
+        const sidebar = document.getElementById("logo-sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
 
-            if (openButton && sidebar && backdrop) {
-                openButton.addEventListener('click', function () {
-                    sidebar.classList.remove('-translate-x-full');
-                    sidebar.classList.add('open');
-                    backdrop.classList.add('visible');
-                    openButton.classList.add('hidden');
-                });
-            }
-        });
+        if (openButton && sidebar && backdrop) {
+          openButton.addEventListener("click", function () {
+            sidebar.classList.remove("-translate-x-full");
+            sidebar.classList.add("open");
+            backdrop.classList.add("visible");
+            openButton.classList.add("hidden");
+          });
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>
