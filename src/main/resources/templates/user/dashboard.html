@@ -581,25 +581,48 @@
 
                           let selectedFoods = [];
 
+                          // Helper to get unit (g, ml, pieces) based on food object
+                          function getFoodUnit(food) {
+                            if (food.unit) return food.unit;
+                            const desc = (food.description || "").toLowerCase();
+                            if (desc.includes("mango")) return "pieces"; // <-- Add this line
+                            if (desc.includes("ml") || desc.includes("juice") || desc.includes("milk") || desc.includes("water") || desc.includes("drink")) return "ml";
+                            if (desc.includes("piece") || desc.includes("egg") || desc.includes("bread") || desc.includes("slice")) return "pieces";
+                            return "g";
+                          }
+
+                          // Render search results, only unique food names, show best match
                           function renderSearchResults(foods) {
                             searchResultsContainer.innerHTML = "";
-                            if (foods.length === 0) {
+                            if (!foods || foods.length === 0) {
                               searchResultsContainer.innerHTML =
                                 '<p class="p-2 text-gray-500 dark:text-gray-400">No results found.</p>';
                               return;
                             }
-                            foods.slice(0, 6).forEach((food) => {
-                              // Limit to 6 items
+                            // Map to unique food names, pick the first (best) match for each name
+                            const uniqueFoods = {};
+                            foods.forEach(food => {
+                              const key = (food.description || "").toLowerCase().trim();
+                              if (!uniqueFoods[key]) {
+                                uniqueFoods[key] = food;
+                              }
+                            });
+                            // Filter by search keyword in name (case-insensitive)
+                            const keyword = searchInput.value.trim().toLowerCase();
+                            const filtered = Object.values(uniqueFoods).filter(food =>
+                              (food.description || "").toLowerCase().includes(keyword)
+                            );
+                            filtered.slice(0, 6).forEach((food) => {
                               const item = document.createElement("div");
                               item.className =
                                 "p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center";
                               item.textContent =
                                 food.description +
                                 " (" +
-                                (food.calories
-                                  ? food.calories.toFixed(2)
-                                  : "0") +
-                                " cal)";
+                                (food.calories ? food.calories.toFixed(2) : "0") +
+                                " cal, " +
+                                getFoodUnit(food) +
+                                ")";
                               item.addEventListener("click", () => {
                                 addFoodItem(food);
                                 clearSearchResults();
@@ -615,39 +638,67 @@
                               li.className =
                                 "flex justify-between items-center py-2 px-4 dark:text-white";
 
-                              const descriptionSpan =
-                                document.createElement("span");
+                              const descriptionSpan = document.createElement("span");
                               descriptionSpan.textContent =
                                 food.description +
                                 " - " +
-                                (food.calories
-                                  ? food.calories.toFixed(2)
-                                  : "0") +
+                                (food.calories ? food.calories.toFixed(2) : "0") +
                                 " cal";
 
-                              const quantityInput =
-                                document.createElement("input");
+                              // Quantity controls container
+                              const quantityContainer = document.createElement("div");
+                              quantityContainer.className = "flex items-center";
+
+                              // Minus button (now on the left)
+                              const minusBtn = document.createElement("button");
+                              minusBtn.textContent = "-";
+                              minusBtn.className =
+                                "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-l hover:bg-gray-300 dark:hover:bg-gray-500";
+                              minusBtn.addEventListener("click", () => {
+                                if ((selectedFoods[index].quantity || 1) > 1) {
+                                  selectedFoods[index].quantity -= 1;
+                                  renderSelectedFoods();
+                                }
+                              });
+
+                              // Quantity input
+                              const quantityInput = document.createElement("input");
                               quantityInput.type = "number";
                               quantityInput.min = "1";
                               quantityInput.value = food.quantity || 1;
                               quantityInput.className =
-                                "w-16 ml-4 p-1 rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white";
+                                "w-16 p-1 border-t border-b border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-center";
                               quantityInput.addEventListener("change", (e) => {
-                                const newQuantity = parseInt(
-                                  e.target.value,
-                                  10,
-                                );
+                                const newQuantity = parseInt(e.target.value, 10);
                                 if (newQuantity > 0) {
                                   selectedFoods[index].quantity = newQuantity;
                                   updateTotalCalories();
                                 } else {
-                                  e.target.value =
-                                    selectedFoods[index].quantity || 1;
+                                  e.target.value = selectedFoods[index].quantity || 1;
                                 }
                               });
 
-                              const removeBtn =
-                                document.createElement("button");
+                              // Plus button (now on the right)
+                              const plusBtn = document.createElement("button");
+                              plusBtn.textContent = "+";
+                              plusBtn.className =
+                                "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-r hover:bg-gray-300 dark:hover:bg-gray-500";
+                              plusBtn.addEventListener("click", () => {
+                                selectedFoods[index].quantity = (selectedFoods[index].quantity || 1) + 1;
+                                renderSelectedFoods();
+                              });
+
+                              // Add controls to container in new order: minus, input, plus
+                              quantityContainer.appendChild(minusBtn);
+                              quantityContainer.appendChild(quantityInput);
+                              quantityContainer.appendChild(plusBtn);
+
+                              // Add unit span after input
+                              const unitSpan = document.createElement("span");
+                              unitSpan.className = "ml-1 text-gray-500 dark:text-gray-400";
+                              unitSpan.textContent = getFoodUnit(food);
+
+                              const removeBtn = document.createElement("button");
                               removeBtn.className =
                                 "ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600";
                               removeBtn.textContent = "Remove";
@@ -656,7 +707,8 @@
                               });
 
                               li.appendChild(descriptionSpan);
-                              li.appendChild(quantityInput);
+                              li.appendChild(quantityContainer);
+                              li.appendChild(unitSpan);
                               li.appendChild(removeBtn);
                               selectedFoodList.appendChild(li);
                             });
@@ -673,10 +725,24 @@
                             totalCaloriesSpan.textContent = total.toFixed(2);
                           }
 
+                          // When adding a food, set quantity based on unit
                           function addFoodItem(food) {
-                            if (
-                              !selectedFoods.some((f) => f.fdcId === food.fdcId)
-                            ) {
+                            if (!selectedFoods.some((f) => f.fdcId === food.fdcId)) {
+                              const unit = getFoodUnit(food);
+                              let quantity = 1;
+                              if (unit === "g") {
+                                quantity = 0; // Default to 0 grams
+                              } else if (unit === "ml") {
+                                quantity = 0; // Default to 0 ml
+                              } else if (unit === "pieces") {
+                                // For mango, set to 0 or minimum pieces for ~600 cal
+                                if ((food.description || "").toLowerCase().includes("mango") && food.calories) {
+                                  quantity = Math.ceil(600 / food.calories);
+                                } else {
+                                  quantity = 0;
+                                }
+                              }
+                              food.quantity = quantity;
                               selectedFoods.push(food);
                               renderSelectedFoods();
                             }
@@ -1639,148 +1705,106 @@
                 }
               }
 
-              async function fetchSavedBreatheScore() {
+              async function fetchSavedMeditationTime() {
                 const userId = userIdElement.value;
-                console.log("Fetching saved breathescore for userId:", userId);
+                console.log("Fetching saved meditation time for userId:", userId);
 
                 if (!userId) {
-                  console.warn(
-                    "User ID not found. Starting breathescore from 0.",
-                  );
-                  const savedSeconds = sessionStorage.getItem("breatheScore");
-                  totalElapsed = savedSeconds ? parseInt(savedSeconds, 10) : 0;
-                  sessionElapsed = 0;
-                  updateUI();
+                  console.warn("User ID not found. Starting timer from 0.");
+                  const savedSeconds = sessionStorage.getItem("meditationTime");
+                  seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                  sessionSeconds = 0;
+                  updateTimerDisplay();
                   return;
                 }
 
                 try {
-                  const response = await fetch(`/user/performance/${userId}`, {
-                    method: "GET",
-                    credentials: "include",
-                  });
+                  const response = await fetch(
+                    `/user/performance/${userId}`,
+                    {
+                      method: "GET",
+                      credentials: "include",
+                    },
+                  );
 
                   if (!response.ok) {
                     throw new Error(
-                      `Failed to fetch breathescore: ${response.status} ${response.statusText}`,
+                      `Failed to fetch meditation time: ${response.status} ${response.statusText}`,
                     );
                   }
 
-                  const performanceData = JSON.parse(await response.text());
+                  const performanceData = await response.json();
                   console.log("Parsed performance data:", performanceData);
 
                   if (
                     performanceData &&
-                    typeof performanceData.breatheScore === "number"
+                    typeof performanceData.meditationScore === "number"
                   ) {
-                    totalElapsed = performanceData.breatheScore;
-                    console.log(
-                      "totalElapsed set to database value:",
-                      totalElapsed,
-                    );
-
-                    // Check if session is complete
-                    if (totalElapsed >= totalDuration) {
-                      totalElapsed = totalDuration;
-                      phaseText.textContent = "Complete!";
-                      totalProgressCircle.style.strokeDashoffset = "0";
-                      progressCircle.style.strokeDashoffset = "0";
-                      instructionText.textContent = "Session Complete!";
-                      startBtn.disabled = true;
-                      stopBtn.disabled = true;
-                      resetBtn.disabled = false;
-                      return;
-                    }
-
-                    // Reconstruct state based on totalElapsed
-                    const cycleDuration = 27; // 11s + 6s + 10s
-                    cycleCount = Math.floor(totalElapsed / cycleDuration);
-                    const elapsedInCycle = totalElapsed % cycleDuration;
-
-                    // Determine current phase and timeLeft
-                    let accumulatedTime = 0;
-                    for (let i = 0; i < phases.length; i++) {
-                      const phaseTime =
-                        phases[i].duration + (phases[i].transition || 0);
-                      accumulatedTime += phaseTime;
-                      if (elapsedInCycle < accumulatedTime) {
-                        currentPhase = i;
-                        const timeIntoPhase =
-                          elapsedInCycle - (accumulatedTime - phaseTime);
-
-                        if (timeIntoPhase >= phases[i].duration) {
-                          // In transition period
-                          isTransition = true;
-                          isHolding = false;
-                          isInhaling = false;
-                          timeLeft =
-                            phases[i].transition -
-                            (timeIntoPhase - phases[i].duration);
-                        } else if (currentPhase === 2) {
-                          // Stop Breathe phase
-                          isTransition = false;
-                          isHolding = timeIntoPhase > 0;
-                          isInhaling = false;
-                          timeLeft = phases[i].hold - timeIntoPhase;
-                        } else if (timeIntoPhase < phases[i].inhale) {
-                          // In inhale
-                          isTransition = false;
-                          isHolding = false;
-                          isInhaling = true;
-                          timeLeft = phases[i].inhale - timeIntoPhase;
-                        } else {
-                          // In exhale
-                          isTransition = false;
-                          isHolding = false;
-                          isInhaling = false;
-                          timeLeft =
-                            phases[i].exhale -
-                            (timeIntoPhase - phases[i].inhale);
-                        }
-                        break;
-                      }
-                    }
-
-                    // Set UI state based on saved progress
-                    if (totalElapsed > 0) {
-                      startText.textContent = "Play";
-                      playIcon.classList.remove("hidden");
-                      startBtn.disabled = false;
-                      stopBtn.disabled = true;
-                      resetBtn.disabled = false;
-                      phaseText.textContent = "Paused";
-                      instructionText.textContent = `Resume your breathwork session • ${Math.floor((totalDuration - totalElapsed) / 60)}:${((totalDuration - totalElapsed) % 60).toString().padStart(2, "0")} left`;
-                      isFirstStart = false;
-                    }
+                    seconds = performanceData.meditationScore;
+                    console.log("Seconds set to database value:", seconds);
                   } else {
                     console.warn(
-                      "breatheScore is invalid or missing:",
+                      "meditationScore is invalid or missing, using sessionStorage:",
                       performanceData,
                     );
-                    totalElapsed = 0;
-                    sessionStorage.setItem("breatheScore", "0");
+                    const savedSeconds =
+                      sessionStorage.getItem("meditationTime");
+                    seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
                   }
-
-                  sessionElapsed = 0;
-                  updateUI();
+                  sessionSeconds = 0;
+                  sessionStorage.setItem(
+                    "meditationTime",
+                    seconds.toString(),
+                  );
+                  updateTimerDisplay();
                 } catch (error) {
-                  console.error("Error fetching breathescore:", error.message);
-                  totalElapsed = 0;
-                  sessionElapsed = 0;
-                  updateUI();
+                  console.error(
+                    "Error fetching meditation time:",
+                    error.message,
+                  );
+                  const savedSeconds =
+                    sessionStorage.getItem("meditationTime");
+                  seconds = savedSeconds ? parseInt(savedSeconds, 10) : 0;
+                  sessionSeconds = 0;
+                  console.log(
+                    "Falling back to sessionStorage value:",
+                    seconds,
+                  );
+                  updateTimerDisplay();
                 }
               }
 
-              // Event listeners
-              startBtn.addEventListener("click", startSession);
-              stopBtn.addEventListener("click", stopSession);
-              resetBtn.addEventListener("click", resetSession);
+              // Hide and show elements based on authentication status
+              function updateAuthUI(isLoggedIn) {
+                const loggedInElements = document.querySelectorAll(
+                  "[data-auth='logged-in']",
+                );
+                const loggedOutElements = document.querySelectorAll(
+                  "[data-auth='logged-out']",
+                );
 
-              // Initialize on page load
-              document.addEventListener(
-                "DOMContentLoaded",
-                fetchSavedBreatheScore,
-              );
+                if (isLoggedIn) {
+                  loggedInElements.forEach((el) => {
+                    el.classList.remove("hidden");
+                  });
+                  loggedOutElements.forEach((el) => {
+                    el.classList.add("hidden");
+                  });
+                } else {
+                  loggedInElements.forEach((el) => {
+                    el.classList.add("hidden");
+                  });
+                  loggedOutElements.forEach((el) => {
+                    el.classList.remove("hidden");
+                  });
+                }
+              }
+
+              // Initial check for authentication status
+              document.addEventListener("DOMContentLoaded", function () {
+                const userId = userIdElement.value;
+                updateAuthUI(!!userId); // Pass true if userId exists
+              });
             </script>
             <!-- Hydration tracker code area -->
             <div class="text-center">
@@ -2104,6 +2128,11 @@
             <img
               src="https://picsum.photos/40/40?random=1"
               alt="Deepak kumar"
+
+
+
+
+
               class="w-10 h-10 rounded-full mr-3"
             />
             <span class="font-bold"
@@ -2115,11 +2144,13 @@
             <button
               class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center"
             >
+             
               <svg
+
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
-                viewBox="0 0 24 24"
+                viewBox="0 24"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -2141,7 +2172,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
-                viewBox="0 0 24 24"
+                viewBox="0 0 24"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -2177,7 +2208,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
-                viewBox="0 0 24 24"
+                viewBox="0 0 24"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -2199,7 +2230,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
-                viewBox="0 0 24 24"
+                viewBox="0 0 24"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
