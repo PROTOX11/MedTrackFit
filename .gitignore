@@ -36,3 +36,5 @@ build/
 ### Application Properties ###
 application.properties
 application-*.properties
+
+output.css
