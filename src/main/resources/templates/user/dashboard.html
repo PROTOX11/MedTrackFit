@@ -972,6 +972,87 @@
             stopBtn.addEventListener("click", stopSession);
             resetBtn.addEventListener("click", resetSession);
 
+            async function fetchSavedBreatheScore() {
+              const userId = userIdElement.value;
+              console.log("Fetching saved breatheScore for userId:", userId);
+
+              if (!userId) {
+                console.warn("User ID not found. Starting breatheScore from 0.");
+                totalElapsed = 0;
+                sessionStorage.setItem("breatheScore", "0");
+                updateUI();
+                return;
+              }
+
+              try {
+                const response = await fetch(`/user/performance/${userId}`, {
+                  method: "GET",
+                  credentials: "include",
+                });
+
+                if (!response.ok) {
+                  throw new Error(
+                    `Failed to fetch breatheScore: ${response.status} ${response.statusText}`,
+                  );
+                }
+
+                const performanceData = await response.json();
+                console.log("Parsed performance data:", performanceData);
+
+                if (
+                  performanceData &&
+                  typeof performanceData.breatheScore === "number"
+                ) {
+                  totalElapsed = performanceData.breatheScore;
+                  console.log("totalElapsed set to database breatheScore:", totalElapsed);
+                  sessionStorage.setItem("breatheScore", totalElapsed.toString());
+
+                  // Update UI buttons and text based on breatheScore
+                  if (totalElapsed > 0) {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = false;
+                    resetBtn.disabled = false;
+                    startText.textContent = "Play";
+                    playIcon.classList.add("hidden");
+                    isFirstStart = false;  // Prevent reset on start
+                  } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    resetBtn.disabled = true;
+                    startText.textContent = "Start";
+                    playIcon.classList.remove("hidden");
+                    isFirstStart = true;
+                  }
+                } else {
+                  console.warn(
+                    "breatheScore is invalid or missing, resetting to 0",
+                    performanceData,
+                  );
+                  totalElapsed = 0;
+                  sessionStorage.setItem("breatheScore", "0");
+                  startBtn.disabled = false;
+                  stopBtn.disabled = true;
+                  resetBtn.disabled = true;
+                  startText.textContent = "Start";
+                  playIcon.classList.remove("hidden");
+                  isFirstStart = true;
+                }
+                updateUI();
+              } catch (error) {
+                console.error("Error fetching breatheScore:", error.message);
+                totalElapsed = 0;
+                sessionStorage.setItem("breatheScore", "0");
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                resetBtn.disabled = true;
+                startText.textContent = "Start";
+                playIcon.classList.remove("hidden");
+                isFirstStart = true;
+                updateUI();
+              }
+
+            }
+
 
             async function stopSession() {
               clearInterval(timerInterval);
@@ -1063,6 +1144,7 @@
               }
             }
 
+
             async function resetSession() {
               clearInterval(timerInterval);
               timerInterval = null;
@@ -1103,6 +1185,14 @@
                     },
                   );
 
+                  const responseText = await response.text();
+                  console.log(
+                    "Reset response status:",
+                    response.status,
+                    "Response text:",
+                    responseText,
+                  );
+
                   if (!response.ok) {
                     throw new Error(
                       `Failed to reset breathescore: ${response.status} ${response.statusText}`,
@@ -1111,6 +1201,7 @@
 
                   console.log("Breathescore reset successfully in database");
                   sessionStorage.setItem("breatheScore", "0");
+                  updateUI();
                 } catch (error) {
                   console.error(
                     "Error resetting breathescore in database:",
@@ -1118,7 +1209,12 @@
                   );
                 }
               }
+              // Start the timer immediately after reset
+              startSession();
             }
+
+
+
 
             function updateTimer() {
               if (timeLeft > 0) {
@@ -1349,9 +1445,11 @@
             document.addEventListener("DOMContentLoaded", function () {
               const userId = userIdElement.value;
               updateAuthUI(!!userId); // Pass true if userId exists
+              fetchSavedBreatheScore();
             });
           </script>
           <!-- breathe code end -->
+
 
           <!-- Hydration tracker code area -->
           <div class="text-center">
