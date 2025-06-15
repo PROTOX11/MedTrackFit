@@ -38,34 +38,6 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
     @Autowired
     private usersPerformanceRepository usersPerformanceRepository; // Corrected to match interface name
 
-    @Autowired
-    private com.example.medtrackfit.services.FoodService foodService;
-
-    @GetMapping("/food/search")
-    public ResponseEntity<?> searchFoods(@RequestParam("query") String query, Authentication authentication) {
-        logger.info("Received food search request with query: {}", query);
-
-        if (authentication == null) {
-            logger.error("Authentication is null");
-            return ResponseEntity.status(401).body("Unauthorized: Not logged in");
-        }
-
-        String loggedInUsername = Helper.getEmailOfLoggedInUser(authentication);
-        User loggedInUser = userService.getUserByEmail(loggedInUsername);
-        if (loggedInUser == null) {
-            logger.error("Logged in user not found for email: {}", loggedInUsername);
-            return ResponseEntity.status(401).body("Unauthorized: User not found");
-        }
-
-        try {
-            var results = foodService.searchFoods(query);
-            return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            logger.error("Error searching foods for query: {}", query, e);
-            return ResponseEntity.status(500).body("Error searching foods: " + e.getMessage());
-        }
-    }
-
     @ModelAttribute
     public void addLoggedinUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -160,7 +132,7 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
             }
 
             userService.updateNutritionScore(userId, nutritionScore);
-            logger.info("Nutrition score updated successfully for userId: {}, new nutritionScore: {}", 
+            logger.info("Nutrition score updated successfully for userId: {}, new nutritionScore: {}",
                     userId, nutritionScore);
             return ResponseEntity.ok("Nutrition score updated successfully");
         } catch (Exception e) {
@@ -195,7 +167,7 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
         try {
             UsersPerformance performance = usersPerformanceRepository.findByUserUserId(userId)
                     .orElseThrow(() -> new RuntimeException("Performance data not found for user: " + userId));
-            logger.info("Fetched performance for userId: {}: meditationScore: {}, hydrationScore: {}", 
+            logger.info("Fetched performance for userId: {}: meditationScore: {}, hydrationScore: {}",
                     userId, performance.getMeditationScore(), performance.getHydrationScore());
             return ResponseEntity.ok(performance);
         } catch (Exception e) {
@@ -240,7 +212,7 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
                     .orElseThrow(() -> new RuntimeException("Performance data not found for user: " + userId));
             performance.setBreatheScore(breatheScore);
             usersPerformanceRepository.save(performance);
-            logger.info("Breathe score updated successfully for userId: {}, new breatheScore: {}", 
+            logger.info("Breathe score updated successfully for userId: {}, new breatheScore: {}",
                     userId, performance.getBreatheScore());
             return ResponseEntity.ok("Breathe score updated successfully");
         } catch (Exception e) {
@@ -285,7 +257,7 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
                     .orElseThrow(() -> new RuntimeException("Performance data not found for user: " + userId));
             performance.setHydrationScore(performance.getHydrationScore() + hydrationAmount);
             usersPerformanceRepository.save(performance);
-            logger.info("Hydration updated successfully for userId: {}, new hydrationScore: {}", 
+            logger.info("Hydration updated successfully for userId: {}, new hydrationScore: {}",
                     userId, performance.getHydrationScore());
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -27,6 +27,8 @@
           th:text="'Welcome back, ' + ${loggedInUser?.name} + '!'"></h2>
         <p class="text-lg text-gray-600 dark:text-gray-300" th:text="'Here\'s your health overview'"></p>
       </div>
+      <!-- here will be upar ka maal  -->
+
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <div class="flex items-center mb-4">
@@ -141,30 +143,24 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <!-- Nutrition tracking starts here -->
           <div class="text-center">
-            <div class="relative w-24 h-24 mx-auto">
+            <div class="relative w-24 h-24 mx-auto" id="nutrition-score-circle">
               <svg class="w-full h-full transform -rotate-90">
                 <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
-                <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#1976d2" stroke-dasharray="283"
-                  stroke-dashoffset="calc(283 - (283 * 78.23) / 100)" style="transition: stroke-dashoffset 0.3s">
+                <circle id="nutrition-score-progress" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8"
+                  stroke="#1976d2" stroke-dasharray="283" stroke-dashoffset="283"
+                  style="transition: stroke-dashoffset 0.3s">
                 </circle>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <span class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
-                <span class="text-xs text-gray-500 mt-1">cal</span>
+                <span id="nutrition-score-value" class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
+                <span class="text-xs text-gray-500 mt-1">Nutrition Score</span>
               </div>
             </div>
             <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
-              Nutrition Tracking<br />Target: 2000 calorie
+              Nutrition Score (0-10)
             </p>
 
             <!-- Modal toggle -->
-            <div class="flex justify-center mt-2">
-              <button data-modal-target="timeline-modal" data-modal-toggle="timeline-modal"
-                class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100"
-                type="button">
-                <span>Find Food</span>
-              </button>
-            </div>
             <div class="flex justify-center">
               <button id="resetFoodButton" disabled
                 class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 mt-1 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
@@ -220,8 +216,8 @@
                         <!-- Selected food items will be appended here -->
                       </ul>
                       <div class="text-right max-w-md mx-auto mb-4">
-                        <span class="font-semibold dark:text-white">Total Calories: </span><span id="total-calories"
-                          class="font-bold dark:text-white">0</span>
+                        <span class="font-semibold dark:text-white">Total Nutrition Score: </span>
+                        <span id="total-calories" class="font-bold dark:text-white">0</span>
                       </div>
                       <button id="confirm-food-selection"
                         class="text-white w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -232,263 +228,394 @@
                   <!-- open find body ends here -->
 
                   <script>
-                    document.addEventListener(
-                      "DOMContentLoaded",
-                      function () {
-                        const searchInput =
-                          document.getElementById("food-search-input");
-                        const searchResultsContainer =
-                          document.getElementById("food-search-results");
-                        const selectedFoodList =
-                          document.getElementById("selected-food-list");
-                        const totalCaloriesSpan =
-                          document.getElementById("total-calories");
-                        const confirmButton = document.getElementById(
-                          "confirm-food-selection",
-                        );
+                    document.addEventListener("DOMContentLoaded", function () {
+                      const searchInput = document.getElementById("food-search-input");
+                      const searchResultsContainer = document.getElementById("food-search-results");
+                      const selectedFoodList = document.getElementById("selected-food-list");
+                      const totalCaloriesSpan = document.getElementById("total-calories");
+                      const confirmButton = document.getElementById("confirm-food-selection");
+                      const resetButton = document.getElementById("resetFoodButton");
 
-                        let selectedFoods = [];
+                      let selectedFoods = [];
 
-                        // Helper to get unit (g, ml, pieces) based on food object
-                        function getFoodUnit(food) {
-                          if (food.unit) return food.unit;
-                          const desc = (food.description || "").toLowerCase();
-                          if (desc.includes("mango")) return "pieces"; // <-- Add this line
-                          if (desc.includes("ml") || desc.includes("juice") || desc.includes("milk") || desc.includes("water") || desc.includes("drink")) return "ml";
-                          if (desc.includes("piece") || desc.includes("egg") || desc.includes("bread") || desc.includes("slice")) return "pieces";
-                          return "g";
+                      // Helper to get unit (g, ml, pieces) based on food object
+                      function getFoodUnit(food) {
+                        if (food.unit) return food.unit;
+                        const desc = (food.description || "").toLowerCase();
+
+                        // Handle liquids
+                        if (desc.includes("ml") || desc.includes("juice") ||
+                          desc.includes("milk") || desc.includes("water") ||
+                          desc.includes("drink") || desc.includes("beverage")) {
+                          return "ml";
                         }
 
-                        // Render search results, only unique food names, show best match
-                        function renderSearchResults(foods) {
-                          searchResultsContainer.innerHTML = "";
-                          if (!foods || foods.length === 0) {
-                            searchResultsContainer.innerHTML =
-                              '<p class="p-2 text-gray-500 dark:text-gray-400">No results found.</p>';
-                            return;
+                        // Handle pieces
+                        if (desc.includes("piece") || desc.includes("egg") ||
+                          desc.includes("bread") || desc.includes("slice") ||
+                          desc.includes("banana") || desc.includes("apple") ||
+                          desc.includes("mango")) {
+                          return "pieces";
+                        }
+
+                        // Default to grams for solid foods
+                        return "g";
+                      }
+
+                      // Render search results, only unique food names, show best match
+                      function renderSearchResults(foods) {
+                        searchResultsContainer.innerHTML = "";
+                        if (!foods || foods.length === 0) {
+                          searchResultsContainer.innerHTML =
+                            '<p class="p-2 text-gray-500 dark:text-gray-400">No results found.</p>';
+                          return;
+                        }
+
+                        // Map to unique food names, pick the first (best) match for each name
+                        const uniqueFoods = {};
+                        foods.forEach(food => {
+                          const key = (food.description || "").toLowerCase().trim();
+                          if (!uniqueFoods[key]) {
+                            uniqueFoods[key] = food;
                           }
-                          // Map to unique food names, pick the first (best) match for each name
-                          const uniqueFoods = {};
-                          foods.forEach(food => {
-                            const key = (food.description || "").toLowerCase().trim();
-                            if (!uniqueFoods[key]) {
-                              uniqueFoods[key] = food;
+                        });
+
+                        // Filter by search keyword in name (case-insensitive)
+                        const keyword = searchInput.value.trim().toLowerCase();
+                        const filtered = Object.values(uniqueFoods).filter(food =>
+                          (food.description || "").toLowerCase().includes(keyword)
+                        );
+
+                        filtered.slice(0, 6).forEach((food) => {
+                          const item = document.createElement("div");
+                          item.className =
+                            "p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center";
+                          item.textContent =
+                            food.description +
+                            " (" +
+                            (food.calories ? food.calories.toFixed(2) : "0") +
+                            " cal, " +
+                            getFoodUnit(food) +
+                            ")";
+                          item.addEventListener("click", () => {
+                            addFoodItem(food);
+                            clearSearchResults();
+                          });
+                          searchResultsContainer.appendChild(item);
+                        });
+                      }
+
+                      function clearSearchResults() {
+                        searchResultsContainer.innerHTML = "";
+                        searchInput.value = "";
+                      }
+
+                      function renderSelectedFoods() {
+                        selectedFoodList.innerHTML = "";
+                        selectedFoods.forEach((food, index) => {
+                          const li = document.createElement("li");
+                          li.className = "flex justify-between items-center py-2 px-4 dark:text-white";
+
+                          const descriptionSpan = document.createElement("span");
+                          descriptionSpan.textContent =
+                            food.description;
+
+                          // Quantity controls container
+                          const quantityContainer = document.createElement("div");
+                          quantityContainer.className = "flex items-center";
+
+                          // Minus button
+                          const minusBtn = document.createElement("button");
+                          minusBtn.textContent = "-";
+                          minusBtn.className =
+                            "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-l hover:bg-gray-300 dark:hover:bg-gray-500";
+                          minusBtn.addEventListener("click", () => {
+                            if ((selectedFoods[index].quantity || 1) > (getFoodUnit(food) === "pieces" ? 1 : 0)) {
+                              selectedFoods[index].quantity -= getFoodUnit(food) === "pieces" ? 1 : 10;
+                              renderSelectedFoods();
+                              updateTotalNutritionScore();
                             }
                           });
-                          // Filter by search keyword in name (case-insensitive)
-                          const keyword = searchInput.value.trim().toLowerCase();
-                          const filtered = Object.values(uniqueFoods).filter(food =>
-                            (food.description || "").toLowerCase().includes(keyword)
-                          );
-                          filtered.slice(0, 6).forEach((food) => {
-                            const item = document.createElement("div");
-                            item.className =
-                              "p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center";
-                            item.textContent =
-                              food.description +
-                              " (" +
-                              (food.calories ? food.calories.toFixed(2) : "0") +
-                              " cal, " +
-                              getFoodUnit(food) +
-                              ")";
-                            item.addEventListener("click", () => {
-                              addFoodItem(food);
-                              clearSearchResults();
-                            });
-                            searchResultsContainer.appendChild(item);
+
+                          // Quantity input
+                          const quantityInput = document.createElement("input");
+                          quantityInput.type = "number";
+                          quantityInput.min = getFoodUnit(food) === "pieces" ? "1" : "0";
+                          quantityInput.step = getFoodUnit(food) === "pieces" ? "1" : "10";
+                          quantityInput.value = food.quantity || (getFoodUnit(food) === "pieces" ? 1 : 100);
+                          quantityInput.className =
+                            "w-16 p-1 border-t border-b border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-center";
+                          quantityInput.addEventListener("change", (e) => {
+                            const newQuantity = parseFloat(e.target.value);
+                            if (!isNaN(newQuantity) && newQuantity >= (getFoodUnit(food) === "pieces" ? 1 : 0)) {
+                              selectedFoods[index].quantity = newQuantity;
+                              updateTotalNutritionScore();
+                            } else {
+                              e.target.value = selectedFoods[index].quantity || (getFoodUnit(food) === "pieces" ? 1 : 100);
+                            }
                           });
-                        }
 
-                        function renderSelectedFoods() {
-                          selectedFoodList.innerHTML = "";
-                          selectedFoods.forEach((food, index) => {
-                            const li = document.createElement("li");
-                            li.className =
-                              "flex justify-between items-center py-2 px-4 dark:text-white";
-
-                            const descriptionSpan = document.createElement("span");
-                            descriptionSpan.textContent =
-                              food.description +
-                              " - " +
-                              (food.calories ? food.calories.toFixed(2) : "0") +
-                              " cal";
-
-                            // Quantity controls container
-                            const quantityContainer = document.createElement("div");
-                            quantityContainer.className = "flex items-center";
-
-                            // Minus button (now on the left)
-                            const minusBtn = document.createElement("button");
-                            minusBtn.textContent = "-";
-                            minusBtn.className =
-                              "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-l hover:bg-gray-300 dark:hover:bg-gray-500";
-                            minusBtn.addEventListener("click", () => {
-                              if ((selectedFoods[index].quantity || 1) > 1) {
-                                selectedFoods[index].quantity -= 1;
-                                renderSelectedFoods();
-                              }
-                            });
-
-                            // Quantity input
-                            const quantityInput = document.createElement("input");
-                            quantityInput.type = "number";
-                            quantityInput.min = "1";
-                            quantityInput.value = food.quantity || 1;
-                            quantityInput.className =
-                              "w-16 p-1 border-t border-b border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-center";
-                            quantityInput.addEventListener("change", (e) => {
-                              const newQuantity = parseInt(e.target.value, 10);
-                              if (newQuantity > 0) {
-                                selectedFoods[index].quantity = newQuantity;
-                                updateTotalCalories();
-                              } else {
-                                e.target.value = selectedFoods[index].quantity || 1;
-                              }
-                            });
-
-                            // Plus button (now on the right)
-                            const plusBtn = document.createElement("button");
-                            plusBtn.textContent = "+";
-                            plusBtn.className =
-                              "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-r hover:bg-gray-300 dark:hover:bg-gray-500";
-                            plusBtn.addEventListener("click", () => {
-                              selectedFoods[index].quantity = (selectedFoods[index].quantity || 1) + 1;
-                              renderSelectedFoods();
-                            });
-
-                            // Add controls to container in new order: minus, input, plus
-                            quantityContainer.appendChild(minusBtn);
-                            quantityContainer.appendChild(quantityInput);
-                            quantityContainer.appendChild(plusBtn);
-
-                            // Add unit span after input
-                            const unitSpan = document.createElement("span");
-                            unitSpan.className = "ml-1 text-gray-500 dark:text-gray-400";
-                            unitSpan.textContent = getFoodUnit(food);
-
-                            const removeBtn = document.createElement("button");
-                            removeBtn.className =
-                              "ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600";
-                            removeBtn.textContent = "Remove";
-                            removeBtn.addEventListener("click", () => {
-                              removeFoodItem(index);
-                            });
-
-                            li.appendChild(descriptionSpan);
-                            li.appendChild(quantityContainer);
-                            li.appendChild(unitSpan);
-                            li.appendChild(removeBtn);
-                            selectedFoodList.appendChild(li);
+                          // Plus button
+                          const plusBtn = document.createElement("button");
+                          plusBtn.textContent = "+";
+                          plusBtn.className =
+                            "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-r hover:bg-gray-300 dark:hover:bg-gray-500";
+                          plusBtn.addEventListener("click", () => {
+                            selectedFoods[index].quantity += getFoodUnit(food) === "pieces" ? 1 : 10;
+                            renderSelectedFoods();
+                            updateTotalNutritionScore();
                           });
-                      updateTotalCalories();
-                    }
 
-                    // When adding a food, set quantity based on unit
-                    function addFoodItem(food) {
-                      if (!selectedFoods.some((f) => f.fdcId === food.fdcId)) {
-                        const unit = getFoodUnit(food);
-                        let quantity = 1;
-                        if (unit === "g") {
-                          quantity = 0; // Default to 0 grams
-                        } else if (unit === "ml") {
-                          quantity = 0; // Default to 0 ml
-                        } else if (unit === "pieces") {
-                          // For mango, set to 0 or minimum pieces for ~600 cal
-                          if ((food.description || "").toLowerCase().includes("mango") && food.calories) {
-                            quantity = Math.ceil(600 / food.calories);
-                          } else {
-                            quantity = 0;
-                          }
+                          // Add controls to container
+                          quantityContainer.appendChild(minusBtn);
+                          quantityContainer.appendChild(quantityInput);
+                          quantityContainer.appendChild(plusBtn);
+
+                          // Add unit span after input
+                          const unitSpan = document.createElement("span");
+                          unitSpan.className = "ml-1 text-gray-500 dark:text-gray-400";
+                          unitSpan.textContent = getFoodUnit(food);
+
+                          const removeBtn = document.createElement("button");
+                          removeBtn.className =
+                            "ml-4 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600";
+                          removeBtn.textContent = "Remove";
+                          removeBtn.addEventListener("click", () => {
+                            removeFoodItem(index);
+                          });
+
+                          li.appendChild(descriptionSpan);
+                          li.appendChild(quantityContainer);
+                          li.appendChild(unitSpan);
+                          li.appendChild(removeBtn);
+                          selectedFoodList.appendChild(li);
+                        });
+                        updateTotalNutritionScore();
+                      }
+
+                      // When adding a food, set quantity based on unit
+                      function addFoodItem(food) {
+                        if (!selectedFoods.some((f) => f.fdcId === food.fdcId)) {
+                          const unit = getFoodUnit(food);
+                          let quantity = unit === "pieces" ? 1 : 100; // Default to 1 piece or 100g/ml
+                          food.quantity = quantity;
+                          selectedFoods.push(food);
+                          renderSelectedFoods();
                         }
-                        food.quantity = quantity;
-                        selectedFoods.push(food);
+                      }
+
+                      function removeFoodItem(index) {
+                        selectedFoods.splice(index, 1);
                         renderSelectedFoods();
                       }
-                    }
 
-                    function removeFoodItem(index) {
-                      selectedFoods.splice(index, 1);
-                      renderSelectedFoods();
-                    }
-
-                    async function searchFoods(query) {
-                      if (!query || query.trim().length === 0) {
-                        renderSearchResults([]);
-                        return;
-                      }
-                      try {
-                        const response = await fetch(
-                          `/user/food/search?query=${encodeURIComponent(query)}`,
-                          {
-                            credentials: "include",
-                          },
-                        );
-                        if (!response.ok) {
-                          throw new Error(
-                            "Failed to fetch food search results",
-                          );
+                      async function updateTotalNutritionScore() {
+                        if (selectedFoods.length === 0) {
+                          document.getElementById('total-calories').textContent = "0";
+                          document.getElementById('nutrition-score-value').textContent = "0";
+                          const circle = document.getElementById('nutrition-score-progress');
+                          if (circle) {
+                            circle.style.strokeDashoffset = 283;
+                          }
+                          resetButton.disabled = true;
+                          return;
                         }
-                        const data = await response.json();
-                        renderSearchResults(data);
-                      } catch (error) {
-                        console.error("Error searching foods:", error);
-                        renderSearchResults([]);
+
+                        // Show loading spinner while fetching
+                        document.getElementById('total-calories').innerHTML = '<span class="loader inline-block w-4 h-4 border-2 border-t-2 border-gray-200 rounded-full animate-spin"></span>';
+
+                        // Prepare payload for backend
+                        const payload = selectedFoods.map(food => ({
+                          fdcId: food.fdcId,
+                          description: food.description,
+                          quantity: Number(food.quantity) || 0,
+                          calories: Number(food.calories) || 0,
+                          protein: Number(food.protein) || 0,
+                          fiber: Number(food.fiber) || 0,
+                          vitamins: Number(food.vitamins) || 0,
+                          sugar: Number(food.sugar) || 0,
+                          saturatedFat: Number(food.saturatedFat) || 0,
+                          sodium: Number(food.sodium) || 0,
+                          minerals: typeof food.minerals !== 'undefined' ? Number(food.minerals) : 0,
+                          transFat: typeof food.transFat !== 'undefined' ? Boolean(food.transFat) : false
+                        }));
+
+                        try {
+                          console.log("Sending payload to /user/food/save:", payload);
+                          const response = await fetch('/user/food/save', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRF-TOKEN': (document.querySelector('meta[name="_csrf"]') ? document.querySelector('meta[name="_csrf"]').getAttribute('content') : '')
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(payload)
+                          });
+
+                          if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error('Failed to calculate nutrition score: ' + errorText);
+                          }
+
+                          const data = await response.json();
+                          const nutritionScore = data.nutritionScore || 0;
+
+                          // Update UI with nutrition score
+                          document.getElementById('total-calories').textContent = nutritionScore;
+                          document.getElementById('nutrition-score-value').textContent = nutritionScore;
+
+                          // Update the circle progress
+                          const circle = document.getElementById('nutrition-score-progress');
+                          if (circle) {
+                            const circumference = 283;
+                            const offset = circumference - (nutritionScore / 10) * circumference;
+                            circle.style.strokeDashoffset = offset;
+                          }
+
+                          // Enable reset button
+                          resetButton.disabled = false;
+                        } catch (error) {
+                          console.error("Error fetching nutrition score:", error);
+                          document.getElementById('total-calories').textContent = "Error: " + error.message;
+                        }
                       }
-                    }
 
-                    let debounceTimeout = null;
-                    searchInput.addEventListener("input", () => {
-                      clearTimeout(debounceTimeout);
-                      debounceTimeout = setTimeout(() => {
-                        searchFoods(searchInput.value);
-                      }, 300);
-                    });
+                      async function searchFoods(query) {
+                        if (!query || query.trim().length === 0) {
+                          renderSearchResults([]);
+                          return;
+                        }
+                        try {
+                          const response = await fetch(
+                            `/user/food/search?query=${encodeURIComponent(query)}`,
+                            {
+                              credentials: "include",
+                            },
+                          );
+                          if (!response.ok) {
+                            throw new Error("Failed to fetch food search results");
+                          }
+                          const data = await response.json();
+                          renderSearchResults(data);
+                        } catch (error) {
+                          console.error("Error searching foods:", error);
+                          renderSearchResults([]);
+                        }
+                      }
 
-                    document
-                      .getElementById("food-search-form")
-                      .addEventListener("submit", (e) => {
+                      // Reset functionality
+                      resetButton.addEventListener("click", () => {
+                        selectedFoods = [];
+                        renderSelectedFoods();
+                      });
+
+                      let debounceTimeout = null;
+                      searchInput.addEventListener("input", () => {
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(() => {
+                          searchFoods(searchInput.value);
+                        }, 300);
+                      });
+
+                      document.getElementById("food-search-form").addEventListener("submit", (e) => {
                         e.preventDefault();
                         searchFoods(searchInput.value);
                       });
 
-                    confirmButton.addEventListener("click", () => {
-                      // TODO: Implement what happens when user confirms food selection
-                      // For example, send selectedFoods to backend or update UI accordingly
-                      console.log(
-                        "Selected foods confirmed:",
-                        selectedFoods,
-                      );
-                      // Close modal programmatically if needed
-                      const modal =
-                        document.getElementById("timeline-modal");
-                      if (modal) {
-                        modal.classList.add("hidden");
-                      }
+                      confirmButton.addEventListener("click", async () => {
+                        if (selectedFoods.length === 0) {
+                          alert("Please select at least one food item.");
+                          return;
+                        }
+                        try {
+                          // Call backend to save food entries and get updated nutrition score
+                          const payload = selectedFoods.map(food => ({
+                            fdcId: food.fdcId,
+                            description: food.description,
+                            quantity: food.quantity,
+                            calories: food.calories,
+                            protein: food.protein || 0,
+                            fiber: food.fiber || 0,
+                            vitamins: food.vitamins || 0,
+                            sugar: food.sugar || 0,
+                            saturatedFat: food.saturatedFat || 0,
+                            sodium: food.sodium || 0,
+                            minerals: food.minerals || 0,
+                            transFat: food.transFat || false
+                          }));
+
+                          const response = await fetch('/user/food/save', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(payload)
+                          });
+
+                          if (!response.ok) {
+                            throw new Error('Failed to save food entries');
+                          }
+
+                          const data = await response.json();
+                          const updatedScore = data.nutritionScore || 0;
+
+                          // Update main dashboard nutrition score UI
+                          updateNutritionScoreUI(updatedScore);
+
+                          // Close modal
+                          const modal = document.getElementById("timeline-modal");
+                          if (modal) {
+                            modal.classList.add("hidden");
+                          }
+
+                          // Reset selected foods and UI
+                          selectedFoods = [];
+                          renderSelectedFoods();
+
+                        } catch (error) {
+                          console.error("Error saving food entries:", error);
+                          alert("Failed to save food entries. Please try again.");
+                        }
+                      });
+
+                      // Hide search results when clicking outside
+                      document.addEventListener("click", (event) => {
+                        const isClickInside =
+                          document.getElementById("food-search-form").contains(event.target) ||
+                          document.getElementById("food-search-results").contains(event.target);
+                        if (!isClickInside) {
+                          searchResultsContainer.innerHTML = "";
+                        }
+                      });
                     });
 
-                    // Hide search results when clicking outside
-                    document.addEventListener("click", (event) => {
-                      const isClickInside =
-                        document
-                          .getElementById("food-search-form")
-                          .contains(event.target) ||
-                        document
-                          .getElementById("food-search-results")
-                          .contains(event.target);
-                      if (!isClickInside) {
-                        searchResultsContainer.innerHTML = "";
+                    // Add CSS for loader spinner
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+                      .loader {
+                        border-top-color: #3498db;
+                        -webkit-animation: spin 1s linear infinite;
+                        animation: spin 1s linear infinite;
                       }
-                    });
-                  },
-                );
-              </script>
-
+                      @-webkit-keyframes spin {
+                        0% { -webkit-transform: rotate(0deg); }
+                        100% { -webkit-transform: rotate(360deg); }
+                      }
+                      @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                    `;
+                    document.head.appendChild(style);
+                  </script>
                 </div>
               </div>
             </div>
             <!-- nutrition score ends here  -->
           </div>
-          <!-- Nutrition tracking ends here -->
+          <!-- Add more health  bich ka metrics here -->
 
           <!-- Meditation tracking starts here -->
           <div class="text-center">
@@ -1711,9 +1838,164 @@
               fetchSavedHydration();
             });
           </script>
+
         </div>
       </div>
-      <!-- ynhaa pe ayega  -->
+      <!-- ynhaa pe ayega  last script -->
+
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h3 class="text-lg font-medium mb-2">Upcoming Appointments</h3>
+            <p class="text-sm">
+              Your scheduled meetings with healthcare providers
+            </p>
+          </div>
+          <a href="#" class="text-green-500 dark:text-green-400 hover:underline">Schedule New</a>
+        </div>
+        <div class="appointment-item flex items-center flex-wrap gap-2 mb-3">
+          <img src="https://picsum.photos/40/40?random=1" alt="Deepak kumar" class="w-10 h-10 rounded-full mr-3" />
+          <span class="font-bold">Deepak kumar<br /><span
+              class="text-gray-600 dark:text-gray-400 font-normal">Nutritionist</span></span>
+          <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-calendar mr-1">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+            Today
+          </button>
+          <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-calendar mr-1">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+            2:30 PM
+          </button>
+          <button class="join px-2 py-1 rounded text-sm">Join Call</button>
+        </div>
+        <div class="appointment-item flex items-center flex-wrap gap-2">
+          <img src="https://picsum.photos/40/40?random=2" alt="Rajkumar Rao" class="w-10 h-10 rounded-full mr-3" />
+          <span class="font-bold">Rajkumar Rao<br /><span class="text-gray-600 dark:text-gray-400 font-normal">Physical
+              Therapist</span></span>
+          <button class="today ml-auto px-2 py-1 rounded mr-2 text-sm flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-calendar mr-1">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+            Tomorrow
+          </button>
+          <button class="time px-2 py-1 rounded mr-2 text-sm flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-calendar mr-1">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+            10:00 AM
+          </button>
+          <button class="join px-2 py-1 rounded text-sm" style="background: var(--purple)">
+            In Person
+          </button>
+        </div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+        <h3 class="text-lg font-medium mb-2">Activity Feed</h3>
+        <p class="text-sm mb-4">Recent updates and notifications</p>
+        <div class="activity-item flex items-center mb-2">
+          <img src="https://picsum.photos/40/40?random=3" alt="Rohan kumar" class="w-10 h-10 rounded-full mr-3" />
+          <span>User1 accepted your connection request</span>
+          <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">2 hours ago</span>
+        </div>
+        <div class="activity-item flex items-center mb-2">
+          <img src="https://picsum.photos/40/40?random=4" alt="System" class="w-10 h-10 rounded-full mr-3" />
+          <span>You reached your daily step goal!</span>
+          <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">4 hours ago</span>
+        </div>
+        <div class="activity-item flex items-center mb-2">
+          <img src="https://picsum.photos/40/40?random=5" alt="Roushan kumar" class="w-10 h-10 rounded-full mr-3" />
+          <span>Roushan kumar sent you a message</span>
+          <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
+        </div>
+        <div class="activity-item flex items-center">
+          <img src="https://picsum.photos/40/40?random=6" alt="Manoj kumar" class="w-10 h-10 rounded-full mr-3" />
+          <span>Manoj kumar confirmed your appointment for tomorrow</span>
+          <span class="ml-auto text-sm text-gray-500 dark:text-gray-400">Yesterday</span>
+        </div>
+        <div class="text-right mt-2">
+          <a href="#" class="hover:underline">View All Activity</a>
+        </div>
+      </div>
+      <div
+        class="recommendations grid gap-4 bg-gradient-to-br from-white to-yellow-300 dark:from-gray-800 dark:to-red-300 p-6 rounded-lg shadow-lg">
+        <div>
+          <h3 class="text-xl font-semibold text-green-500 dark:text-green-400 mb-2">
+            Recommended for You
+          </h3>
+          <p class="text-sm mb-4">Based on your health profile and goals</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div
+              class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+              <img src="https://picsum.photos/60/60?random=8" alt="Sanoj kumar"
+                class="mx-auto border-2 border-blue-500 rounded-full" />
+              <span class="block font-bold text-gray-900 dark:text-gray-100">Sanoj kumar<br /><span
+                  class="text-purple-600 dark:text-purple-400">Cardiologist</span></span>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Heart Disease Recovery
+              </p>
+              <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">
+                Connect
+              </button>
+              <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
+            </div>
+            <div
+              class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+              <img src="https://picsum.photos/60/60?random=8" alt="Gauri kumari"
+                class="mx-auto border-2 border-blue-500 rounded-full" />
+              <span class="block font-bold text-gray-900 dark:text-gray-100">Gauri kumari<br /><span
+                  class="text-purple-600 dark:text-purple-400">Recovered Patient</span></span>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Diabetes Management
+              </p>
+              <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">
+                Connect
+              </button>
+              <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
+            </div>
+            <div
+              class="recommendation-item bg-white dark:bg-gray-700 p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-xl transition-all duration-200">
+              <img src="https://picsum.photos/60/60?random=9" alt="Muskan kumari"
+                class="mx-auto border-2 border-blue-500 rounded-full" />
+              <span class="block font-bold text-gray-900 dark:text-gray-100">Muskan kumari<br /><span
+                  class="text-purple-600 dark:text-purple-400">Fitness Mentor</span></span>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Cardiac Rehabilitation
+              </p>
+              <button class="bg-teal-500 text-white w-full py-2 rounded-lg mt-2 hover:bg-teal-600 transition-colors">
+                Connect
+              </button>
+              <a href="#" class="block mt-2 hover:underline text-center">View Profile</a>
+            </div>
+          </div>
+        </div>
+        <div class="text-right mt-2">
+          <a href="#" class="hover:underline">View All</a>
+        </div>
+      </div>
     </div>
   </div>
   <script th:src="@{/js/script.js}"></script>
@@ -1732,7 +2014,27 @@
           openButton.classList.add("hidden");
         });
       }
-    });
+      // Color coding based on score
+      if (score <= 3) {
+        progressCircle.style.stroke = "#ef4444"; // Red
+        scoreValue.classList.remove("text-yellow-500", "text-green-500");
+        scoreValue.classList.add("text-red-600");
+      } else if (score <= 6) {
+        progressCircle.style.stroke = "#fbbf24"; // Yellow
+        scoreValue.classList.remove("text-red-600", "text-green-500");
+        scoreValue.classList.add("text-yellow-500");
+      } else {
+        progressCircle.style.stroke = "#22c55e"; // Green
+        scoreValue.classList.remove("text-red-600", "text-yellow-500");
+        scoreValue.classList.add("text-green-500");
+      }
+    }
+
+      // Example: Fetch nutrition score from backend or set dynamically
+      // For now, set to 0 or fetch from server via AJAX if implemented
+      // updateNutritionScoreUI(7);
+
+    );
   </script>
 </body>
 
