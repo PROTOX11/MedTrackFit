@@ -23,4 +23,7 @@ public interface UserService {
     UsersPerformance getUserPerformance(String userId);
     Connections addConnection(String userId, String connectedId);
     User updateProfilePicture(String userId, MultipartFile file) throws IOException;
+    void updateMeditationTime(String userId, int meditationTime);
+
+    void updateNutritionScore(String userId, int nutritionScore);
 }

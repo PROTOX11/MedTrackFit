@@ -2,7 +2,7 @@ package com.example.medtrackfit.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.catalina.Group;
 import org.apache.catalina.Role;
 import org.apache.catalina.UserDatabase;
@@ -72,6 +72,7 @@ public class User implements UserDetails, org.apache.catalina.User {
     private List<String> roleList = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonManagedReference
     private UsersPerformance usersPerformance;
 
     
