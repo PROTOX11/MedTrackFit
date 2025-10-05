@@ -1,0 +1,70 @@
+<aside data-th-fragment="doctor-sidebar" id="logo-sidebar" class="w-full sm:w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-900 fixed top-0 left-0 z-40 border-r dark:border-gray-700">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        <button id="sidebar-close-toggle" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 z-50" aria-label="Close sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <a th:href="@{'/doctor/chat'}" class="flex items-center space-x-3 rtl:space-x-reverse mb-6">
+            <img th:src="@{'/images/logo.png'}" class="w-8 h-8" alt="MedTrackFit logo">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">MTF</span>
+        </a>     
+        <ul class="space-y-2 font-medium mt-6">
+            <!-- Dashboard -->
+            <li>
+                <a href="/doctor/dashboard" class="flex items-center p-3 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-200 font-medium hover:shadow-md dark:hover:shadow-gray-900/50 hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M13.5 2c-.178 0-.356.013-.492.022l-.074.005a1 1 0 0 0-.934.998V11a1 1 0 0 0 1 1h7.975a1 1 0 0 0 .998-.934l.005-.074A7.04 7.04 0 0 0 22 10.5 8.5 8.5 0 0 0 13.5 2Z"/>
+                        <path d="M11 6.025a1 1 0 0 0-1.065-.998 8.5 8.5 0 1 0 9.038 9.039A1 1 0 0 0 17.975 13H11V6.025Z"/>
+                    </svg>
+                    <span class="ms-3">Dashboard</span>
+                </a>
+            </li>
+            
+            <!-- Chat -->
+            <li>
+                <a href="/doctor/chat" class="flex items-center p-3 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-200 font-medium hover:shadow-md dark:hover:shadow-gray-900/50 hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span class="ms-3">Chat</span>
+                </a>
+            </li>
+            
+            <!-- Patient Management -->
+            <li>
+                <a href="/doctor/patients" class="flex items-center p-3 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-200 font-medium hover:shadow-md dark:hover:shadow-gray-900/50 hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"/>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Patients</span>
+                    <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">12</span>
+                </a>
+            </li>
+            
+            
+            
+            <!-- Medical Blog -->
+            <li>
+                <a href="/doctor/blog" class="flex items-center p-3 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-200 font-medium hover:shadow-md dark:hover:shadow-gray-900/50 hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm0 2h16v12H4V6Zm2 2a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H6Zm0 4a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H6Zm0 4a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2H6Z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Medical Blog</span>
+                </a>
+            </li>
+            
+            
+            <!-- Profile -->
+            <li>
+                <a href="/doctor/profile" class="flex items-center p-3 text-gray-900 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-200 font-medium hover:shadow-md dark:hover:shadow-gray-900/50 hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Profile</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</aside>

@@ -4,12 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.medtrackfit.services.impl.SecurityCustomUserDetailsService;
 
@@ -22,6 +26,9 @@ public class SecurityConfig {
     @Autowired
     @Lazy
     private OAuthAuthenticationSuccessHandler handler;
+    
+    @Autowired
+    private AuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     // Configure authentication provider
     @Bean
@@ -37,8 +44,9 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(authorize -> {
             // Allow unauthenticated access to /actuator/health for health checks
             authorize.requestMatchers("/actuator/health").permitAll();
-            // Require authentication for /user/**
+            // Require authentication for /user/** and /doctor/**
             authorize.requestMatchers("/user/**").authenticated();
+            authorize.requestMatchers("/doctor/**").authenticated();
             // Permit all other requests
             authorize.anyRequest().permitAll();
         });
@@ -47,11 +55,14 @@ public class SecurityConfig {
         httpSecurity.formLogin(formLogin -> {
             formLogin.loginPage("/login");
             formLogin.loginProcessingUrl("/authenticate");
-            formLogin.successForwardUrl("/user/dashboard");
+            formLogin.successHandler(customAuthenticationSuccessHandler);
             formLogin.usernameParameter("email");
             formLogin.passwordParameter("password");
         });
 
+        // Add custom authentication filter
+        httpSecurity.addFilterBefore(new CustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        
         // Disable CSRF
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
@@ -73,5 +84,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

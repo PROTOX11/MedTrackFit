@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions - MedTrackFit</title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <style>
+        .prescription-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .prescription-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-completed { background-color: #dbeafe; color: #1e40af; }
+        .status-expired { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Prescription Management</h1>
+                        <p class="text-green-100">Manage patient prescriptions and medication schedules</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            New Prescription
+                        </button>
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Print All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Search and Filters -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Search prescriptions by patient name, medication, or prescription ID..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div class="flex gap-2">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Pending</option>
+                            <option>Completed</option>
+                            <option>Expired</option>
+                        </select>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option>All Medications</option>
+                            <option>Cardiovascular</option>
+                            <option>Diabetes</option>
+                            <option>Respiratory</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescription Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">89</div>
+                    <div class="text-gray-600">Total Prescriptions</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">45</div>
+                    <div class="text-gray-600">Active</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2">12</div>
+                    <div class="text-gray-600">Pending</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2">8</div>
+                    <div class="text-gray-600">Expiring Soon</div>
+                </div>
+            </div>
+
+            <!-- Prescriptions List -->
+            <div class="space-y-6">
+                <!-- Active Prescription -->
+                <div class="prescription-card bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold mr-4">JS</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">John Smith - Lisinopril</h3>
+                                <p class="text-sm text-gray-600">Prescription ID: #RX001 | Patient ID: #P001</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 status-active rounded-full text-sm font-medium">Active</span>
+                            <span class="text-sm text-gray-500">Issued 5 days ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Medication</p>
+                            <p class="text-sm text-gray-900">Lisinopril 10mg</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Dosage</p>
+                            <p class="text-sm text-gray-900">1 tablet daily</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Duration</p>
+                            <p class="text-sm text-gray-900">30 days</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Refills</p>
+                            <p class="text-sm text-gray-900">2 remaining</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Print</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Pending Prescription -->
+                <div class="prescription-card bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-pink-500 flex items-center justify-center text-white font-semibold mr-4">MJ</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Mary Johnson - Metformin</h3>
+                                <p class="text-sm text-gray-600">Prescription ID: #RX002 | Patient ID: #P002</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 status-pending rounded-full text-sm font-medium">Pending</span>
+                            <span class="text-sm text-gray-500">Issued 2 days ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Medication</p>
+                            <p class="text-sm text-gray-900">Metformin 500mg</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Dosage</p>
+                            <p class="text-sm text-gray-900">2 tablets daily</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Duration</p>
+                            <p class="text-sm text-gray-900">90 days</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Refills</p>
+                            <p class="text-sm text-gray-900">3 remaining</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Print</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Completed Prescription -->
+                <div class="prescription-card bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold mr-4">SD</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Sarah Davis - Albuterol</h3>
+                                <p class="text-sm text-gray-600">Prescription ID: #RX003 | Patient ID: #P004</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 status-completed rounded-full text-sm font-medium">Completed</span>
+                            <span class="text-sm text-gray-500">Completed 1 week ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Medication</p>
+                            <p class="text-sm text-gray-900">Albuterol Inhaler</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Dosage</p>
+                            <p class="text-sm text-gray-900">As needed</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Duration</p>
+                            <p class="text-sm text-gray-900">60 days</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Refills</p>
+                            <p class="text-sm text-gray-900">0 remaining</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Print</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Expiring Soon Prescription -->
+                <div class="prescription-card bg-white rounded-lg shadow-lg p-6 border-l-4 border-red-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-red-500 flex items-center justify-center text-white font-semibold mr-4">RB</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Robert Brown - Atorvastatin</h3>
+                                <p class="text-sm text-gray-600">Prescription ID: #RX004 | Patient ID: #P003</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 status-expired rounded-full text-sm font-medium">Expiring Soon</span>
+                            <span class="text-sm text-gray-500">Expires in 3 days</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Medication</p>
+                            <p class="text-sm text-gray-900">Atorvastatin 20mg</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Dosage</p>
+                            <p class="text-sm text-gray-900">1 tablet daily</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Duration</p>
+                            <p class="text-sm text-gray-900">30 days</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Refills</p>
+                            <p class="text-sm text-gray-900">1 remaining</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Print</button>
+                        <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">Renew</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

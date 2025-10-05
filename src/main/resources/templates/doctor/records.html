@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - MedTrackFit</title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <style>
+        .record-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .record-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .priority-high { border-left: 4px solid #ef4444; }
+        .priority-medium { border-left: 4px solid #f59e0b; }
+        .priority-low { border-left: 4px solid #10b981; }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Medical Records</h1>
+                        <p class="text-indigo-100">Access and manage patient medical records</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Add New Record
+                        </button>
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Export Records
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Search and Filters -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Search records by patient name, ID, or diagnosis..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="flex gap-2">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>All Priorities</option>
+                            <option>High Priority</option>
+                            <option>Medium Priority</option>
+                            <option>Low Priority</option>
+                        </select>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>All Types</option>
+                            <option>Diagnosis</option>
+                            <option>Treatment</option>
+                            <option>Lab Results</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Records Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-indigo-600 mb-2">156</div>
+                    <div class="text-gray-600">Total Records</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2">12</div>
+                    <div class="text-gray-600">High Priority</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2">34</div>
+                    <div class="text-gray-600">Pending Review</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">110</div>
+                    <div class="text-gray-600">Completed</div>
+                </div>
+            </div>
+
+            <!-- Medical Records List -->
+            <div class="space-y-6">
+                <!-- High Priority Record -->
+                <div class="record-card priority-high bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-red-500 flex items-center justify-center text-white font-semibold mr-4">JS</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">John Smith - Emergency Admission</h3>
+                                <p class="text-sm text-gray-600">Patient ID: #P001 | Record ID: #R001</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">High Priority</span>
+                            <span class="text-sm text-gray-500">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Diagnosis</p>
+                            <p class="text-sm text-gray-900">Acute Myocardial Infarction</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Treatment</p>
+                            <p class="text-sm text-gray-900">Emergency PCI, Aspirin, Clopidogrel</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Status</p>
+                            <p class="text-sm text-gray-900">Stable, Monitoring</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit Record</button>
+                    </div>
+                </div>
+
+                <!-- Medium Priority Record -->
+                <div class="record-card priority-medium bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-pink-500 flex items-center justify-center text-white font-semibold mr-4">MJ</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Mary Johnson - Diabetes Management</h3>
+                                <p class="text-sm text-gray-600">Patient ID: #P002 | Record ID: #R002</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">Medium Priority</span>
+                            <span class="text-sm text-gray-500">1 day ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Diagnosis</p>
+                            <p class="text-sm text-gray-900">Type 2 Diabetes Mellitus</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Treatment</p>
+                            <p class="text-sm text-gray-900">Metformin, Lifestyle Modification</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Status</p>
+                            <p class="text-sm text-gray-900">Improving, Follow-up needed</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit Record</button>
+                    </div>
+                </div>
+
+                <!-- Low Priority Record -->
+                <div class="record-card priority-low bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold mr-4">SD</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Sarah Davis - Routine Checkup</h3>
+                                <p class="text-sm text-gray-600">Patient ID: #P004 | Record ID: #R003</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Low Priority</span>
+                            <span class="text-sm text-gray-500">3 days ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Diagnosis</p>
+                            <p class="text-sm text-gray-900">Well-controlled Asthma</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Treatment</p>
+                            <p class="text-sm text-gray-900">Inhaler adjustment, Exercise plan</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Status</p>
+                            <p class="text-sm text-gray-900">Stable, No concerns</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit Record</button>
+                    </div>
+                </div>
+
+                <!-- Lab Results Record -->
+                <div class="record-card priority-medium bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold mr-4">RB</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Robert Brown - Lab Results</h3>
+                                <p class="text-sm text-gray-600">Patient ID: #P003 | Record ID: #R004</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">Lab Results</span>
+                            <span class="text-sm text-gray-500">5 days ago</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Test Type</p>
+                            <p class="text-sm text-gray-900">Complete Blood Count, Lipid Panel</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Results</p>
+                            <p class="text-sm text-gray-900">Cholesterol: 240 mg/dL (High)</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Status</p>
+                            <p class="text-sm text-gray-900">Results available, Review needed</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300">View Details</button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Edit Record</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Management - MedTrackFit</title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <style>
+        .patient-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .patient-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-active { background-color: #dcfce7; color: #166534; }
+        .status-recovering { background-color: #fef3c7; color: #92400e; }
+        .status-critical { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">Patient Management</h1>
+                        <p class="text-blue-100">Manage your patients and their medical records</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Find Patient
+                        </button>
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Add New Patient
+                        </button>
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Export Records
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Search and Filters -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" placeholder="Search patients by name, ID, or condition..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex gap-2">
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Recovering</option>
+                            <option>Critical</option>
+                        </select>
+                        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>All Specializations</option>
+                            <option>Cardiology</option>
+                            <option>Neurology</option>
+                            <option>Oncology</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">24</div>
+                    <div class="text-gray-600">Total Patients</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">18</div>
+                    <div class="text-gray-600">Active Cases</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2">4</div>
+                    <div class="text-gray-600">Recovering</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2">2</div>
+                    <div class="text-gray-600">Critical</div>
+                </div>
+            </div>
+
+            <!-- Patient List -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-800">Patient List</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Condition</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Visit</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="patient-card">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">JS</div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">John Smith</div>
+                                            <div class="text-sm text-gray-500">Male, 45 years</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#P001</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Hypertension</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge status-active">Active</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 days ago</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-3">Chat</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                </td>
+                            </tr>
+                            <tr class="patient-card">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-pink-500 flex items-center justify-center text-white font-semibold">MJ</div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Mary Johnson</div>
+                                            <div class="text-sm text-gray-500">Female, 38 years</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#P002</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Diabetes Type 2</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge status-recovering">Recovering</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 week ago</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-3">Chat</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                </td>
+                            </tr>
+                            <tr class="patient-card">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-red-500 flex items-center justify-center text-white font-semibold">RB</div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Robert Brown</div>
+                                            <div class="text-sm text-gray-500">Male, 62 years</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#P003</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Heart Disease</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge status-critical">Critical</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3 hours ago</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-3">Chat</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                </td>
+                            </tr>
+                            <tr class="patient-card">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">SD</div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Sarah Davis</div>
+                                            <div class="text-sm text-gray-500">Female, 29 years</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#P004</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Asthma</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge status-active">Active</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5 days ago</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-3">Chat</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

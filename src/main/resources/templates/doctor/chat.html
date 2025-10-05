@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content}, ~{::title}, ~{::script}, ~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:fragment="title">Doctor Chat - MedTrackFit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/flowbite@1.8.1/dist/flowbite.js"></script>
+    <link href="https://unpkg.com/flowbite@1.8.1/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="content">
+        <!-- Main Content with Flowbite styling -->
+        <div class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4 md:p-6">
+            <!-- Header Section with Flowbite Card -->
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900">Doctor Dashboard</h1>
+                                <p class="text-sm text-gray-600">Manage patient communications</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Bar with Flowbite Input -->
+                        <div class="relative">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" 
+                                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm" 
+                                       placeholder="Search patients..." 
+                                       th:attr="data-search=true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patients Section with Flowbite Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6" th:if="${patients != null}">
+                    <div class="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" 
+                         th:each="patient : ${patients}">
+                        <div class="p-6">
+                            <!-- Patient Avatar -->
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900" th:text="${patient.name}">Patient Name</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-circle text-green-400 mr-1"></i>
+                                            Active
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Patient Info -->
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-user-md text-pink-500 mr-2"></i>
+                                    <span th:text="'Mentor: ' + ${patient.mentorName}">Mentor: Dr. Example</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-heartbeat text-red-500 mr-2"></i>
+                                    <span th:text="'Status: ' + ${patient.status}">Status: Suffering</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="space-y-2">
+                                <button class="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
+                                        th:attr="data-patient-id=${patient.id}" 
+                                        onclick="openIndividualChat(this)">
+                                    <i class="fas fa-comments"></i>
+                                    <span>Chat Individually</span>
+                                </button>
+                                <button class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
+                                        onclick="openGroupChat()">
+                                    <i class="fas fa-users"></i>
+                                    <span>Chat with Mentor</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+                <!-- Empty State -->
+                <div th:if="${patients == null || #lists.isEmpty(patients)}" 
+                     class="bg-white rounded-lg shadow-md border border-gray-200 p-12 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-friends text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No patients assigned yet</h3>
+                    <p class="text-gray-600">Patients will appear here once they are assigned to you.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Modal with Flowbite Modal -->
+        <div id="chatModal" 
+             class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+            <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 shadow-lg rounded-md bg-white">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-comments text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white">Patient Communication</h3>
+                        </div>
+                        <button onclick="closeChat()" 
+                                class="text-white hover:text-gray-200 transition-colors duration-200">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Chat Tabs -->
+                    <div class="mt-4 flex space-x-1 bg-white bg-opacity-20 rounded-lg p-1">
+                        <button class="tab-btn flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200 bg-white text-purple-600" 
+                                onclick="switchTab(event, 'individual')">
+                            <i class="fas fa-user mr-2"></i>Individual
+                        </button>
+                        <button class="tab-btn flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200 text-white hover:bg-white hover:bg-opacity-20" 
+                                onclick="switchTab(event, 'group')">
+                            <i class="fas fa-users mr-2"></i>Group
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Body -->
+                <div class="bg-gray-50 h-80 overflow-y-auto p-4">
+                    <!-- Individual Chat -->
+                    <div id="individual-chat" class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-gray-600 text-sm"></i>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                                <p class="text-sm text-gray-800">Hello Doctor, how are you?</p>
+                                <p class="text-xs text-gray-500 mt-1">2:30 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
+                                <p class="text-sm">I'm here to help. What's bothering you?</p>
+                                <p class="text-xs text-pink-100 mt-1">2:32 PM</p>
+                            </div>
+                            <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group Chat -->
+                    <div id="group-chat" class="space-y-4 hidden">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white text-sm"></i>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 shadow-sm max-w-xs">
+                                <p class="text-sm text-gray-800"><span class="font-semibold">Mentor:</span> Patient is improving.</p>
+                                <p class="text-xs text-gray-500 mt-1">2:30 PM</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3 justify-end">
+                            <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
+                                <p class="text-sm"><span class="font-semibold">Doctor:</span> Noted, let's discuss further.</p>
+                                <p class="text-xs text-pink-100 mt-1">2:32 PM</p>
+                            </div>
+                            <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-md text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="bg-white border-t border-gray-200 p-4">
+                    <div class="flex space-x-3">
+                        <div class="flex-1">
+                            <input type="text" 
+                                   id="messageInput"
+                                   placeholder="Type a message..." 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200">
+            </div>
+                        <button onclick="sendMessage()" 
+                                class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Send</span>
+                        </button>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="script">
+        <script th:inline="javascript">
+            /* Thymeleaf JS Integration */
+            /* eslint-disable */
+            /*<![CDATA[*/
+            // Patient data from model
+            var patients = /*[[${patients}]]*/ [];
+            /*]]>*/
+            /* eslint-enable */
+
+            function openIndividualChat(btn) {
+                var patientId = btn.getAttribute('data-patient-id');
+                document.getElementById('chatModal').classList.remove('hidden');
+                // Here, integrate with WebSocket or AJAX to load patient-specific chat
+                console.log('Opening individual chat for patient ID: ' + patientId);
+                switchTab({target: document.querySelector('.tab-btn:first-child')}, 'individual');
+            }
+
+            function openGroupChat() {
+                document.getElementById('chatModal').classList.remove('hidden');
+                // Load group chat with mentor
+                switchTab({target: document.querySelector('.tab-btn:last-child')}, 'group');
+            }
+
+            function closeChat() {
+                document.getElementById('chatModal').classList.add('hidden');
+            }
+
+            function switchTab(event, tab) {
+                var tabs = document.querySelectorAll('.tab-btn');
+                tabs.forEach(t => {
+                    t.classList.remove('bg-white', 'text-purple-600');
+                    t.classList.add('text-white', 'hover:bg-white', 'hover:bg-opacity-20');
+                });
+                
+                event.target.classList.remove('text-white', 'hover:bg-white', 'hover:bg-opacity-20');
+                event.target.classList.add('bg-white', 'text-purple-600');
+
+                var individual = document.getElementById('individual-chat');
+                var group = document.getElementById('group-chat');
+                
+                if (tab === 'individual') {
+                    individual.classList.remove('hidden');
+                    group.classList.add('hidden');
+                } else {
+                    individual.classList.add('hidden');
+                    group.classList.remove('hidden');
+                }
+            }
+
+            function sendMessage() {
+                var input = document.getElementById('messageInput');
+                var message = input.value.trim();
+                if (message) {
+                    var chatBody = document.getElementById('individual-chat');
+                    if (!document.getElementById('group-chat').classList.contains('hidden')) {
+                        chatBody = document.getElementById('group-chat');
+                    }
+                    
+                    var messageDiv = document.createElement('div');
+                    messageDiv.className = 'flex items-start space-x-3 justify-end';
+                    messageDiv.innerHTML = `
+                        <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
+                            <p class="text-sm">${message}</p>
+                            <p class="text-xs text-pink-100 mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-md text-white text-sm"></i>
+                        </div>
+                    `;
+                    
+                    chatBody.appendChild(messageDiv);
+                    input.value = '';
+                    // Here, send via WebSocket/AJAX to backend
+                    console.log('Sending message: ' + message);
+                    chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll to bottom
+                }
+            }
+
+            // Search functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                var searchBar = document.querySelector('input[data-search]');
+                if (searchBar) {
+                    searchBar.addEventListener('input', function(e) {
+                        var query = e.target.value.toLowerCase();
+                        var cards = document.querySelectorAll('[th\\:each]');
+                        cards.forEach(card => {
+                            var name = card.querySelector('h3').textContent.toLowerCase();
+                            card.style.display = name.includes(query) ? 'block' : 'none';
+                        });
+                    });
+                }
+
+                // Add Enter key support for message input
+                var messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            sendMessage();
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

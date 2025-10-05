@@ -30,6 +30,19 @@ public class Contact {
 
     @ManyToOne
     private User user;
+    
+    @ManyToOne
+    private Doctor doctor;
+    
+    @ManyToOne
+    private HealthMentor mentor;
+    
+    @ManyToOne
+    private SufferingPatient sufferingPatient;
+    
+    @ManyToOne
+    private RecoveredPatient recoveredPatient;
+    
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<SocialLink> socialLinks = new ArrayList<>();
 }

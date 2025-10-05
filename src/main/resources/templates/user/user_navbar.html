@@ -1,11 +1,17 @@
 <nav data-th-fragment="user-navbar" class="fixed top-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-l border-gray-200 dark:border-gray-700 rounded-bl-[35px]">
     <div class="flex items-center p-4">
+        <!-- Mobile Sidebar Toggle Button -->
+        <button id="sidebar-open-toggle" class="sm:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200" aria-label="Open sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        
         <!-- Navbar Content (Dark Mode Toggle and Profile Picture) -->
         <div class="flex items-center space-x-4 ml-auto">
             <!-- Dark Mode Toggle -->
-            <button id="theme-change-button" class="flex items-center space-x-2 px-3 py-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors">
-                <i class="fa-solid fa-circle-half-stroke"></i>
-                <span class="text-sm" id="theme-label">Dark</span>
+            <button id="theme-change-button" class="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" title="Toggle theme">
+                <i id="theme-icon" class="fa-solid fa-sun"></i>
             </button>
 
             <!-- Profile Picture -->

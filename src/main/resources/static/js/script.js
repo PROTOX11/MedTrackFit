@@ -17,11 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebar.removeAttribute('data-drawer-toggle');
         console.log("Flowbite drawer attributes removed from #logo-sidebar");
     }
+    
+    // Prevent sidebar duplication
+    const sidebars = document.querySelectorAll('#logo-sidebar');
+    if (sidebars.length > 1) {
+        console.warn('Multiple sidebars detected, removing duplicates');
+        for (let i = 1; i < sidebars.length; i++) {
+            sidebars[i].remove();
+        }
+    }
 });
 
 // Theme switching functionality
 function changeTheme() {
     document.querySelector("html").classList.add(currentTheme);
+    
+    // Initialize the icon based on current theme
+    updateButtonIcon(currentTheme);
 
     const changeThemeButton = document.querySelector('#theme-change-button');
     if (changeThemeButton) {
@@ -36,17 +48,18 @@ function changeTheme() {
             setTheme(currentTheme);
             document.querySelector("html").classList.remove(oldTheme);
             document.querySelector("html").classList.add(currentTheme);
-            updateButtonText(currentTheme);
+            updateButtonIcon(currentTheme);
         });
     } else {
         console.warn("Theme change button (#theme-change-button) not found");
     }
 }
 
-function updateButtonText(theme) {
-    const changeThemeButton = document.querySelector('#theme-change-button');
-    if (changeThemeButton) {
-        changeThemeButton.querySelector("span").textContent = theme === "dark" ? "Light" : "Dark";
+function updateButtonIcon(theme) {
+    const themeIcon = document.querySelector('#theme-icon');
+    if (themeIcon) {
+        // Change icon based on theme: sun for light mode, moon for dark mode
+        themeIcon.className = theme === "dark" ? "fa-solid fa-moon" : "fa-solid fa-sun";
     }
 }
 
@@ -101,12 +114,14 @@ function setupSidebarToggle() {
         sidebar.style.zIndex = '-1'; // Move behind other elements
         backdrop.style.display = 'none';
         openButton.classList.remove('hidden');
+        console.log('Sidebar initialized for mobile - hidden');
     } else {
         sidebar.style.transform = 'translateX(0)';
         sidebar.style.pointerEvents = 'auto'; // Enable interaction
         sidebar.style.zIndex = '40'; // Default z-index
         backdrop.style.display = 'none';
         openButton.classList.add('hidden');
+        console.log('Sidebar initialized for desktop - visible');
     }
 
     // Open sidebar function
@@ -118,6 +133,7 @@ function setupSidebarToggle() {
         backdrop.style.display = 'block';
         backdrop.style.opacity = '1';
         openButton.classList.add('hidden');
+        console.log('Sidebar opened successfully');
     };
 
     // Close sidebar function
@@ -131,12 +147,25 @@ function setupSidebarToggle() {
             backdrop.style.display = 'none';
         }, 300); // Match transition duration
         openButton.classList.remove('hidden');
+        console.log('Sidebar closed successfully');
     };
 
     // Add event listeners
-    openButton.addEventListener('click', openSidebar);
-    closeButton.addEventListener('click', closeSidebar);
-    backdrop.addEventListener('click', closeSidebar);
+    openButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openSidebar();
+    });
+    closeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeSidebar();
+    });
+    backdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeSidebar();
+    });
 
     // Handle window resize
     window.addEventListener('resize', () => {

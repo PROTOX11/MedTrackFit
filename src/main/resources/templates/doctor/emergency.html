@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contacts - MedTrackFit</title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <style>
+        .emergency-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .emergency-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .priority-critical { border-left: 4px solid #ef4444; }
+        .priority-high { border-left: 4px solid #f59e0b; }
+        .priority-normal { border-left: 4px solid #10b981; }
+        .emergency-button {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Emergency Header -->
+        <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">🚨 Emergency Contacts</h1>
+                        <p class="text-red-100">Critical emergency contacts and protocols</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button class="emergency-button px-6 py-3 rounded-lg text-white font-bold hover:from-red-700 hover:to-red-900 transition duration-300">
+                            🚨 EMERGENCY CALL
+                        </button>
+                        <button class="bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition duration-300">
+                            Add Contact
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Emergency Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2">3</div>
+                    <div class="text-gray-600">Active Emergencies</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2">12</div>
+                    <div class="text-gray-600">High Priority</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">45</div>
+                    <div class="text-gray-600">Normal Contacts</div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">8</div>
+                    <div class="text-gray-600">Specialists</div>
+                </div>
+            </div>
+
+            <!-- Critical Emergency Contacts -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🚨 Critical Emergency Contacts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="emergency-card priority-critical bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mr-4">🚑</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Emergency Medical Services</h3>
+                                    <p class="text-sm text-gray-600">Ambulance & Emergency Response</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold text-red-600">911</p>
+                                <p class="text-sm text-gray-500">24/7 Available</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">Call Now</button>
+                            <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Details</button>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-critical bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mr-4">🏥</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Hospital Emergency</h3>
+                                    <p class="text-sm text-gray-600">City General Hospital</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-bold text-red-600">(555) 911-0000</p>
+                                <p class="text-sm text-gray-500">Emergency Room</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">Call Now</button>
+                            <button class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- High Priority Contacts -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">⚠️ High Priority Contacts</h2>
+                <div class="space-y-4">
+                    <div class="emergency-card priority-high bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold mr-4">👨‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Sarah Wilson - Cardiologist</h3>
+                                    <p class="text-sm text-gray-600">Emergency Cardiac Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 123-4567</p>
+                                    <p class="text-sm text-gray-500">Available 24/7</p>
+                                </div>
+                                <button class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-high bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold mr-4">👩‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Michael Chen - Neurologist</h3>
+                                    <p class="text-sm text-gray-600">Emergency Neurology Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 234-5678</p>
+                                    <p class="text-sm text-gray-500">On-call tonight</p>
+                                </div>
+                                <button class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-high bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold mr-4">👨‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Emily Rodriguez - Trauma Surgeon</h3>
+                                    <p class="text-sm text-gray-600">Emergency Trauma Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 345-6789</p>
+                                    <p class="text-sm text-gray-500">Available now</p>
+                                </div>
+                                <button class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Normal Priority Contacts -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">📞 Regular Contacts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="emergency-card priority-normal bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold mr-4">👨‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. James Thompson - General Medicine</h3>
+                                    <p class="text-sm text-gray-600">Primary Care Physician</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 456-7890</p>
+                                    <p class="text-sm text-gray-500">Mon-Fri 9AM-5PM</p>
+                                </div>
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-normal bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold mr-4">👩‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Lisa Park - Pediatrician</h3>
+                                    <p class="text-sm text-gray-600">Pediatric Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 567-8901</p>
+                                    <p class="text-sm text-gray-500">Mon-Fri 8AM-6PM</p>
+                                </div>
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-normal bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold mr-4">👨‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Robert Kim - Psychiatrist</h3>
+                                    <p class="text-sm text-gray-600">Mental Health Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 678-9012</p>
+                                    <p class="text-sm text-gray-500">Mon-Fri 10AM-4PM</p>
+                                </div>
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-card priority-normal bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center text-white font-bold mr-4">👩‍⚕️</div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Dr. Maria Garcia - Oncologist</h3>
+                                    <p class="text-sm text-gray-600">Cancer Specialist</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">(555) 789-0123</p>
+                                    <p class="text-sm text-gray-500">Mon-Fri 9AM-5PM</p>
+                                </div>
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">Call</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Protocols -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Emergency Protocols</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 bg-red-50 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">🚨 Critical Emergency Protocol</h3>
+                        <ol class="text-sm text-red-700 space-y-1">
+                            <li>1. Call 911 immediately</li>
+                            <li>2. Notify hospital emergency room</li>
+                            <li>3. Alert on-call specialist</li>
+                            <li>4. Document incident</li>
+                        </ol>
+                    </div>
+                    <div class="p-4 bg-yellow-50 rounded-lg">
+                        <h3 class="font-semibold text-yellow-800 mb-2">⚠️ High Priority Protocol</h3>
+                        <ol class="text-sm text-yellow-700 space-y-1">
+                            <li>1. Contact specialist directly</li>
+                            <li>2. Schedule urgent consultation</li>
+                            <li>3. Prepare patient records</li>
+                            <li>4. Follow up within 24 hours</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

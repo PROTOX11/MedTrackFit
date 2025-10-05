@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - MedTrackFit</title>
+    <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
+    <style>
+        /* Enhanced Color Schemes */
+        .doctor-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .patient-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .blog-card {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .post-card {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+        }
+        
+        /* Glassmorphism Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .dark .glass-card {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+        }
+        
+        /* Enhanced Feature Cards */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        /* Animated Statistics */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Counter Animation */
+        .counter {
+            font-variant-numeric: tabular-nums;
+            transition: all 0.3s ease;
+        }
+        
+        /* Pulse Animation for Active Elements */
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Floating Animation */
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Interactive Buttons */
+        .interactive-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .interactive-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .interactive-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        /* Activity Feed Enhancements */
+        .activity-item {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .activity-item:hover {
+            transform: translateX(5px);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent);
+        }
+        
+        /* Weather Widget */
+        .weather-widget {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .weather-widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Dark mode optimizations */
+        .dark .feature-card {
+            background-color: rgb(31 41 55);
+            border: 1px solid rgb(55 65 81);
+        }
+        .dark .feature-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .dark .bg-white {
+            background-color: rgb(31 41 55);
+        }
+        .dark .text-gray-600 {
+            color: rgb(156 163 175);
+        }
+        .dark .text-gray-800 {
+            color: rgb(243 244 246);
+        }
+        .dark .bg-blue-50 {
+            background-color: rgb(30 58 138);
+        }
+        .dark .bg-green-50 {
+            background-color: rgb(21 128 61);
+        }
+        .dark .bg-purple-50 {
+            background-color: rgb(88 28 135);
+        }
+        
+        /* Enhanced button styling for better visibility */
+        .feature-card a {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .feature-card a:hover::before {
+            left: 100%;
+        }
+        
+        /* Dark mode button enhancements */
+        .dark .feature-card a {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark .feature-card a:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Enhanced text visibility in light mode */
+        .feature-card h3 {
+            color: rgb(17 24 39) !important;
+        }
+        
+        .dark .feature-card h3 {
+            color: rgb(243 244 246) !important;
+        }
+        
+        .feature-card .text-gray-700 {
+            color: rgb(55 65 81) !important;
+        }
+        
+        .dark .feature-card .text-gray-700 {
+            color: rgb(156 163 175) !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Doctor Profile Picture in Top Right (replacing dark mode toggle) -->
+        <div class="fixed top-4 right-4 z-50">
+            <div class="relative group">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-lg font-bold shadow-lg cursor-pointer hover:scale-110 transition-all duration-300">
+                    <span th:text="${doctor.name != null ? doctor.name.substring(0,2).toUpperCase() : 'DR'}">DR</span>
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                
+                <!-- Profile Dropdown -->
+                <div class="absolute top-14 right-0 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <div class="p-4">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                <span th:text="${doctor.name != null ? doctor.name.substring(0,2).toUpperCase() : 'DR'}">DR</span>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-900 dark:text-white" th:text="${doctor.name}">Dr. Name</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${doctor.specialization ?: 'General Medicine'}">General Medicine</p>
+                            </div>
+                        </div>
+                        <div class="border-t dark:border-gray-700 pt-3">
+                            <a href="/doctor/profile" class="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                                👤 View Profile
+                            </a>
+                            <a href="/doctor/settings" class="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                                ⚙️ Settings
+                            </a>
+                            <a href="/logout" class="block px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                                🚪 Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Doctor Dashboard Header -->
+        <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-16 overflow-hidden">
+            <!-- Animated Background Elements -->
+            <div class="absolute inset-0">
+                <div class="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full float-animation"></div>
+                <div class="absolute top-20 right-20 w-16 h-16 bg-white bg-opacity-5 rounded-full float-animation" style="animation-delay: 1s;"></div>
+                <div class="absolute bottom-10 left-1/4 w-12 h-12 bg-white bg-opacity-15 rounded-full float-animation" style="animation-delay: 2s;"></div>
+                <div class="absolute bottom-20 right-1/3 w-8 h-8 bg-white bg-opacity-20 rounded-full float-animation" style="animation-delay: 0.5s;"></div>
+            </div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h1 class="text-5xl font-bold mb-3 gradient-text">
+                            Welcome, Dr. <span th:text="${doctor.name}" class="text-white">Doctor Name</span>
+                        </h1>
+                        <p class="text-blue-100 text-xl mb-4">Your medical expertise is making a difference</p>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-400 rounded-full pulse-animation"></div>
+                                <span class="text-sm">Online</span>
+                            </div>
+                            <div class="text-sm text-blue-200">
+                                <span id="current-time"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right space-y-4">
+                        <!-- Doctor Profile Section -->
+                        <div class="glass-card rounded-xl p-6 backdrop-blur-lg">
+                            <div class="flex items-center space-x-4">
+                                <div class="relative">
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                                        <span th:text="${doctor.name != null ? doctor.name.substring(0,2).toUpperCase() : 'DR'}">DR</span>
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                                        <div class="w-2 h-2 bg-white rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-blue-100 mb-1">Dr. <span th:text="${doctor.name}">Doctor Name</span></p>
+                                    <p class="text-lg font-bold text-white" th:text="${doctor.specialization ?: 'General Medicine'}">General Medicine</p>
+                                    <p class="text-xs text-blue-200">Online</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="weather-widget">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm opacity-90">Today's Weather</p>
+                                    <p class="text-2xl font-bold">22°C</p>
+                                    <p class="text-sm opacity-80">Sunny</p>
+                                </div>
+                                <div class="text-4xl">☀️</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Quick Actions</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Access your most important tools</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Chat with Patients & Mentors -->
+                <div class="feature-card bg-pink-50 dark:bg-pink-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-pink-200 dark:border-pink-800">
+                    <div class="patient-card p-6 text-white relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-pink-500/90 to-rose-500/90"></div>
+                        <div class="relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Patient Chat</h3>
+                                    <p class="text-pink-100 font-medium">Connect with suffering patients</p>
+                                </div>
+                                <div class="text-4xl opacity-90">💬</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-pink-50 dark:bg-pink-900/20">
+                        <p class="text-pink-800 dark:text-pink-200 mb-4">Communicate directly with patients who need medical guidance and support.</p>
+                        <a href="/doctor/chat" class="block w-full bg-pink-500 hover:bg-pink-600 dark:bg-pink-600 dark:hover:bg-pink-700 text-white text-center py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg dark:shadow-pink-900/50 hover:scale-105 interactive-btn">
+                            Open Chat
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- Patient Management -->
+                <div class="feature-card bg-blue-50 dark:bg-blue-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-blue-200 dark:border-blue-800">
+                    <div class="doctor-card p-6 text-white relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/90 to-purple-500/90"></div>
+                        <div class="relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Patient Records</h3>
+                                    <p class="text-blue-100 font-medium">Manage patient information</p>
+                                </div>
+                                <div class="text-4xl opacity-90">📋</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-blue-50 dark:bg-blue-900/20">
+                        <p class="text-blue-800 dark:text-blue-200 mb-4">Access and manage patient records and medical history.</p>
+                        <a href="/doctor/patients" class="block w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white text-center py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg dark:shadow-blue-900/50 hover:scale-105 interactive-btn">
+                            View Patients
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Medical Resources -->
+                <div class="feature-card bg-purple-50 dark:bg-purple-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-purple-200 dark:border-purple-800">
+                    <div class="p-6 text-white relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/90 to-purple-500/90"></div>
+                        <div class="relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Medical Resources</h3>
+                                    <p class="text-indigo-100 font-medium">Access medical databases</p>
+                                </div>
+                                <div class="text-4xl opacity-90">📚</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-purple-50 dark:bg-purple-900/20">
+                        <p class="text-purple-800 dark:text-purple-200 mb-4">Access medical databases, drug information, and treatment protocols.</p>
+                        <a href="/doctor/resources" class="block w-full bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-center py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg dark:shadow-indigo-900/50 hover:scale-105 interactive-btn">
+                            Access Resources
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Write New Post -->
+                <div class="feature-card bg-emerald-50 dark:bg-emerald-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-emerald-200 dark:border-emerald-800">
+                    <div class="post-card p-6 text-white relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/90 to-teal-500/90"></div>
+                        <div class="relative z-10">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Write New Post</h3>
+                                    <p class="text-emerald-100 font-medium">Share medical knowledge</p>
+                                </div>
+                                <div class="text-4xl opacity-90">📝</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-emerald-50 dark:bg-emerald-900/20">
+                        <p class="text-emerald-800 dark:text-emerald-200 mb-4">Create and publish articles about health concerns and medical advice.</p>
+                        <a href="/doctor/blog" class="block w-full bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white text-center py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg dark:shadow-emerald-900/50 hover:scale-105 interactive-btn">
+                            Write Post
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Enhanced Performance Overview with Charts -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Performance Overview</h2>
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-400 rounded-full pulse-animation"></div>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Live Data</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Statistics Cards -->
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 text-center border dark:border-gray-700 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500 bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                        <div class="relative z-10">
+                            <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2 counter" data-target="${doctor.doctorPerformance?.patientsHelped ?: 0}">0</div>
+                            <div class="text-gray-600 dark:text-gray-300 font-medium">Patients Helped</div>
+                            <div class="text-sm text-green-500 mt-2">↗ +12% this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 text-center border dark:border-gray-700 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-green-500 bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                        <div class="relative z-10">
+                            <div class="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 counter" data-target="${doctor.doctorPerformance?.consultationsGiven ?: 0}">0</div>
+                            <div class="text-gray-600 dark:text-gray-300 font-medium">Consultations</div>
+                            <div class="text-sm text-green-500 mt-2">↗ +8% this week</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 text-center border dark:border-gray-700 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-500 bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                        <div class="relative z-10">
+                            <div class="text-4xl font-bold text-yellow-600 dark:text-yellow-400 mb-2 counter" data-target="${doctor.doctorPerformance?.satisfactionRating ?: '0.0'}">0.0</div>
+                            <div class="text-gray-600 dark:text-gray-300 font-medium">Rating</div>
+                            <div class="text-sm text-green-500 mt-2">↗ +0.3 this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 text-center border dark:border-gray-700 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-purple-500 bg-opacity-10 rounded-full -translate-y-10 translate-x-10"></div>
+                        <div class="relative z-10">
+                            <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2 counter" data-target="${doctor.doctorPerformance?.yearsActive ?: 0}">0</div>
+                            <div class="text-gray-600 dark:text-gray-300 font-medium">Years Active</div>
+                            <div class="text-sm text-blue-500 mt-2">Experienced Professional</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Performance Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 border dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Weekly Performance</h3>
+                    <div class="chart-container">
+                        <canvas id="performanceChart" width="300" height="200"></canvas>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Recent Activity -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Recent Activity</h2>
+                <button class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium">
+                    View All →
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Activity Feed -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 border dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Activity Feed</h3>
+                    <div class="space-y-4">
+                        <div class="activity-item flex items-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border dark:border-blue-800">
+                            <div class="text-blue-500 dark:text-blue-400 mr-4 text-2xl">💬</div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900 dark:text-gray-100">New chat message from patient</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">Sarah Johnson - 2 minutes ago</p>
+                            </div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full pulse-animation"></div>
+                        </div>
+                        
+                        <div class="activity-item flex items-center p-4 bg-green-50 dark:bg-green-900/30 rounded-lg border dark:border-green-800">
+                            <div class="text-green-500 dark:text-green-400 mr-4 text-2xl">📋</div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900 dark:text-gray-100">Updated patient record</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">John Doe - 1 hour ago</p>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="activity-item flex items-center p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg border dark:border-yellow-800">
+                            <div class="text-yellow-500 dark:text-yellow-400 mr-4 text-2xl">📝</div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900 dark:text-gray-100">Published new blog post</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">"Diabetes Management Tips" - 5 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Notifications -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 border dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Notifications</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-red-50 dark:bg-red-900/30 rounded-lg border dark:border-red-800">
+                            <div class="text-red-500 dark:text-red-400 mr-3 text-xl">🚨</div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900 dark:text-gray-100 text-sm">Urgent: Patient requires immediate attention</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-xs">Michael Chen - 10 minutes ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg border dark:border-orange-800">
+                            <div class="text-orange-500 dark:text-orange-400 mr-3 text-xl">⏰</div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900 dark:text-gray-100 text-sm">Appointment reminder</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-xs">Emily Rodriguez - 2:00 PM today</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border dark:border-blue-800">
+                            <div class="text-blue-500 dark:text-blue-400 mr-3 text-xl">📊</div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900 dark:text-gray-100 text-sm">Monthly report ready</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-xs">Performance analytics - 1 day ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced JavaScript for Animations and Interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Animated Counter Function
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        // Initialize counters when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate counters
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target')) || 0;
+                animateCounter(counter, target);
+            });
+
+            // Update current time
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                document.getElementById('current-time').textContent = timeString;
+            }
+            
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Initialize performance chart
+            const ctx = document.getElementById('performanceChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Consultations',
+                            data: [12, 19, 15, 25, 22, 18, 24],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'Patients Helped',
+                            data: [8, 15, 12, 20, 18, 14, 19],
+                            borderColor: 'rgb(16, 185, 129)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Add hover effects to feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Add click animations to buttons
+            const buttons = document.querySelectorAll('.interactive-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards for scroll animations
+            const animatedElements = document.querySelectorAll('.feature-card, .stat-card, .activity-item');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Add ripple effect CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
