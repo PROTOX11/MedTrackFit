@@ -315,6 +315,69 @@ public class UserController { // Removed incorrect generic type <usersPerformanc
         return "redirect:/user/profile";
     }
 
+    @RequestMapping("/edit-profile")
+    public String editProfile(Model model, Authentication authentication) {
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        logger.info("User editing profile: {}", username);
+        User user = userService.getUserByEmail(username);
+        logger.info("User name: {}, email: {}", user.getName(), user.getEmail());
+        model.addAttribute("loggedInUser", user);
+        return "user/edit-profile";
+    }
+
+    @PostMapping("/update-profile")
+    public String updateProfile(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(value = "role", required = false) String role,
+            @RequestParam(value = "about", required = false) String about,
+            @RequestParam(value = "medicalHistory", required = false) String medicalHistory,
+            @RequestParam(value = "allergies", required = false) String allergies,
+            @RequestParam(value = "primaryGoal", required = false) String primaryGoal,
+            @RequestParam(value = "targetDate", required = false) String targetDate,
+            @RequestParam(value = "additionalGoals", required = false) String additionalGoals,
+            @RequestParam(value = "emergencyContactName", required = false) String emergencyContactName,
+            @RequestParam(value = "emergencyContactPhone", required = false) String emergencyContactPhone,
+            @RequestParam(value = "emergencyContactRelation", required = false) String emergencyContactRelation,
+            Authentication authentication,
+            Model model) {
+        
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        User user = userService.getUserByEmail(username);
+
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        try {
+            // Update basic information
+            user.setName(name);
+            user.setEmail(email);
+            if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+                user.setPhoneNumber(phoneNumber);
+            }
+            if (role != null && !role.trim().isEmpty()) {
+                user.setRole(role);
+            }
+            if (about != null && !about.trim().isEmpty()) {
+                user.setAbout(about);
+            }
+
+            // Save the updated user
+            userService.updatUser(user);
+            logger.info("Profile updated successfully for user: {}", username);
+            
+            return "redirect:/user/profile?success=true";
+        } catch (Exception e) {
+            logger.error("Failed to update profile for user: {}", username, e);
+            model.addAttribute("error", "Failed to update profile: " + e.getMessage());
+            model.addAttribute("loggedInUser", user);
+            return "user/edit-profile";
+        }
+    }
+
     @RequestMapping("/settings")
     public String settings() {
         return "user/settings";

@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -321,6 +322,134 @@ public class DoctorController {
         return "doctor/profile";
     }
 
+    @RequestMapping("/edit-profile")
+    public String doctorEditProfile(Model model, Authentication authentication) {
+        logger.info("Doctor edit profile page accessed");
+        
+        if (authentication != null) {
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+            
+            if (!"Doctor".equals(userRole)) {
+                logger.warn("Non-doctor user attempted to access doctor edit profile: {}", username);
+                return "redirect:/user/dashboard";
+            }
+            
+            Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
+            model.addAttribute("doctor", doctor);
+            model.addAttribute("userRole", userRole);
+        }
+        
+        return "doctor/edit-profile";
+    }
+
+    @PostMapping("/update-profile")
+    public String updateDoctorProfile(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(value = "specialization", required = false) String specialization,
+            @RequestParam(value = "yearsOfExperience", required = false) String yearsOfExperience,
+            @RequestParam(value = "qualification", required = false) String qualification,
+            @RequestParam(value = "licenseNumber", required = false) String licenseNumber,
+            @RequestParam(value = "about", required = false) String about,
+            Authentication authentication,
+            Model model) {
+
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        String userRole = universalUserService.getUserRole(username);
+
+        if (!"Doctor".equals(userRole)) {
+            logger.warn("Non-doctor user attempted to update doctor profile: {}", username);
+            return "redirect:/user/dashboard";
+        }
+
+        Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
+
+        if (doctor == null) {
+            model.addAttribute("error", "Doctor not found");
+            return "error";
+        }
+
+        try {
+            // Update basic information
+            doctor.setName(name);
+            doctor.setEmail(email);
+            if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+                doctor.setPhoneNumber(phoneNumber);
+            }
+            if (specialization != null && !specialization.trim().isEmpty()) {
+                doctor.setSpecialization(specialization);
+            }
+            if (yearsOfExperience != null && !yearsOfExperience.trim().isEmpty()) {
+                doctor.setYearsOfExperience(Integer.parseInt(yearsOfExperience));
+            }
+            if (qualification != null && !qualification.trim().isEmpty()) {
+                doctor.setQualification(qualification);
+            }
+            if (licenseNumber != null && !licenseNumber.trim().isEmpty()) {
+                doctor.setLicenseNumber(licenseNumber);
+            }
+            if (about != null && !about.trim().isEmpty()) {
+                doctor.setAbout(about);
+            }
+
+            // Save the updated doctor
+            universalUserService.updateUser(doctor);
+            logger.info("Doctor profile updated successfully for: {}", username);
+
+            return "redirect:/doctor/profile?success=true";
+        } catch (Exception e) {
+            logger.error("Failed to update doctor profile for: {}", username, e);
+            model.addAttribute("error", "Failed to update profile: " + e.getMessage());
+            model.addAttribute("doctor", doctor);
+            return "doctor/edit-profile";
+        }
+    }
+
+    @PostMapping("/update-profile-picture")
+    public String updateProfilePicture(
+            @RequestParam("profilePicture") MultipartFile file,
+            Authentication authentication,
+            Model model) {
+        String username = Helper.getEmailOfLoggedInUser(authentication);
+        Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
+
+        if (doctor == null) {
+            model.addAttribute("error", "Doctor not found");
+            return "error";
+        }
+
+        try {
+            if (!file.isEmpty()) {
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    model.addAttribute("error", "Only image files are allowed");
+                    model.addAttribute("doctor", doctor);
+                    return "doctor/profile";
+                }
+
+                doctorService.updateProfilePicture(doctor.getDoctorId(), file);
+                logger.info("Profile picture updated for doctor: {}", username);
+            } else {
+                model.addAttribute("error", "No file uploaded");
+                model.addAttribute("doctor", doctor);
+                return "doctor/profile";
+            }
+        } catch (Exception e) {
+            logger.error("Failed to update profile picture for doctor: {}", username, e);
+            model.addAttribute("error", "Failed to update profile picture: " + e.getMessage());
+            model.addAttribute("doctor", doctor);
+            return "doctor/profile";
+        }
+
+        return "redirect:/doctor/profile";
+    }
+
     @RequestMapping("/settings")
     public String doctorSettings(Model model, Authentication authentication) {
         logger.info("Doctor settings page accessed");
@@ -409,7 +538,8 @@ public class DoctorController {
                     .authorName(doctor.getName())
                     .authorSpecialization(doctor.getSpecialization())
                     .authorProfilePicture(doctor.getProfilePicture())
-                    .status(AllBlogPost.PostStatus.DRAFT)
+                    .status(AllBlogPost.PostStatus.PUBLISHED)
+                    .publishedAt(java.time.LocalDateTime.now())
                     .build();
             
             AllBlogPost savedPost = allBlogPostService.saveBlogPost(blogPost);

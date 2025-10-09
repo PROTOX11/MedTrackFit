@@ -146,6 +146,15 @@
                 <p class="text-gray-600 dark:text-gray-100 dark:text-gray-300">
                     Manage your personal and medical information
                 </p>
+                <!-- Success Message -->
+                <div th:if="${param.success}" class="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Profile updated successfully!
+                    </div>
+                </div>
             </div>
 
             <!-- Profile Card -->
@@ -180,7 +189,7 @@
                                         </button>
                                     </form>
                                 </div>
-                                <button onclick="window.location.href='/user/settings'"
+                                <button onclick="window.location.href='/user/edit-profile'"
                                     class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:bg-gray-400 dark:text-white bg-white hover:bg-gray-50 transition-colors"><svg
                                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -236,12 +245,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <!-- Medical History -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden ">
-                    <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                    <div class="p-5 border-b border-gray-100">
                         <div>
                             <h3 class="font-semibold text-gray-800">Medical History</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-100 mt-1">Record of conditions and treatments</p>
                         </div>
-                        <div><button class="text-sm text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Update</button></div>
                     </div>
                     <div class="p-5">
                         <div class="space-y-4">
@@ -290,12 +298,10 @@
 
                 <!-- Health Goals -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden ">
-                    <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                    <div class="p-5 border-b border-gray-100">
                         <div>
                             <h3 class="font-semibold text-gray-800">Health Goals</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-100 mt-1">Your progress towards better health</p>
-                        </div>
-                        <div><button class="text-sm text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Add Goal</button>
                         </div>
                     </div>
                     <div class="p-5">
@@ -318,9 +324,7 @@
                                         style="width: 65%;"></div>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center"><span
-                                        class="text-sm font-medium text-gray-700">65% complete</span><button
-                                        class="text-xs text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Update
-                                        Progress</button></div>
+                                        class="text-sm font-medium text-gray-700">65% complete</span></div>
                             </div>
                             <div class="border border-gray-100 rounded-lg p-4">
                                 <div class="flex justify-between items-start mb-3">
@@ -340,9 +344,7 @@
                                         style="width: 78%;"></div>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center"><span
-                                        class="text-sm font-medium text-gray-700">78% complete</span><button
-                                        class="text-xs text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Update
-                                        Progress</button></div>
+                                        class="text-sm font-medium text-gray-700">78% complete</span></div>
                             </div>
                             <div class="border border-gray-100 rounded-lg p-4">
                                 <div class="flex justify-between items-start mb-3">
@@ -362,9 +364,7 @@
                                         style="width: 45%;"></div>
                                 </div>
                                 <div class="mt-2 flex justify-between items-center"><span
-                                        class="text-sm font-medium text-gray-700">45% complete</span><button
-                                        class="text-xs text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Update
-                                        Progress</button></div>
+                                        class="text-sm font-medium text-gray-700">45% complete</span></div>
                             </div>
                         </div>
                     </div>
@@ -372,12 +372,10 @@
 
                 <!-- My Connections -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden h-full">
-                    <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                    <div class="p-5 border-b border-gray-100">
                         <div>
                             <h3 class="font-semibold text-gray-800">My Connections</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-100 mt-1">People in your health network</p>
-                        </div>
-                        <div><button class="text-sm text-teal-600 dark:text-teal-300 hover:text-teal-800 font-medium">Find More</button>
                         </div>
                     </div>
                     <div class="p-5">

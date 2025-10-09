@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{base :: parent(~{::#content}, ~{::title}, ~{::script}, ~{})}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:fragment="title">Doctor Chat - MedTrackFit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/flowbite@1.8.1/dist/flowbite.js"></script>
     <link href="https://unpkg.com/flowbite@1.8.1/dist/flowbite.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 </head>
+
 <body>
     <div id="content">
-        <!-- Main Content with Flowbite styling -->
-        <div class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
-            <!-- Header Section with Flowbite Card -->
+        <div
+            class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
             <div class="max-w-7xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                <!-- Header -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
                                 <i class="fas fa-user-md text-white text-lg"></i>
                             </div>
                             <div>
@@ -26,421 +30,177 @@
                                 <p class="text-sm text-gray-600 dark:text-gray-400">Manage patient communications</p>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center space-x-4">
-                            <!-- Dark Mode Toggle -->
-                            <button id="darkModeToggle" 
-                                    class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
-                                <i class="fas fa-moon dark:hidden"></i>
-                                <i class="fas fa-sun hidden dark:block"></i>
-                            </button>
-                            
-                            <!-- Search Bar with Flowbite Input -->
+                            <!-- Search -->
                             <div class="relative">
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-search text-gray-400 dark:text-gray-500"></i>
-                                    </div>
-                                    <input type="text" 
-                                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                                           placeholder="Search patients..." 
-                                           th:attr="data-search=true">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400 dark:text-gray-500"></i>
                                 </div>
+                                <input type="text"
+                                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    placeholder="Search patients..." th:attr="data-search=true" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Patients Section with Rectangular Cards -->
+                <!-- Patients -->
                 <div class="space-y-4 mb-6" th:if="${patients != null}">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]" 
-                         th:each="patient : ${patients}">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                        th:each="patient : ${patients}">
                         <div class="p-4 md:p-6">
-                            <!-- Desktop Layout -->
                             <div class="hidden md:flex items-center justify-between">
-                                <!-- Left Side - Patient Info -->
-                                <div class="flex items-center space-x-4 flex-1">
-                                    <div class="w-16 h-16 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                                <!-- Patient (clickable) -->
+                                <div class="flex items-center space-x-4 flex-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2"
+                                    th:attr="data-patient-id=${patient.id}" onclick="openIndividualChat(this)">
+                                    <div
+                                        class="w-16 h-16 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
                                         <i class="fas fa-user text-white text-xl"></i>
                                     </div>
                                     <div class="flex-1">
-                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1" th:text="${patient.name}">Patient Name</h3>
+                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1"
+                                            th:text="${patient.name}">Patient
+                                            Name</h3>
                                         <div class="flex items-center space-x-3">
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
                                                 <i class="fas fa-heartbeat text-red-500 mr-2"></i>
                                                 <span th:text="${patient.status}">Suffering</span>
-                                            </span>
-                                            <span class="text-sm text-gray-500 dark:text-gray-400">
-                                                <i class="fas fa-clock mr-1"></i>
-                                                Active Now
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Middle - Group Chat Button -->
+                                <!-- Group Chat -->
                                 <div class="flex flex-col items-center space-y-2 mx-6">
-                                    <button onclick="openGroupChat()" 
-                                            class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                                    <button onclick="openGroupChat()"
+                                        class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
                                         <i class="fas fa-users text-lg"></i>
                                         <span>Group Chat</span>
                                     </button>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 text-center">Chat with<br/>Patient & Mentor</p>
                                 </div>
 
-                                <!-- Right Side - Mentor Info -->
-                                <div class="flex items-center space-x-4 flex-1 justify-end">
+                                <!-- Mentor (clickable) -->
+                                <div class="flex items-center space-x-4 flex-1 justify-end cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg p-2"
+                                    onclick="openMentorChat(this)">
                                     <div class="text-right">
-                                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-1" th:text="${patient.mentorName}">Dr. Example</h4>
+                                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-1"
+                                            th:text="${patient.mentorName}">Dr. Example</h4>
                                         <div class="flex items-center justify-end space-x-2">
-                                            <span class="text-sm text-gray-600 dark:text-gray-400">Assigned Mentor</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                            <span class="text-sm text-gray-600 dark:text-gray-400">Assigned
+                                                Mentor</span>
+                                            <span
+                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                                                 <i class="fas fa-circle text-green-400 mr-1"></i>
                                                 Online
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <div
+                                        class="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
                                         <i class="fas fa-user-md text-white text-xl"></i>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Mobile Layout -->
-                            <div class="md:hidden space-y-4">
-                                <!-- Patient and Mentor Row -->
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
-                                            <i class="fas fa-user text-white"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white" th:text="${patient.name}">Patient Name</h3>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
-                                                <i class="fas fa-heartbeat text-red-500 mr-1"></i>
-                                                <span th:text="${patient.status}">Suffering</span>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <div class="text-right">
-                                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white" th:text="${patient.mentorName}">Dr. Example</h4>
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">Mentor</span>
-                                        </div>
-                                        <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                                            <i class="fas fa-user-md text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Group Chat Button - Mobile -->
-                                <div class="flex justify-center">
-                                    <button onclick="openGroupChat()" 
-                                            class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 w-full justify-center">
-                                        <i class="fas fa-users text-lg"></i>
-                                        <span>Start Group Chat</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Bottom Action Bar -->
-                            <div class="mt-4 md:mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                <!-- Desktop Action Bar -->
-                                <div class="hidden md:flex items-center justify-between">
-                                    <div class="flex items-center space-x-4">
-                                        <button class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center space-x-2"
-                                                th:attr="data-patient-id=${patient.id}" 
-                                                onclick="openIndividualChat(this)">
-                                            <i class="fas fa-comments"></i>
-                                            <span>Individual Chat</span>
-                                        </button>
-                                        <button class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-all duration-200 flex items-center space-x-2">
-                                            <i class="fas fa-file-medical"></i>
-                                            <span>View Records</span>
-                                        </button>
-                                    </div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                                        <i class="fas fa-calendar mr-1"></i>
-                                        Last active: 2 minutes ago
-                                    </div>
-                                </div>
-
-                                <!-- Mobile Action Bar -->
-                                <div class="md:hidden space-y-3">
-                                    <div class="flex space-x-2">
-                                        <button class="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
-                                                th:attr="data-patient-id=${patient.id}" 
-                                                onclick="openIndividualChat(this)">
-                                            <i class="fas fa-comments"></i>
-                                            <span>Individual</span>
-                                        </button>
-                                        <button class="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium py-2 px-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
-                                            <i class="fas fa-file-medical"></i>
-                                            <span>Records</span>
-                                        </button>
-                                    </div>
-                                    <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-                                        <i class="fas fa-calendar mr-1"></i>
-                                        Last active: 2 minutes ago
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
-            </div>
+                </div>
 
-                <!-- Empty State -->
-                <div th:if="${patients == null || #lists.isEmpty(patients)}" 
-                     class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <!-- Empty -->
+                <div th:if="${patients == null || #lists.isEmpty(patients)}"
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-12 text-center">
+                    <div
+                        class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-user-friends text-gray-400 dark:text-gray-500 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No patients assigned yet</h3>
-                    <p class="text-gray-600 dark:text-gray-400">Patients will appear here once they are assigned to you.</p>
+                    <p class="text-gray-600 dark:text-gray-400">Patients will appear here once they are assigned to you.
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Chat Modal with Flowbite Modal -->
-        <div id="chatModal" 
-             class="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 hidden">
-            <div class="relative top-20 mx-auto p-5 border border-gray-200 dark:border-gray-700 w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 shadow-lg rounded-md bg-white dark:bg-gray-800">
-                <!-- Modal Header -->
-                <div class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-lg p-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-comments text-white"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-white">Patient Communication</h3>
-                        </div>
-                        <button onclick="closeChat()" 
-                                class="text-white hover:text-gray-200 transition-colors duration-200">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- Chat Tabs -->
-                    <div class="mt-4 flex space-x-1 bg-white bg-opacity-20 rounded-lg p-1">
-                        <button class="tab-btn flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200 bg-white text-purple-600" 
-                                onclick="switchTab(event, 'individual')">
-                            <i class="fas fa-user mr-2"></i>Individual
-                        </button>
-                        <button class="tab-btn flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all duration-200 text-white hover:bg-white hover:bg-opacity-20" 
-                                onclick="switchTab(event, 'group')">
-                            <i class="fas fa-users mr-2"></i>Group
-                        </button>
-                    </div>
+        <!-- Chat Modal -->
+        <div id="chatModal"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 hidden">
+            <div
+                class="relative top-20 mx-auto p-5 border border-gray-200 dark:border-gray-700 w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 shadow-lg rounded-md bg-white dark:bg-gray-800">
+                <div
+                    class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-lg p-4 flex items-center justify-between">
+                    <h3 id="chatTitle" class="text-lg font-semibold text-white">Chat</h3>
+                    <button onclick="closeChat()" class="text-white hover:text-gray-200 transition-colors duration-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
                 </div>
 
-                <!-- Chat Body -->
-                <div class="bg-gray-50 dark:bg-gray-700 h-80 overflow-y-auto p-4">
-                    <!-- Individual Chat -->
-                    <div id="individual-chat" class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-gray-600 dark:text-gray-300 text-sm"></i>
-                            </div>
-                            <div class="bg-white dark:bg-gray-600 rounded-lg p-3 shadow-sm max-w-xs">
-                                <p class="text-sm text-gray-800 dark:text-gray-200">Hello Doctor, how are you?</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">2:30 PM</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-3 justify-end">
-                            <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
-                                <p class="text-sm">I'm here to help. What's bothering you?</p>
-                                <p class="text-xs text-pink-100 mt-1">2:32 PM</p>
-                            </div>
-                            <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user-md text-white text-sm"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Group Chat -->
-                    <div id="group-chat" class="space-y-4 hidden">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user-md text-white text-sm"></i>
-                            </div>
-                            <div class="bg-white dark:bg-gray-600 rounded-lg p-3 shadow-sm max-w-xs">
-                                <p class="text-sm text-gray-800 dark:text-gray-200"><span class="font-semibold">Mentor:</span> Patient is improving.</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">2:30 PM</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-3 justify-end">
-                            <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
-                                <p class="text-sm"><span class="font-semibold">Doctor:</span> Noted, let's discuss further.</p>
-                                <p class="text-xs text-pink-100 mt-1">2:32 PM</p>
-                            </div>
-                            <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user-md text-white text-sm"></i>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-gray-50 dark:bg-gray-700 h-80 overflow-y-auto p-4" id="chatBody">
+                    <p class="text-center text-gray-500 dark:text-gray-400 mt-20">Select a chat to start messaging.</p>
                 </div>
 
-                <!-- Chat Input -->
                 <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
                     <div class="flex space-x-3">
-                        <div class="flex-1">
-                            <input type="text" 
-                                   id="messageInput"
-                                   placeholder="Type a message..." 
-                                   class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
-            </div>
-                        <button onclick="sendMessage()" 
-                                class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2">
+                        <input type="text" id="messageInput" placeholder="Type a message..."
+                            class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
+                        <button onclick="sendMessage()"
+                            class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2">
                             <i class="fas fa-paper-plane"></i>
                             <span>Send</span>
                         </button>
-            </div>
-            </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- JS -->
     <div th:fragment="script">
         <script th:inline="javascript">
-            /* Thymeleaf JS Integration */
-            /* eslint-disable */
-            /*<![CDATA[*/
-            // Patient data from model
-            var patients = /*[[${patients}]]*/ [];
-            /*]]>*/
-            /* eslint-enable */
-
-            function openIndividualChat(btn) {
-                var patientId = btn.getAttribute('data-patient-id');
+            function openIndividualChat(el) {
+                const name = el.querySelector('h3').textContent.trim();
+                document.getElementById('chatTitle').textContent = `Chat with ${name}`;
+                document.getElementById('chatBody').innerHTML = `<p class='text-gray-600 dark:text-gray-300 mt-4'>You are now chatting with <b>${name}</b> (Patient).</p>`;
                 document.getElementById('chatModal').classList.remove('hidden');
-                // Here, integrate with WebSocket or AJAX to load patient-specific chat
-                console.log('Opening individual chat for patient ID: ' + patientId);
-                switchTab({target: document.querySelector('.tab-btn:first-child')}, 'individual');
+            }
+
+            function openMentorChat(el) {
+                const name = el.querySelector('h4').textContent.trim();
+                document.getElementById('chatTitle').textContent = `Chat with ${name}`;
+                document.getElementById('chatBody').innerHTML = `<p class='text-gray-600 dark:text-gray-300 mt-4'>You are now chatting with <b>${name}</b> (Mentor).</p>`;
+                document.getElementById('chatModal').classList.remove('hidden');
             }
 
             function openGroupChat() {
+                document.getElementById('chatTitle').textContent = "Group Chat";
+                document.getElementById('chatBody').innerHTML = `<p class='text-gray-600 dark:text-gray-300 mt-4'>You are now in a <b>Group Chat</b> with Patient and Mentor.</p>`;
                 document.getElementById('chatModal').classList.remove('hidden');
-                // Load group chat with mentor
-                switchTab({target: document.querySelector('.tab-btn:last-child')}, 'group');
             }
 
             function closeChat() {
                 document.getElementById('chatModal').classList.add('hidden');
             }
 
-            function switchTab(event, tab) {
-                var tabs = document.querySelectorAll('.tab-btn');
-                tabs.forEach(t => {
-                    t.classList.remove('bg-white', 'text-purple-600');
-                    t.classList.add('text-white', 'hover:bg-white', 'hover:bg-opacity-20');
-                });
-                
-                event.target.classList.remove('text-white', 'hover:bg-white', 'hover:bg-opacity-20');
-                event.target.classList.add('bg-white', 'text-purple-600');
-
-                var individual = document.getElementById('individual-chat');
-                var group = document.getElementById('group-chat');
-                
-                if (tab === 'individual') {
-                    individual.classList.remove('hidden');
-                    group.classList.add('hidden');
-                } else {
-                    individual.classList.add('hidden');
-                    group.classList.remove('hidden');
-                }
-            }
-
             function sendMessage() {
-                var input = document.getElementById('messageInput');
-                var message = input.value.trim();
-                if (message) {
-                    var chatBody = document.getElementById('individual-chat');
-                    if (!document.getElementById('group-chat').classList.contains('hidden')) {
-                        chatBody = document.getElementById('group-chat');
-                    }
-                    
-                    var messageDiv = document.createElement('div');
-                    messageDiv.className = 'flex items-start space-x-3 justify-end';
-                    messageDiv.innerHTML = `
-                        <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs">
-                            <p class="text-sm">${message}</p>
-                            <p class="text-xs text-pink-100 mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                        </div>
-                        <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user-md text-white text-sm"></i>
-                        </div>
-                    `;
-                    
-                    chatBody.appendChild(messageDiv);
-                    input.value = '';
-                    // Here, send via WebSocket/AJAX to backend
-                    console.log('Sending message: ' + message);
-                    chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll to bottom
-                }
+                const input = document.getElementById('messageInput');
+                const chatBody = document.getElementById('chatBody');
+                const msg = input.value.trim();
+                if (!msg) return;
+                const div = document.createElement('div');
+                div.className = "flex items-start space-x-3 justify-end mt-2";
+                div.innerHTML = `
+          <div class='bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg p-3 shadow-sm max-w-xs'>
+            <p class='text-sm'>${msg}</p>
+            <p class='text-xs text-pink-100 mt-1'>${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+          <div class='w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center'>
+            <i class='fas fa-user-md text-white text-sm'></i>
+          </div>`;
+                chatBody.appendChild(div);
+                input.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
             }
-
-            // Dark Mode Toggle Functionality
-            function toggleDarkMode() {
-                const html = document.documentElement;
-                const darkModeToggle = document.getElementById('darkModeToggle');
-                
-                if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    localStorage.setItem('darkMode', 'false');
-                } else {
-                    html.classList.add('dark');
-                    localStorage.setItem('darkMode', 'true');
-                }
-            }
-
-            // Initialize dark mode from localStorage
-            function initializeDarkMode() {
-                const savedDarkMode = localStorage.getItem('darkMode');
-                const html = document.documentElement;
-                
-                if (savedDarkMode === 'true') {
-                    html.classList.add('dark');
-                } else {
-                    html.classList.remove('dark');
-                }
-            }
-
-            // Search functionality
-            document.addEventListener('DOMContentLoaded', function() {
-                // Initialize dark mode
-                initializeDarkMode();
-                
-                // Dark mode toggle event listener
-                const darkModeToggle = document.getElementById('darkModeToggle');
-                if (darkModeToggle) {
-                    darkModeToggle.addEventListener('click', toggleDarkMode);
-                }
-                
-                var searchBar = document.querySelector('input[data-search]');
-                if (searchBar) {
-                    searchBar.addEventListener('input', function(e) {
-                        var query = e.target.value.toLowerCase();
-                        var cards = document.querySelectorAll('[th\\:each]');
-                        cards.forEach(card => {
-                            var name = card.querySelector('h3').textContent.toLowerCase();
-                            card.style.display = name.includes(query) ? 'block' : 'none';
-                        });
-                    });
-                }
-
-                // Add Enter key support for message input
-                var messageInput = document.getElementById('messageInput');
-                if (messageInput) {
-                    messageInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            sendMessage();
-                        }
-                    });
-                }
-            });
         </script>
     </div>
 </body>
+
 </html>

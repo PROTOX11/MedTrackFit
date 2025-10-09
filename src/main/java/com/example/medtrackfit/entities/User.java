@@ -89,6 +89,11 @@ public class User implements UserDetails, org.apache.catalina.User {
         return this.email;
     }
 
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
     public String getProfilePicture() {
         return this.profilePicture;
     }
@@ -116,6 +121,11 @@ public class User implements UserDetails, org.apache.catalina.User {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    @Override
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

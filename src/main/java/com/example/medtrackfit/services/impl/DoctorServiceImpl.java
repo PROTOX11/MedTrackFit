@@ -4,6 +4,7 @@ import com.example.medtrackfit.entities.Doctor;
 import com.example.medtrackfit.entities.DoctorPerformance;
 import com.medtrackfit.helper.AppConstants;
 import com.example.medtrackfit.repositories.DoctorRepository;
+import com.example.medtrackfit.services.CloudinaryService;
 import com.example.medtrackfit.services.DoctorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -24,6 +27,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -73,5 +79,15 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return getDoctorByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public Doctor updateProfilePicture(String doctorId, MultipartFile file) throws IOException {
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        String imageUrl = cloudinaryService.uploadImage(file);
+        doctor.setProfilePicture(imageUrl);
+        return doctorRepository.save(doctor);
     }
 }

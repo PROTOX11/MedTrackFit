@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{base :: parent(~{::#home}, ~{::title}, ~{::script}, ~{})}" class="light"
+    data-theme="light" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    
+    <style>
+        :root {
+            --bg: #f7f8fa;
+            --text: #6b7280;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+            --btn-bg: #2563eb;
+            --btn-text: #ffffff;
+            --link: #3b82f6;
+            --gradient-start: #a7f3d0;
+            --gradient-end: #60a5fa;
+            --progress-bg: #e5e7eb;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e293b;
+            --text: #d1d5db;
+            --card-bg: #2d3748;
+            --card-border: #4b5563;
+            --btn-bg: #1d4ed8;
+            --btn-text: #e5e7eb;
+            --link: #60a5fa;
+            --gradient-start: #4b5563;
+            --gradient-end: #1e40af;
+            --progress-bg: #4b5563;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-primary {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            transition: background 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            transition: background 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background: #4b5563;
+            color: #d1d5db;
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background: #6b7280;
+        }
+
+        a {
+            color: var(--link);
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .info-card h3 {
+                font-size: 1.125rem;
+            }
+
+            .info-card p {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="overflow-x-hidden bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
+    <div id="home" class="w-full">
+        <div class="container mx-auto px-4 pt-12 sm:pt-4 max-w-4xl">
+            <button id="sidebar-open-toggle"
+                class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-gray-200 dark:bg-gray-700 rounded-md"
+                aria-label="Open sidebar">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                            Edit Profile
+                        </h1>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Update your personal information and preferences
+                        </p>
+                    </div>
+                    <button onclick="window.location.href='/user/profile'"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:bg-gray-400 dark:text-white bg-white hover:bg-gray-50 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left mr-2">
+                            <path d="m12 19-7-7 7-7"></path>
+                            <path d="M19 12H5"></path>
+                        </svg>
+                        Back to Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <form th:action="@{/user/update-profile}" method="post" class="space-y-6">
+                <!-- Basic Information Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Basic Information</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your basic profile details</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                                <input type="text" id="name" name="name" th:value="${loggedInUser?.name}"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" th:value="${loggedInUser?.email}"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="phoneNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" th:value="${loggedInUser?.phoneNumber}"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                            </div>
+                            <div>
+                                <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
+                                <select id="role" name="role" th:value="${loggedInUser?.role}"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                                    <option value="">Select Role</option>
+                                    <option value="USER">User</option>
+                                    <option value="DOCTOR">Doctor</option>
+                                    <option value="NURSE">Nurse</option>
+                                    <option value="PHARMACIST">Pharmacist</option>
+                                    <option value="NUTRITIONIST">Nutritionist</option>
+                                    <option value="FITNESS_TRAINER">Fitness Trainer</option>
+                                    <option value="MENTOR">Mentor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="about" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">About Me</label>
+                            <textarea id="about" name="about" rows="4" th:text="${loggedInUser?.about}"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Tell us about yourself, your health journey, or your professional background..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Picture Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Profile Picture</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your profile picture</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center space-x-6">
+                            <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-600">
+                                <img th:src="${loggedInUser?.profilePicture}" 
+                                     alt="Current profile picture" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <form method="post" th:action="@{/user/update-profile-picture}" enctype="multipart/form-data" id="profilePictureForm">
+                                    <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" class="hidden" onchange="this.form.submit()"/>
+                                    <button type="button" 
+                                            onclick="document.getElementById('profilePictureInput').click()"
+                                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:bg-gray-400 dark:text-white bg-white hover:bg-gray-50 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera mr-2">
+                                            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                                            <circle cx="12" cy="13" r="3"></circle>
+                                        </svg>
+                                        Change Picture
+                                    </button>
+                                </form>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">JPG, PNG or GIF. Max size 5MB.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical Information Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Medical Information</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your medical history and conditions</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label for="medicalHistory" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medical History</label>
+                            <textarea id="medicalHistory" name="medicalHistory" rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="Describe your medical history, conditions, treatments, and medications..."></textarea>
+                        </div>
+                        <div>
+                            <label for="allergies" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Allergies</label>
+                            <textarea id="allergies" name="allergies" rows="2"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="List any allergies or adverse reactions..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Goals Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Health Goals</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Set and track your health objectives</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label for="primaryGoal" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Primary Health Goal</label>
+                            <input type="text" id="primaryGoal" name="primaryGoal"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="e.g., Lose 20 pounds, Control diabetes, Improve fitness...">
+                        </div>
+                        <div>
+                            <label for="targetDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Date</label>
+                            <input type="date" id="targetDate" name="targetDate"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="additionalGoals" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Goals</label>
+                            <textarea id="additionalGoals" name="additionalGoals" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="List any additional health goals or milestones..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Emergency Contact</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Emergency contact information</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="emergencyContactName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contact Name</label>
+                                <input type="text" id="emergencyContactName" name="emergencyContactName"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    placeholder="Full name">
+                            </div>
+                            <div>
+                                <label for="emergencyContactPhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contact Phone</label>
+                                <input type="tel" id="emergencyContactPhone" name="emergencyContactPhone"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                    placeholder="Phone number">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="emergencyContactRelation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Relationship</label>
+                            <input type="text" id="emergencyContactRelation" name="emergencyContactRelation"
+                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                placeholder="e.g., Spouse, Parent, Sibling, Friend...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-end">
+                    <button type="button" onclick="window.location.href='/user/profile'"
+                        class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+
+</html>

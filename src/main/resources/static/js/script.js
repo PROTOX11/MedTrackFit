@@ -28,10 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Theme switching functionality
 function changeTheme() {
+    // Remove all theme classes first
+    document.querySelector("html").classList.remove("light", "dark");
+
+    // Add the current theme class
     document.querySelector("html").classList.add(currentTheme);
-    
+
     // Initialize the icon based on current theme
     updateButtonIcon(currentTheme);
 

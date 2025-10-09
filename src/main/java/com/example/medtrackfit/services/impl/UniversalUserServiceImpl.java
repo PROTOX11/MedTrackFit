@@ -1,6 +1,7 @@
 package com.example.medtrackfit.services.impl;
 
 import com.example.medtrackfit.services.*;
+import com.example.medtrackfit.entities.Doctor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -119,5 +120,10 @@ public class UniversalUserServiceImpl implements UniversalUserService {
             }
         }
         return null;
+    }
+
+    @Override
+    public void updateUser(Doctor doctor) {
+        doctorService.saveDoctor(doctor);
     }
 }
