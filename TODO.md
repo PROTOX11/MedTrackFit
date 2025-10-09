@@ -1,25 +1,29 @@
-# TODO: Implement Change Photo Functionality for Doctor Profile
+# TODO: Fix Blog Post Saving Functionality
 
-## Information Gathered
-- Doctor profile page has a "Change Photo" button in the sidebar but it's not functional
-- Edit-profile page already has profile picture upload functionality
-- UserService has updateProfilePicture method using CloudinaryService
-- DoctorService lacks updateProfilePicture method
-- DoctorController lacks /update-profile-picture endpoint
+## Current Status
+- The "Write Your First Post" button should open a modal for creating a blog post
+- The modal form should submit the blog post data to the backend
+- The backend should save the blog post to the database
 
-## Plan
-1. ✅ Add updateProfilePicture method to DoctorService interface
-2. ✅ Implement updateProfilePicture in DoctorServiceImpl (similar to UserServiceImpl)
-3. ✅ Add /update-profile-picture POST endpoint to DoctorController
-4. ✅ Update doctor/profile.html to make "Change Photo" button functional with form and file input
+## Issues Identified
+- Modal implementation may have issues
+- Form submission may not be working
+- Backend saving may have issues
 
-## Dependent Files to be edited
-- ✅ src/main/java/com/example/medtrackfit/services/DoctorService.java
-- ✅ src/main/java/com/example/medtrackfit/services/impl/DoctorServiceImpl.java
-- ✅ src/main/java/com/example/medtrackfit/controllers/DoctorController.java
-- ✅ src/main/resources/templates/doctor/profile.html
+## Tasks
+- [x] Verify modal opens correctly when clicking "Write Your First Post"
+- [x] Verify form submission sends POST request to /doctor/blog/create
+- [x] Verify backend endpoint handles the request and saves to database
+- [x] Add error handling and user feedback
+- [x] Test the complete flow
 
-## Followup steps
-- Test the profile picture upload functionality
-- Verify image validation and error handling
-- Ensure proper redirect after successful upload
+## Files to Check/Edit
+- src/main/resources/templates/doctor/blog.html (modal and JS)
+- src/main/java/com/example/medtrackfit/controllers/DoctorController.java (POST endpoint)
+- src/main/java/com/example/medtrackfit/services/impl/AllBlogPostServiceImpl.java (saving logic)
+
+## Recent Changes
+- Updated blog_write_modal.html to include all necessary fields: title, content, excerpt, category, tags, metaDescription, metaKeywords, featuredImage
+- Changed JavaScript to use FormData for multipart/form-data submission
+- Updated DoctorController.java to use @RequestParam for all fields instead of @RequestBody
+- Added loading state and better error handling in the form submission

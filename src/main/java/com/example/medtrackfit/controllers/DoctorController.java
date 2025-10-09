@@ -5,6 +5,7 @@ import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
+import com.example.medtrackfit.services.CloudinaryService;
 import com.medtrackfit.helper.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class DoctorController {
 
     @Autowired
     private AllBlogPostService allBlogPostService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -472,50 +476,57 @@ public class DoctorController {
     }
 
     // Blog creation endpoints
-    @PostMapping("/blog/create")
+    @PostMapping(value = "/blog/create", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> createBlogPost(@RequestBody Map<String, Object> blogData, 
+    public ResponseEntity<Map<String, Object>> createBlogPost(@RequestParam("title") String title,
+                                                              @RequestParam("content") String content,
+                                                              @RequestParam(value = "excerpt", required = false) String excerpt,
+                                                              @RequestParam(value = "category", required = false) String categoryStr,
+                                                              @RequestParam(value = "tags", required = false) String tags,
+                                                              @RequestParam(value = "metaDescription", required = false) String metaDescription,
+                                                              @RequestParam(value = "metaKeywords", required = false) String metaKeywords,
+                                                              @RequestParam(value = "featuredImage", required = false) MultipartFile featuredImage,
                                                               Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             if (authentication == null) {
                 response.put("success", false);
                 response.put("message", "User not authenticated");
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
             String username = Helper.getEmailOfLoggedInUser(authentication);
+            logger.info("Blog post creation attempt by user: {}", username);
             String userRole = universalUserService.getUserRole(username);
-            
+
             if (!"Doctor".equals(userRole)) {
                 response.put("success", false);
                 response.put("message", "Only doctors can create blog posts");
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
             Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
-            
-            String title = (String) blogData.get("title");
-            String content = (String) blogData.get("content");
-            String excerpt = (String) blogData.get("excerpt");
-            String categoryStr = (String) blogData.get("category");
-            String tags = (String) blogData.get("tags");
-            String metaDescription = (String) blogData.get("metaDescription");
-            String metaKeywords = (String) blogData.get("metaKeywords");
-            
+            if (doctor == null) {
+                response.put("success", false);
+                response.put("message", "Doctor not found");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            logger.info("Blog post data - title: {}, content length: {}, tags: {}", title, content != null ? content.length() : 0, tags);
+
             if (title == null || title.trim().isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Title is required");
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
             if (content == null || content.trim().isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Content is required");
                 return ResponseEntity.badRequest().body(response);
             }
-            
+
             AllBlogPost.PostCategory category = AllBlogPost.PostCategory.HEALTH_TIPS;
             if (categoryStr != null && !categoryStr.trim().isEmpty()) {
                 try {
@@ -524,7 +535,7 @@ public class DoctorController {
                     logger.warn("Invalid category: {}", categoryStr);
                 }
             }
-            
+
             AllBlogPost blogPost = AllBlogPost.builder()
                     .title(title)
                     .content(content)
@@ -541,15 +552,17 @@ public class DoctorController {
                     .status(AllBlogPost.PostStatus.PUBLISHED)
                     .publishedAt(java.time.LocalDateTime.now())
                     .build();
-            
+
+            logger.info("Saving blog post for doctor: {}", doctor.getName());
             AllBlogPost savedPost = allBlogPostService.saveBlogPost(blogPost);
-            
+            logger.info("Blog post saved successfully with id: {}", savedPost.getPostId());
+
             response.put("success", true);
             response.put("message", "Blog post created successfully");
             response.put("postId", savedPost.getPostId());
-            
+
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             logger.error("Error creating blog post", e);
             response.put("success", false);

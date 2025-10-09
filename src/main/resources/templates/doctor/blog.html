@@ -1,252 +1,151 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Blog - MedTrackFit</title>
     <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
-    <style>
-        .blog-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .blog-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-        .status-published { background-color: #dcfce7; color: #166534; }
-        .status-draft { background-color: #fef3c7; color: #92400e; }
-        .status-review { background-color: #dbeafe; color: #1e40af; }
-        
-        /* Ensure proper layout with sidebar */
-        @media (min-width: 640px) {
-            #main-content {
-                margin-left: 16rem;
-            }
-        }
-        
-        /* Prevent sidebar duplication */
-        #logo-sidebar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            z-index: 40 !important;
-        }
-    </style>
 </head>
+
 <body>
     <div id="content">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-8">
-            <div class="container mx-auto px-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold mb-2">Medical Blog</h1>
-                        <p class="text-purple-100">Share your medical knowledge and expertise</p>
-                    </div>
-                    <div class="flex space-x-4">
-                        <button onclick="showWriteForm()" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
-                            Write New Post
-                        </button>
-                        <button onclick="showManagePosts()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
-                            Manage Your Posts
-                        </button>
-                    </div>
-                </div>
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl font-bold mb-4">Medical Blog</h1>
+                <p class="text-xl text-blue-100 mb-6">Share your medical knowledge and insights</p>
+                <button onclick="openWriteModal()"
+                    class="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-3 px-8 rounded-lg transition duration-300 shadow-lg">
+                    Write New Post
+                </button>
             </div>
         </div>
 
+        <!-- Main Content -->
+        <div class="container mx-auto px-4 py-8">
+            <!-- Blog Posts Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" th:if="${allBlogs != null and !allBlogs.empty}">
+                <div th:each="blog : ${allBlogs}"
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Blog Image Placeholder -->
+                    <div class="h-32 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
+                        <span class="text-white text-3xl">📚</span>
+                    </div>
 
-        <div class="container mx-auto px-4 py-8 ml-64 sm:ml-0">
-            <!-- Blog Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-purple-600 mb-2" th:text="${totalPosts}">0</div>
-                    <div class="text-gray-600 dark:text-gray-400">Total Posts</div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-green-600 mb-2" th:text="${doctorPosts}">0</div>
-                    <div class="text-gray-600 dark:text-gray-400">Doctor Posts</div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-blue-600 mb-2" th:text="${mentorPosts}">0</div>
-                    <div class="text-gray-600 dark:text-gray-400">Mentor Posts</div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-orange-600 mb-2" th:text="${patientPosts}">0</div>
-                    <div class="text-gray-600 dark:text-gray-400">Patient Stories</div>
-                </div>
-            </div>
+                    <!-- Blog Content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2" th:text="${blog.title}">
+                            Blog Title</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3" th:text="${blog.content}">Blog
+                            content preview...</p>
 
-            <!-- Blog Posts -->
-            <div class="space-y-6" th:if="${allBlogs != null and !allBlogs.empty}">
-                <!-- Dynamic Blog Posts -->
-                <div th:each="blog : ${allBlogs}" class="blog-card bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
-                     th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center">
-                            <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-semibold mr-4"
-                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'bg-purple-500' :
-                                          (${blog.authorType.name() == 'MENTOR'} ? 'bg-blue-500' : 'bg-orange-500')">
-                                <span th:if="${blog.authorType.name() == 'DOCTOR'}">👨‍⚕️</span>
-                                <span th:if="${blog.authorType.name() == 'MENTOR'}">👨‍🏫</span>
-                                <span th:if="${blog.authorType.name() == 'RECOVERED_PATIENT'}">💪</span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100" th:text="${blog.title}">Blog Title</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span th:text="${blog.authorName}">Author Name</span> •
-                                    <span th:text="${blog.authorType.name()}">Author Type</span>
-                                    <span th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}"> •
-                                        <span th:text="${blog.authorSpecialization}">Specialization</span>
-                                    </span>
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400" th:if="${blog.publishedAt != null}">
-                                    Published <span th:text="${#temporals.format(blog.publishedAt, 'MMM dd, yyyy')}">Date</span>
-                                </p>
-                            </div>
+                        <!-- Meta Info -->
+                        <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <span th:text="${blog.authorName}">Author</span>
+                            <span th:text="${#temporals.format(blog.createdAt, 'MMM dd, yyyy')}">Date</span>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium"
-                                  th:class="${blog.status.name() == 'PUBLISHED'} ? 'status-published' :
-                                           (${blog.status.name() == 'DRAFT'} ? 'status-draft' : 'status-review')"
-                                  th:text="${blog.status.name()}">Status</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400" th:text="${blog.viewCount} + ' views'">0 views</span>
-                            <span th:if="${blog.isFeatured}" class="text-sm text-gray-500 dark:text-gray-400">🔥 Featured</span>
+
+                        <!-- Tags -->
+                        <div class="mt-4 flex flex-wrap gap-2" th:if="${blog.tags != null and !blog.tags.empty}">
+                            <span th:each="tag : ${#strings.arraySplit(blog.tags, ',')}"
+                                class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
+                                th:text="${tag}">Tag</span>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <p class="text-gray-700 dark:text-gray-300" th:text="${blog.excerpt != null and !blog.excerpt.empty ? blog.excerpt : #strings.abbreviate(blog.content, 200)}">Blog excerpt or content preview...</p>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-500 dark:text-gray-400">👁️ <span th:text="${blog.viewCount}">0</span> views</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">💬 <span th:text="${blog.commentCount}">0</span> comments</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">👍 <span th:text="${blog.likeCount}">0</span> likes</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400" th:if="${blog.tags != null and !blog.tags.empty}">
-                                🏷️ <span th:text="${blog.tags}">tags</span>
-                            </span>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300"
-                                    th:onclick="'viewBlog(\'' + ${blog.postId} + '\')'">View Post</button>
-                            <button th:if="${blog.authorType.name() == 'DOCTOR' and blog.authorId == doctor.doctorId}"
-                                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300"
-                                    th:onclick="'editBlog(\'' + ${blog.postId} + '\')'">Edit</button>
-                        </div>
+
+                    <!-- Actions -->
+                    <div class="px-6 pb-6">
+                        <button
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300">
+                            Read More
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- No Blogs Message -->
-            <div th:if="${allBlogs == null or allBlogs.empty}" class="text-center py-12">
-                <div class="text-gray-500 dark:text-gray-400 text-lg mb-4">No blog posts available yet</div>
-                <p class="text-gray-400 dark:text-gray-500">Be the first to share your medical knowledge or recovery story!</p>
+            <!-- Empty State -->
+            <div th:if="${allBlogs == null or allBlogs.empty}" class="text-center py-16">
+                <div class="text-6xl mb-4">📝</div>
+                <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No Blog Posts Yet</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Be the first to share your medical insights and
+                    knowledge.</p>
+                <button onclick="openWriteModal()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300">
+                    Write Your First Post
+                </button>
             </div>
 
             <!-- Pagination -->
-            <div th:if="${totalPages > 1}" class="mt-8 flex justify-center">
-                <nav class="flex space-x-2">
-                    <a th:if="${currentPage > 0}"
-                       th:href="@{/doctor/blog(page=${currentPage - 1})}"
-                       class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
+            <div th:if="${totalPages > 1}" class="mt-12 flex justify-center">
+                <nav class="flex items-center space-x-2">
+                    <a th:if="${currentPage > 0}" th:href="@{/doctor/blog(page=${currentPage - 1})}"
+                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
                         Previous
                     </a>
+
                     <span th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
-                          th:if="${page >= currentPage - 2 and page <= currentPage + 2}">
-                        <a th:if="${page != currentPage}"
-                           th:href="@{/doctor/blog(page=${page})}"
-                           class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300"
-                           th:text="${page + 1}">1</a>
-                        <span th:if="${page == currentPage}"
-                              class="px-3 py-2 bg-purple-600 text-white rounded-lg"
-                              th:text="${page + 1}">1</span>
+                        th:if="${page >= currentPage - 2 and page <= currentPage + 2}">
+                        <a th:if="${page != currentPage}" th:href="@{/doctor/blog(page=${page})}"
+                            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300"
+                            th:text="${page + 1}">1</a>
+                        <span th:if="${page == currentPage}" class="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                            th:text="${page + 1}">1</span>
                     </span>
-                    <a th:if="${currentPage < totalPages - 1}"
-                       th:href="@{/doctor/blog(page=${currentPage + 1})}"
-                       class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
+
+                    <a th:if="${currentPage < totalPages - 1}" th:href="@{/doctor/blog(page=${currentPage + 1})}"
+                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
                         Next
                     </a>
                 </nav>
             </div>
-
         </div>
-
-        <!-- Write New Post Modal -->
+        <!-- Write Blog Modal -->
         <div id="writeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-            <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div
+                class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
                 <div class="mt-3">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Write New Blog Post</h3>
-                        <button onclick="hideWriteForm()" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
+                        <button onclick="closeWriteModal()"
+                            class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
                     </div>
-                    
-                    <form class="space-y-6">
-                        <!-- Title and Category Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog Title</label>
-                                <input type="text" id="blogTitle" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="Enter your blog title">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                                <select id="blogCategory" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                                    <option value="health-tips">Health Tips</option>
-                                    <option value="medical-news">Medical News</option>
-                                    <option value="treatment-guides">Treatment Guides</option>
-                                    <option value="research">Research</option>
-                                    <option value="case-studies">Case Studies</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Content Editor -->
+                    <form id="writeForm" class="space-y-6" onsubmit="submitBlogPost(event)">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog Content</label>
-                            <div class="border border-gray-300 dark:border-gray-600 rounded-lg">
-                                <div class="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-300 dark:border-gray-600 flex items-center space-x-2">
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Bold">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M5 4a1 1 0 011-1h5.5a2.5 2.5 0 010 5H6a1 1 0 000 2h5.5a2.5 2.5 0 010 5H6a1 1 0 01-1-1V4z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Italic">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M8 3a1 1 0 000 2h1v10H8a1 1 0 100 2h4a1 1 0 100-2h-1V5h1a1 1 0 100-2H8z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="List">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <textarea id="blogContent" class="w-full h-64 p-4 border-0 rounded-b-lg focus:outline-none resize-none dark:bg-gray-700 dark:text-gray-100" placeholder="Write your blog content here..."></textarea>
-                            </div>
+                            <label for="title"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog
+                                Title</label>
+                            <input type="text" id="title" name="title" required
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                placeholder="Enter your blog title">
                         </div>
-
-                        <!-- Upload Section -->
-                        <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
-                            <h4 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">📎 Upload Supporting Files</h4>
-                            <div class="border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-lg p-6 text-center hover:border-blue-500 dark:hover:border-blue-400 transition duration-300">
-
-                        <!-- Tags -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags</label>
-                            <input type="text" id="blogTags" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="diabetes, heart health, nutrition (comma separated)">
+                            <label for="content"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content</label>
+                            <textarea id="content" name="content" rows="8" required
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                placeholder="Write your blog content here..."></textarea>
                         </div>
-
-
-
-                        <!-- Action Buttons -->
-                        <div class="flex space-x-4 pt-4">
-                            <button type="button" onclick="hideWriteForm()" class="flex-1 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300 font-semibold">
+                        <div>
+                            <label for="tags"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags (comma
+                                separated)</label>
+                            <input type="text" id="tags" name="tags"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                placeholder="e.g. health, nutrition, fitness">
+                        </div>
+                        <div class="flex justify-end space-x-4 pt-4">
+                            <button type="button" onclick="closeWriteModal()"
+                                class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300 font-semibold">
                                 Cancel
                             </button>
-                            <button type="button" onclick="submitForApproval()" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 font-semibold">
+                            <button type="submit"
+                                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 font-semibold">
                                 Submit
                             </button>
                         </div>
@@ -254,681 +153,63 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Upload Blog Modal -->
-        <div id="uploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
-                <div class="mt-3">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Blog Post</h3>
-                        <button onclick="hideUploadForm()" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog Title</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="Enter blog title">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upload File</label>
-                            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-green-500 dark:hover:border-green-400 transition duration-300">
-                                <svg class="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                </svg>
-                                <p class="text-gray-600 dark:text-gray-400 mb-2">Drag and drop your blog file here</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">or</p>
-                                <input type="file" accept=".doc,.docx,.pdf,.txt" class="mt-2">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                                <option value="health-tips">Health Tips</option>
-                                <option value="medical-news">Medical News</option>
-                                <option value="treatment-guides">Treatment Guides</option>
-                                <option value="research">Research</option>
-                            </select>
-                        </div>
-                        <div class="flex space-x-3">
-                            <button type="button" onclick="hideUploadForm()" class="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition duration-300">
-                                Cancel
-                            </button>
-                            <button type="button" onclick="processUpload()" class="flex-1 px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition duration-300">
-                                Upload
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Import Blog Modal -->
-        <div id="importModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
-                <div class="mt-3">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Import Blog Post</h3>
-                        <button onclick="hideImportForm()" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Import from URL</label>
-                            <input type="url" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="https://example.com/blog-post">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Or paste content</label>
-                            <textarea class="w-full h-32 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="Paste your blog content here..."></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                                <option value="health-tips">Health Tips</option>
-                                <option value="medical-news">Medical News</option>
-                                <option value="treatment-guides">Treatment Guides</option>
-                                <option value="research">Research</option>
-                            </select>
-                        </div>
-                        <div class="flex space-x-3">
-                            <button type="button" onclick="hideImportForm()" class="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition duration-300">
-                                Cancel
-                            </button>
-                            <button type="button" onclick="processImport()" class="flex-1 px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition duration-300">
-                                Import
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Manage Posts Modal -->
-        <div id="manageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-            <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-6xl shadow-lg rounded-md bg-white dark:bg-gray-800">
-                <div class="mt-3">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Manage Your Posts</h3>
-                        <button onclick="hideManagePosts()" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <!-- Filter and Search -->
-                    <div class="mb-6 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search Posts</label>
-                                <input type="text" id="searchPosts" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="Search by title, content, or tags...">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Status</label>
-                                <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                                    <option value="">All Statuses</option>
-                                    <option value="DRAFT">Draft</option>
-                                    <option value="UNDER_REVIEW">Under Review</option>
-                                    <option value="PUBLISHED">Published</option>
-                                    <option value="ARCHIVED">Archived</option>
-                                    <option value="REJECTED">Rejected</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button onclick="filterPosts()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
-                                    Filter Posts
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Posts List -->
-                    <div id="postsList" class="space-y-4 max-h-96 overflow-y-auto">
-                        <!-- Posts will be loaded here dynamically -->
-                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                            Loading posts...
-                        </div>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination" class="mt-6 flex justify-center">
-                        <!-- Pagination will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit Post Modal -->
-        <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-            <div class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white dark:bg-gray-800">
-                <div class="mt-3">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Edit Blog Post</h3>
-                        <button onclick="hideEditForm()" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <form id="editForm" class="space-y-6">
-                        <input type="hidden" id="editPostId">
-                        
-                        <!-- Title and Category Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog Title</label>
-                                <input type="text" id="editTitle" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="Enter your blog title">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                                <select id="editCategory" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                                    <option value="HEALTH_TIPS">Health Tips</option>
-                                    <option value="MEDICAL_NEWS">Medical News</option>
-                                    <option value="TREATMENT_GUIDES">Treatment Guides</option>
-                                    <option value="RESEARCH">Research</option>
-                                    <option value="CASE_STUDIES">Case Studies</option>
-                                    <option value="PREVENTIVE_CARE">Preventive Care</option>
-                                    <option value="MENTAL_HEALTH">Mental Health</option>
-                                    <option value="NUTRITION">Nutrition</option>
-                                    <option value="FITNESS">Fitness</option>
-                                    <option value="CHRONIC_DISEASE">Chronic Disease Management</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Excerpt -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Excerpt</label>
-                            <textarea id="editExcerpt" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" rows="3" placeholder="Brief description of your post..."></textarea>
-                        </div>
-
-                        <!-- Content Editor -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blog Content</label>
-                            <div class="border border-gray-300 dark:border-gray-600 rounded-lg">
-                                <div class="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-300 dark:border-gray-600 flex items-center space-x-2">
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Bold">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M5 4a1 1 0 011-1h5.5a2.5 2.5 0 010 5H6a1 1 0 000 2h5.5a2.5 2.5 0 010 5H6a1 1 0 01-1-1V4z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Italic">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M8 3a1 1 0 000 2h1v10H8a1 1 0 100 2h4a1 1 0 100-2h-1V5h1a1 1 0 100-2H8z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="button" class="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="List">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <textarea id="editContent" class="w-full h-64 p-4 border-0 rounded-b-lg focus:outline-none resize-none dark:bg-gray-700 dark:text-gray-100" placeholder="Write your blog content here..."></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Tags -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags</label>
-                            <input type="text" id="editTags" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="diabetes, heart health, nutrition (comma separated)">
-                        </div>
-
-                        <!-- Meta Information -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meta Description</label>
-                                <textarea id="editMetaDescription" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" rows="2" placeholder="SEO description..."></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Meta Keywords</label>
-                                <input type="text" id="editMetaKeywords" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100" placeholder="keyword1, keyword2, keyword3">
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex space-x-4 pt-4">
-                            <button type="button" onclick="hideEditForm()" class="flex-1 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-300 font-semibold">
-                                Cancel
-                            </button>
-                            <button type="button" onclick="updatePost()" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 font-semibold">
-                                Update Post
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </main>
-    
     <script>
-        let currentPage = 0;
-        let currentStatus = '';
-        let currentSearch = '';
-
-        function showWriteForm() {
+        function openWriteModal() {
             document.getElementById('writeModal').classList.remove('hidden');
         }
 
-        function hideWriteForm() {
+        function closeWriteModal() {
             document.getElementById('writeModal').classList.add('hidden');
         }
 
-        function saveDraft() {
-            const formData = {
-                title: document.querySelector('#writeModal input[type="text"]').value,
-                content: document.querySelector('#writeModal textarea').value,
-                excerpt: '',
-                category: document.querySelector('#writeModal select').value,
-                tags: '',
-                metaDescription: '',
-                metaKeywords: ''
+        function submitBlogPost(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                title: form.title.value.trim(),
+                content: form.content.value.trim(),
+                tags: form.tags.value.trim()
             };
+
+            if (!data.title || !data.content) {
+                alert('Title and content are required.');
+                return;
+            }
 
             fetch('/doctor/blog/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post saved as draft successfully!');
-                    hideWriteForm();
-                    document.querySelector('#writeModal form').reset();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error saving blog post');
-            });
-        }
-
-        function submitForApproval() {
-            const titleInput = document.querySelector('#writeModal input[type="text"]');
-            const contentInput = document.querySelector('#writeModal textarea');
-
-            if (!titleInput.value.trim()) {
-                alert('Please enter a blog title');
-                return;
-            }
-
-            if (!contentInput.value.trim()) {
-                alert('Please enter blog content');
-                return;
-            }
-
-            const formData = {
-                title: titleInput.value,
-                content: contentInput.value,
-                excerpt: '',
-                category: document.querySelector('#writeModal select').value,
-                tags: '',
-                metaDescription: '',
-                metaKeywords: ''
-            };
-
-            fetch('/doctor/blog/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post created successfully!');
-                    hideWriteForm();
-                    document.querySelector('#writeModal form').reset();
-                    // Redirect to blog page to show the newly created post
-                    window.location.href = '/doctor/blog';
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error creating blog post');
-            });
-        }
-
-        function showUploadForm() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function hideUploadForm() {
-            document.getElementById('uploadModal').classList.add('hidden');
-        }
-
-        function showImportForm() {
-            document.getElementById('importModal').classList.remove('hidden');
-        }
-
-        function hideImportForm() {
-            document.getElementById('importModal').classList.add('hidden');
-        }
-
-        function processUpload() {
-            const fileInput = document.querySelector('input[type="file"]');
-            const titleInput = document.querySelector('#uploadModal input[type="text"]');
-            
-            if (!fileInput.files[0]) {
-                alert('Please select a file to upload');
-                return;
-            }
-            
-            if (!titleInput.value.trim()) {
-                alert('Please enter a blog title');
-                return;
-            }
-            
-            // Here you would typically send the file to your backend
-            alert('Blog uploaded successfully!');
-            hideUploadForm();
-            
-            // Reset form
-            document.querySelector('#uploadModal form').reset();
-        }
-
-        function processImport() {
-            const urlInput = document.querySelector('#importModal input[type="url"]');
-            const contentInput = document.querySelector('#importModal textarea');
-            
-            if (!urlInput.value.trim() && !contentInput.value.trim()) {
-                alert('Please provide either a URL or paste content');
-                return;
-            }
-            
-            // Here you would typically process the import
-            alert('Blog imported successfully!');
-            hideImportForm();
-            
-            // Reset form
-            document.querySelector('#importModal form').reset();
-        }
-
-        // Manage Posts Functions
-        function showManagePosts() {
-            document.getElementById('manageModal').classList.remove('hidden');
-            loadPosts();
-        }
-
-        function hideManagePosts() {
-            document.getElementById('manageModal').classList.add('hidden');
-        }
-
-        function loadPosts(page = 0) {
-            currentPage = page;
-            const search = document.getElementById('searchPosts').value;
-            const status = document.getElementById('statusFilter').value;
-            
-            currentSearch = search;
-            currentStatus = status;
-
-            let url = `/doctor/blog/manage?page=${page}&size=10`;
-            if (search) url += `&search=${encodeURIComponent(search)}`;
-            if (status) url += `&status=${encodeURIComponent(status)}`;
-
-            fetch(url)
-            .then(response => response.text())
-            .then(html => {
-                // Parse the response to extract posts data
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const postsContainer = doc.querySelector('#postsList');
-                const paginationContainer = doc.querySelector('#pagination');
-                
-                if (postsContainer) {
-                    document.getElementById('postsList').innerHTML = postsContainer.innerHTML;
-                }
-                if (paginationContainer) {
-                    document.getElementById('pagination').innerHTML = paginationContainer.innerHTML;
-                }
-            })
-            .catch(error => {
-                console.error('Error loading posts:', error);
-                document.getElementById('postsList').innerHTML = '<div class="text-center py-8 text-red-500">Error loading posts</div>';
-            });
-        }
-
-        function filterPosts() {
-            loadPosts(0);
-        }
-
-        function editPost(postId) {
-            fetch(`/doctor/blog/${postId}`)
-            .then(response => response.json())
-            .then(post => {
-                document.getElementById('editPostId').value = post.postId;
-                document.getElementById('editTitle').value = post.title;
-                document.getElementById('editContent').value = post.content;
-                document.getElementById('editExcerpt').value = post.excerpt || '';
-                document.getElementById('editCategory').value = post.category;
-                document.getElementById('editTags').value = post.tags || '';
-                document.getElementById('editMetaDescription').value = post.metaDescription || '';
-                document.getElementById('editMetaKeywords').value = post.metaKeywords || '';
-                
-                document.getElementById('editModal').classList.remove('hidden');
-            })
-            .catch(error => {
-                console.error('Error loading post:', error);
-                alert('Error loading post details');
-            });
-        }
-
-        function hideEditForm() {
-            document.getElementById('editModal').classList.add('hidden');
-        }
-
-        function updatePost() {
-            const postId = document.getElementById('editPostId').value;
-            const formData = {
-                title: document.getElementById('editTitle').value,
-                content: document.getElementById('editContent').value,
-                excerpt: document.getElementById('editExcerpt').value,
-                category: document.getElementById('editCategory').value,
-                tags: document.getElementById('editTags').value,
-                metaDescription: document.getElementById('editMetaDescription').value,
-                metaKeywords: document.getElementById('editMetaKeywords').value
-            };
-
-            if (!formData.title.trim()) {
-                alert('Please enter a blog title');
-                return;
-            }
-            
-            if (!formData.content.trim()) {
-                alert('Please enter blog content');
-                return;
-            }
-
-            fetch(`/doctor/blog/update/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post updated successfully!');
-                    hideEditForm();
-                    loadPosts(currentPage);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating blog post');
-            });
-        }
-
-        function deletePost(postId) {
-            if (!confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
-                return;
-            }
-
-            fetch(`/doctor/blog/delete/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post deleted successfully!');
-                    loadPosts(currentPage);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error deleting blog post');
-            });
-        }
-
-        function publishPost(postId) {
-            fetch(`/doctor/blog/publish/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post published successfully!');
-                    loadPosts(currentPage);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error publishing blog post');
-            });
-        }
-
-        function unpublishPost(postId) {
-            if (!confirm('Are you sure you want to unpublish this blog post?')) {
-                return;
-            }
-
-            fetch(`/doctor/blog/unpublish/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post unpublished successfully!');
-                    loadPosts(currentPage);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error unpublishing blog post');
-            });
-        }
-
-        function submitForReview(postId) {
-            fetch(`/doctor/blog/submit-review/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Blog post submitted for review successfully!');
-                    loadPosts(currentPage);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error submitting blog post for review');
-            });
-        }
-
-        // New blog functionality
-        function viewBlog(postId) {
-            // Redirect to blog detail page or open in modal
-            window.location.href = `/doctor/blog/${postId}`;
-        }
-
-        function editBlog(postId) {
-            // Load blog data and open edit modal
-            fetch(`/doctor/blog/${postId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('editPostId').value = data.postId;
-                    document.getElementById('editTitle').value = data.title;
-                    document.getElementById('editContent').value = data.content;
-                    document.getElementById('editExcerpt').value = data.excerpt || '';
-                    document.getElementById('editCategory').value = data.category;
-                    document.getElementById('editTags').value = data.tags || '';
-                    document.getElementById('editMetaDescription').value = data.metaDescription || '';
-                    document.getElementById('editMetaKeywords').value = data.metaKeywords || '';
-                    
-                    document.getElementById('editModal').classList.remove('hidden');
-                } else {
-                    alert('Error loading blog post: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading blog post:', error);
-                alert('Error loading blog post');
-            });
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const writeModal = document.getElementById('writeModal');
-            const uploadModal = document.getElementById('uploadModal');
-            const importModal = document.getElementById('importModal');
-            const manageModal = document.getElementById('manageModal');
-            const editModal = document.getElementById('editModal');
-            
-            if (event.target === writeModal) {
-                hideWriteForm();
-            }
-            if (event.target === uploadModal) {
-                hideUploadForm();
-            }
-            if (event.target === importModal) {
-                hideImportForm();
-            }
-            if (event.target === manageModal) {
-                hideManagePosts();
-            }
-            if (event.target === editModal) {
-                hideEditForm();
-            }
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to create blog post');
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.success) {
+                        alert('Blog post created successfully!');
+                        closeWriteModal();
+                        // Optionally reload or update blog list
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + (result.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error creating blog post');
+                });
         }
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script th:src="@{'/js/script.js'}"></script>
 </body>
+
 </html>

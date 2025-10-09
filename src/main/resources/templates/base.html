@@ -128,7 +128,7 @@
             <div th:case="*" th:replace="~{user/sidebar :: sidebar}"></div>
         </div>
         <div id="sidebar-backdrop"></div>
-        <main class="flex-grow p-4 w-full" id="main-content">
+        <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
             <section th:replace="${content}"></section>
             <section th:replace="${power}"></section>
         </main>
