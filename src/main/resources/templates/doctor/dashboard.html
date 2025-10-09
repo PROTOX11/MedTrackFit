@@ -215,14 +215,81 @@
             }
         }
 
-        /* Dark mode optimizations */
+        /* Dark mode optimizations with color adjustments matching screenshots */
         .dark .feature-card {
-            background-color: rgb(31 41 55);
             border: 1px solid rgb(55 65 81);
+            transition: background-color 0.3s ease;
+            color: rgb(203 213 225); /* text-slate-300 */
+            box-shadow: none;
         }
 
         .dark .feature-card:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background-color: rgb(30 41 59); /* bg-slate-800 */
+            color: rgb(241 245 249); /* text-slate-100 */
+            box-shadow: none;
+        }
+
+        /* Patient Chat Card Dark Mode Background */
+        .dark .patient-chat-card {
+            background-color: #3e0f29; /* much darker dark pink */
+            color: #f3e8ff; /* lighter text for contrast */
+        }
+
+        .dark .patient-chat-card:hover {
+            background-color: #5a1033;
+        }
+
+        /* Patient Records Card Dark Mode Background */
+        .dark .patient-records-card {
+            background-color: #1e1e7f; /* much darker dark blue */
+            color: #dbeafe; /* lighter text for contrast */
+        }
+
+        .dark .patient-records-card:hover {
+            background-color: #3730a3;
+        }
+
+        /* Medical Resources Card Dark Mode Background */
+        .dark .feature-card:nth-child(3) {
+            background-color: #3f1d8b; /* much darker dark purple */
+            color: #e0d7f7; /* lighter text for contrast */
+        }
+
+        .dark .feature-card:nth-child(3):hover {
+            background-color: #5b21b6;
+        }
+
+        /* Write New Post Card Dark Mode Background */
+        .dark .feature-card:nth-child(4) {
+            background-color: #065f46; /* dark teal */
+        }
+
+        .dark .feature-card:nth-child(4):hover {
+            background-color: #047857;
+        }
+
+        .dark .feature-card h3,
+        .dark .feature-card p,
+        .dark .feature-card a {
+            color: inherit;
+        }
+
+        .dark .stat-card {
+            background-color: rgb(31 41 55);
+            border: 1px solid rgb(55 65 81);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3);
+            transition: box-shadow 0.3s ease, background-color 0.3s ease;
+            color: rgb(203 213 225); /* text-slate-300 */
+        }
+
+        .dark .stat-card:hover {
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.8), 0 0 80px rgba(16, 185, 129, 0.4), 0 10px 25px rgba(0, 0, 0, 0.5);
+            background-color: rgb(30 41 59); /* bg-slate-800 */
+            color: rgb(241 245 249); /* text-slate-100 */
+        }
+
+        .dark .stat-card div {
+            color: inherit;
         }
 
         .dark .bg-white {
@@ -418,7 +485,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <!-- Chat with Patients & Mentors -->
                 <div
-                    class="feature-card bg-pink-50 dark:bg-pink-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-pink-200 dark:border-pink-800">
+                    class="feature-card patient-chat-card bg-pink-50 dark:bg-pink-900/20 rounded-xl shadow-lg dark:shadow-gray-900/50 overflow-hidden border border-pink-200 dark:border-pink-800">
                     <div class="patient-card p-6 text-white relative">
                         <div class="absolute inset-0 bg-gradient-to-r from-pink-500/90 to-rose-500/90"></div>
                         <div class="relative z-10">
@@ -431,7 +498,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6 bg-pink-50 dark:bg-pink-900/20">
+                    <div class="p-6 bg-pink-50 dark:bg-gray-800">
                         <p class="text-pink-800 dark:text-pink-200 mb-4">Communicate directly with patients who need
                             medical guidance and support.</p>
                         <a href="/doctor/chat"
@@ -457,7 +524,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6 bg-blue-50 dark:bg-blue-900/20">
+                    <div class="p-6 bg-blue-50 dark:bg-gray-800">
                         <p class="text-blue-800 dark:text-blue-200 mb-4">Access and manage patient records and medical
                             history.</p>
                         <a href="/doctor/patients"
@@ -482,7 +549,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6 bg-purple-50 dark:bg-purple-900/20">
+                    <div class="p-6 bg-purple-50 dark:bg-gray-800">
                         <p class="text-purple-800 dark:text-purple-200 mb-4">Access medical databases, drug information,
                             and treatment protocols.</p>
                         <a href="/doctor/resources"

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <title>Login to Med Track Fit</title>
+    <style>
+        #logo-sidebar {
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+            background-color: rgb(249 250 251);
+            width: 16rem;
+        }
+        .dark #logo-sidebar {
+            background-color: rgb(31 41 55); /* gray-800 */
+        }
+        
+        
+        /* Ensure only one sidebar exists */
+        #logo-sidebar:not(:first-of-type) {
+            display: none !important;
+        }
+        #sidebar-open-toggle {
+            z-index: 50;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+        }
+        #sidebar-open-toggle.hidden {
+            display: none;
+        }
+        #sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 30;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        #sidebar-backdrop.visible {
+            display: block;
+        }
+        /* Ensure sidebar and related elements are hidden when logged out */
+        body:not([data-logged-in="true"]) #logo-sidebar,
+        body:not([data-logged-in="true"]) #sidebar-open-toggle,
+        body:not([data-logged-in="true"]) #sidebar-backdrop {
+            display: none !important;
+        }
+        /* Ensure sidebar doesn't capture clicks when closed */
+        #logo-sidebar[style*="translateX(-100%)"] {
+            pointer-events: none !important;
+            z-index: -1 !important;
+        }
+        @media (min-width: 640px) {
+            #logo-sidebar {
+                position: fixed;
+            }
+            #sidebar-backdrop {
+                display: none !important;
+            }
+            #sidebar-open-toggle {
+                display: none;
+            }
+            #sidebar-close-toggle {
+                display: none;
+            }
+            #main-content {
+                margin-left: 16rem;
+                background-color: rgb(243 244 246);
+                min-height: 100vh;
+            }
+            .dark #main-content {
+                background-color: rgb(17 24 39); /* gray-900 */
+            }
+            
+        }
+        
+        /* Mobile responsive improvements */
+        @media (max-width: 639px) {
+            #main-content {
+                padding: 1rem;
+            }
+            
+        }
+        
+        /* Improved dark mode transitions */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Button accessibility improvements */
+        button:focus, a:focus {
+            outline: 2px solid rgb(59 130 246);
+            outline-offset: 2px;
+        }
+        
+        
+        /* Enhanced button hover states */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col" data-logged-in="false">
+    
+    <header>
+        <nav class="bg-white shadow-lg dark:bg-gray-800 transition-colors duration-300">
+  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-1">
+      <a href="/home" class="flex items-center rtl:space-x-reverse">
+          <img src="/images/logo.png" class="w-20 h-auto rounded-full" alt="MTF logo">
+          <span class="self-center text-2xl font-bold whitespace-nowrap text-blue-600 dark:text-blue-400">MedTrackFit</span>
+      </a>
+      <div class="flex gap-2 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <button id="theme-change-button" class="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-700 transition-colors duration-200" title="Toggle theme">
+              <i id="theme-icon" class="fa-solid fa-sun"></i>
+          </button>
+          <a href="/signup" type="button" class="hidden md:inline-flex text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors duration-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">You're Not Alone</a>
+          <a href="/login" type="button" class="hidden md:inline-flex text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-6 py-2 text-center transition-colors duration-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Login</a>
+          <button data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-blue-600 rounded-lg md:hidden hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:text-blue-400 dark:hover:bg-blue-900 dark:focus:ring-blue-600" aria-controls="navbar-cta" aria-expanded="false">
+              <span class="sr-only">Open main menu</span>
+              <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+              </svg>
+          </button>
+      </div>
+      <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
+          <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-blue-100 rounded-lg bg-blue-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 dark:border-blue-700">
+              <li>
+                  <a href="/home" class="block py-2 px-3 md:p-0 text-blue-600 bg-blue-100 rounded md:bg-transparent md:text-blue-600 md:hover:text-blue-800 md:dark:text-blue-400 md:dark:hover:text-blue-300 transition-colors duration-200" aria-current="page">Home</a>
+              </li>
+              <li>
+                  <a href="/about" class="block py-2 px-3 md:p-0 text-blue-600 rounded hover:bg-blue-100 md:hover:bg-transparent md:hover:text-blue-800 md:dark:hover:text-blue-300 dark:text-blue-400 dark:hover:bg-blue-700 dark:hover:text-blue-300 md:dark:hover:bg-transparent transition-colors duration-200">About</a>
+              </li>
+          </ul>
+      </div>
+  </div>
+</nav>
+    </header>
+    
+    <div class="flex flex-1">
+        <!-- Include the appropriate sidebar based on user role -->
+        
+        <div id="sidebar-backdrop"></div>
+        <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
+            <div id="home" class="max-w-screen-xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Side Content -->
+            <div class="flex flex-col justify-center">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    Welcome to Med Track Fit
+                </h2>
+                <p class="text-gray-700 dark:text-gray-400 mb-6">
+                    Join our supportive community where health journeys are shared, and recovery is empowered. Log in to access personalized health insights, connect with others, and take control of your well-being.
+                </p>
+                <ul class="space-y-3 text-gray-700 dark:text-gray-400">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Connect with a supportive community
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Access personalized health resources
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Learn from recovered patients
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right Side Login Form -->
+            <div>
+                <div class="p-6 border-t-[10px] border-blue-600 bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Login Here</h5>
+                    <p class="font-normal mb-6 text-gray-700 dark:text-gray-400">
+                        Meet the Recovered You
+                    </p>
+                    
+                    
+                    <form method="post" action="/authenticate" class="max-w-md mx-auto">
+                        <div class="relative z-0 w-full mb-5 group">
+                            <input type="email" name="email" id="email"
+                                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:ring-0 focus:border-blue-500 peer"
+                                placeholder=" " required />
+                            <label for="email"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                Email or Phone number
+                            </label>
+                        </div>
+                        <div class="relative z-0 w-full mb-5 group">
+                            <input type="password" name="password" id="password"
+                                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-400 focus:outline-none focus:ring-0 focus:border-blue-500 peer"
+                                placeholder=" " required />
+                            <label for="password"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-500 peer-focus:dark:text-blue-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                Password
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="submit"
+                                class="w-full bg-blue-700 text-white hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 font-bold py-2 px-3 rounded focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300">
+                                Login
+                            </button>
+                            <button onclick="window.location.href='/signup'" type="button"
+                                class="w-full bg-blue-800 text-white hover:bg-orange-500 dark:bg-orange-500 dark:hover:bg-orange-600 font-bold py-2 px-3 rounded focus:outline-none focus:ring-4 focus:ring-orange-300 transition duration-300">
+                                Create an account
+                            </button>
+                        </div>
+                        <div class="mt-6 space-y-3">
+                            <a href="/oauth2/authorization/google" aria-label="Sign in with Google"
+                                class="flex items-center justify-between bg-blue-500 text-white hover:bg-blue-600 rounded-lg p-2.5 transition-colors duration-300 focus:ring-4 focus:ring-blue-300 w-full">
+                                <svg class="w-5 h-5 ml-2" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                    <path fill="currentColor"
+                                        d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z">
+                                    </path>
+                                </svg>
+                                Login with Google
+                                <span></span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+            
+        </main>
+    </div>
+
+    
+    <footer>
+        <div class="bg-white dark:bg-gray-900 relative">
+    <div class="mx-auto w-full max-w-screen-xl p-4 py-4 lg:py-6">
+        <div class="md:flex md:justify-between">
+            <div class="mb-4 md:mb-0">
+                <a href="/home" class="flex items-center">
+                    <img src="/images/logo.png" class="h-10 me-3" alt="MedTrackFit Logo" />
+                    <span class="text-xl font-bold">MedTrackFit</span>
+                </a>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 gap-8 sm:gap-6 sm:grid-cols-3 mt-4">
+            <div>
+                <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Quick Links</h2>
+                <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                    <li class="mb-4">
+                        <a href="/about" class="hover:underline">About</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="/services" class="hover:underline">Services</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="/contact" class="hover:underline">Contact</a>
+                    </li>
+                    <li>
+                        <a href="/blog" class="hover:underline">Blog</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+                <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                    <li class="mb-4">
+                        <a href="#" class="hover:underline">Facebook</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="#" class="hover:underline">Twitter</a>
+                    </li>
+                    <li class="mb-4">
+                        <a href="#" class="hover:underline">Instagram</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline">LinkedIn</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="mb-4 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                    <li class="mb-4">
+                        <a href="/privacy" class="hover:underline">Privacy Policy</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline">Terms & Conditions</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-6" />
+    <div class="sm:flex sm:items-center sm:justify-between mx-auto w-full max-w-screen-xl p-2">
+        <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+            © 2025 <a href="/home" class="hover:underline">MedTrackFit™</a>. All Rights Reserved.
+        </span>
+        <div class="flex mt-4 sm:justify-center sm:mt-0 space-x-5">
+            <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 8 19">
+                    <path fill-rule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clip-rule="evenodd"/>
+                </svg>
+                <span class="sr-only">Facebook page</span>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 17">
+                    <path fill-rule="evenodd" d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5c0-.177 0-.35-.012-.523A8.143 8.143 0 0 0 20 1.892Z" clip-rule="evenodd"/>
+                </svg>
+                <span class="sr-only">Twitter page</span>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                <span class="sr-only">Instagram page</span>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                <span class="sr-only">LinkedIn page</span>
+            </a>
+        </div>
+    </div>
+    <!-- Back to Top Button -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'});" class="fixed bottom-4 right-4 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition duration-300" aria-label="Back to top">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+</div>
+    </footer>
+
+    <!-- Pass loggedInUser to JavaScript -->
+    <script>
+        window.loggedInUser = false;
+    </script>
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    <script src="/js/script.js"></script> 
+</body>
+</html>
