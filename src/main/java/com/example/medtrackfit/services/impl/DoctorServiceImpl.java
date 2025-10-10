@@ -90,4 +90,9 @@ public class DoctorServiceImpl implements DoctorService {
         doctor.setProfilePicture(imageUrl);
         return doctorRepository.save(doctor);
     }
+
+    @Override
+    public List<Doctor> getAllDoctors() {
+        return doctorRepository.findAll();
+    }
 }
