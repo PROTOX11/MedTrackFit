@@ -1,0 +1,67 @@
+<aside data-th-fragment="recoveredpatient-sidebar" id="logo-sidebar" class="w-full sm:w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 fixed top-0 left-0 z-40 border-r">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <button id="sidebar-close-toggle" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 z-50" aria-label="Close sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <a th:href="@{'/recoveredpatient/dashboard'}" class="flex items-center space-x-3 rtl:space-x-reverse mb-6">
+            <img th:src="@{'/images/logo.png'}" class="w-8 h-8" alt="MedTrackFit logo">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">MTF</span>
+        </a>
+        <ul class="space-y-2 font-medium mt-6">
+            <!-- Dashboard -->
+            <li>
+                <a href="/recoveredpatient/dashboard" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M13.5 2c-.178 0-.356.013-.492.022l-.074.005a1 1 0 0 0-.934.998V11a1 1 0 0 0 1 1h7.975a1 1 0 0 0 .998-.934l.005-.074A7.04 7.04 0 0 0 22 10.5 8.5 8.5 0 0 0 13.5 2Z"/>
+                        <path d="M11 6.025a1 1 0 0 0-1.065-.998 8.5 8.5 0 1 0 9.038 9.039A1 1 0 0 0 17.975 13H11V6.025Z"/>
+                    </svg>
+                    <span class="ms-3 sidebar-text-glow">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Connect Suffering Patient -->
+            <li>
+                <a href="/recoveredpatient/connect_suffering" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M7.05 4.05A7 7 0 0 1 19 9c0 2.407-1.197 3.874-2.186 5.084l-.04.048C15.77 15.362 15 16.34 15 18a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1c0-1.612-.77-2.613-1.78-3.875l-.045-.056C6.193 12.842 5 11.352 5 9a7 7 0 0 1 2.05-4.95ZM9 21a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1Zm1.586-13.414A2 2 0 0 1 12 7a1 1 0 0 0 0-2 4 4 0 0 0-4 4 1 1 0 0 0 2 0 2 2 0 0 1 .586-1.414Z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Connect Suffering Patient</span>
+                </a>
+            </li>
+
+            <!-- Connect Doctor -->
+            <li>
+                <a href="/recoveredpatient/connect_doctor" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"/>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Connect Doctor</span>
+                </a>
+            </li>
+
+            <!-- Connect Mentor -->
+            <li>
+                <a href="/recoveredpatient/connect_mentor" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-gray-800 dark:text-gray-200">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Connect Mentor</span>
+                </a>
+            </li>
+
+            <!-- Logout -->
+            <li>
+                <form th:action="@{'/do-logout'}" method="post" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/>
+                    </svg>
+                    <button type="submit" class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow text-left">Logout</button>
+                </form>
+            </li>
+
+        </ul>
+    </div>
+</aside>

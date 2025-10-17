@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="parent(content,title,script)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{'/css/output.css'}">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <title th:text="${title ?: 'Base page'}">Base page</title>
+    <style>
+        #logo-sidebar {
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+            background-color: rgb(249 250 251);
+            width: 16rem;
+        }
+        .dark #logo-sidebar {
+            background-color: rgb(31 41 55); /* gray-800 */
+        }
+
+
+        /* Ensure only one sidebar exists */
+        #logo-sidebar:not(:first-of-type) {
+            display: none !important;
+        }
+        #sidebar-open-toggle {
+            z-index: 50;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+        }
+        #sidebar-open-toggle.hidden {
+            display: none;
+        }
+        #sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 30;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        #sidebar-backdrop.visible {
+            display: block;
+        }
+        /* Ensure sidebar and related elements are hidden when logged out */
+        body:not([data-logged-in="true"]) #logo-sidebar,
+        body:not([data-logged-in="true"]) #sidebar-open-toggle,
+        body:not([data-logged-in="true"]) #sidebar-backdrop {
+            display: none !important;
+        }
+        /* Ensure sidebar doesn't capture clicks when closed */
+        #logo-sidebar[style*="translateX(-100%)"] {
+            pointer-events: none !important;
+            z-index: -1 !important;
+        }
+        @media (min-width: 640px) {
+            #logo-sidebar {
+                position: fixed;
+            }
+            #sidebar-backdrop {
+                display: none !important;
+            }
+            #sidebar-open-toggle {
+                display: none;
+            }
+            #sidebar-close-toggle {
+                display: none;
+            }
+            #main-content {
+                margin-left: 16rem;
+                background-color: rgb(243 244 246);
+                min-height: 100vh;
+            }
+            .dark #main-content {
+                background-color: rgb(17 24 39); /* gray-900 */
+            }
+
+        }
+
+        /* Mobile responsive improvements */
+        @media (max-width: 639px) {
+            #main-content {
+                padding: 1rem;
+            }
+
+        }
+
+        /* Improved dark mode transitions */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Button accessibility improvements */
+        button:focus, a:focus {
+            outline: 2px solid rgb(59 130 246);
+            outline-offset: 2px;
+        }
+
+
+        /* Enhanced button hover states */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col" th:attr="data-logged-in=${loggedInUser != null ? 'true' : 'false'}">
+    <header th:if="${loggedInUser}">
+        <div th:replace="user/user_navbar::user-navbar"></div>
+    </header>
+    <header th:unless="${loggedInUser}">
+        <div th:replace="navbar :: navbar"></div>
+    </header>
+
+    <div class="flex flex-1">
+        <!-- Hardcoded sidebar for recoveredpatient routes -->
+        <div th:if="${loggedInUser}">
+            <button id="sidebar-open-toggle" class="sm:hidden p-2 bg-gray-800 text-white rounded-lg fixed top-4 left-4 z-50" aria-label="Open sidebar">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div th:replace="~{recoveredpatient/recoveredpatient_sidebar :: recoveredpatient-sidebar}"></div>
+        </div>
+        <div id="sidebar-backdrop"></div>
+        <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
+            <section th:replace="${content}"></section>
+        </main>
+    </div>
+
+    <footer th:if="${loggedInUser}">
+        <div th:replace="user/user_footer::user-footer"></div>
+    </footer>
+    <footer th:unless="${loggedInUser}">
+        <div th:replace="footer :: footer"></div>
+    </footer>
+
+    <!-- Pass loggedInUser to JavaScript -->
+    <script th:inline="javascript">
+        window.loggedInUser = /*[[${loggedInUser != null}]]*/ false;
+    </script>
+
+
+    <script th:replace="${script}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+    <script th:src="@{'/js/script.js'}"></script>
+</body>
+</html>

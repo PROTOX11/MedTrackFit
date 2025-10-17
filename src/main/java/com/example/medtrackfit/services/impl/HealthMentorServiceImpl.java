@@ -69,4 +69,9 @@ public class HealthMentorServiceImpl implements HealthMentorService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return getHealthMentorByEmail(email);
     }
+
+    @Override
+    public List<HealthMentor> getAllHealthMentors() {
+        return healthMentorRepository.findAll();
+    }
 }

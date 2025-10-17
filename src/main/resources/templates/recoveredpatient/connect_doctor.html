@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{recoveredpatient_base :: parent(~{::#content},~{::title},~{})}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Doctor - MedTrackFit</title>
+</head>
+
+<body>
+    <div id="content">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between px-6 py-4">
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Connect Doctor</h1>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Find and Connect with Doctors</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">
+                        Connect with experienced doctors to get professional medical advice and follow-up care.
+                    </p>
+
+                    <!-- Search and Filter Section -->
+                    <div class="mb-6">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="text" placeholder="Search by name, specialty, or location..."
+                                   class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                            <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                                <option value="">All Specialties</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="endocrinology">Endocrinology</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="oncology">Oncology</option>
+                                <option value="psychiatry">Psychiatry</option>
+                            </select>
+                            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Doctor Cards -->
+                    <div class="space-y-4" th:if="${doctors != null}">
+                        <div th:each="doctor : ${doctors}" class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <img th:src="${doctor.profilePicture != null ? doctor.profilePicture : '/images/profiles/default-avatar.png'}" alt="Doctor Avatar" class="w-12 h-12 rounded-full">
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900 dark:text-gray-100" th:text="${'Dr. ' + doctor.name}">Dr. John Smith</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${'Specialty: ' + (doctor.specialization != null ? doctor.specialization : 'General Medicine')}">Specialty: General Medicine</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${'Phone: ' + doctor.phoneNumber}">Phone: N/A</p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-2" th:text="${doctor.about}">Specialized in medical care.</p>
+                                    </div>
+                                </div>
+                                <a th:href="@{'/recoveredpatient/connect_doctor/request/' + ${doctor.doctorId}}" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                    Request Connection
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No doctors message -->
+                    <div th:if="${doctors == null or #lists.isEmpty(doctors)}" class="text-center py-8">
+                        <p class="text-gray-600 dark:text-gray-400">No doctors available at the moment.</p>
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="text-center mt-6">
+                        <button class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            Load More Doctors
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

@@ -69,4 +69,9 @@ public class SufferingPatientServiceImpl implements SufferingPatientService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return getSufferingPatientByEmail(email);
     }
+
+    @Override
+    public List<SufferingPatient> getAllSufferingPatients() {
+        return sufferingPatientRepository.findAll();
+    }
 }
