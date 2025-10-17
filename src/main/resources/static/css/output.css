@@ -2971,6 +2971,10 @@ input:checked + .toggle-bg {
   padding-top: 2rem;
 }
 
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -4057,6 +4061,10 @@ input:checked + .toggle-bg {
     height: 2rem;
   }
 
+  .sm\:h-32 {
+    height: 8rem;
+  }
+
   .sm\:w-1\/6 {
     width: 16.666667%;
   }
@@ -4089,6 +4097,10 @@ input:checked + .toggle-bg {
     width: 2rem;
   }
 
+  .sm\:w-32 {
+    width: 8rem;
+  }
+
   .sm\:max-w-sm {
     max-width: 24rem;
   }
@@ -4115,6 +4127,10 @@ input:checked + .toggle-bg {
 
   .sm\:items-center {
     align-items: center;
+  }
+
+  .sm\:justify-start {
+    justify-content: flex-start;
   }
 
   .sm\:justify-center {
@@ -4149,6 +4165,12 @@ input:checked + .toggle-bg {
     --tw-space-y-reverse: 0;
     margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+  }
+
+  .sm\:space-x-6 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(1.5rem * var(--tw-space-x-reverse));
+    margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)));
   }
 
   .sm\:p-6 {
@@ -4191,6 +4213,10 @@ input:checked + .toggle-bg {
     padding-top: 1rem;
   }
 
+  .sm\:text-left {
+    text-align: left;
+  }
+
   .sm\:text-center {
     text-align: center;
   }
@@ -4218,6 +4244,11 @@ input:checked + .toggle-bg {
   .sm\:text-base {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+
+  .sm\:text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
   }
 }
 
@@ -4811,6 +4842,11 @@ input:checked + .toggle-bg {
   background-color: rgb(99 49 18 / var(--tw-bg-opacity, 1));
 }
 
+.dark\:bg-gray-200:where(.dark, .dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+}
+
 .dark\:bg-opacity-30:where(.dark, .dark *) {
   --tw-bg-opacity: 0.3;
 }
@@ -4970,6 +5006,11 @@ input:checked + .toggle-bg {
   color: rgb(194 120 3 / var(--tw-text-opacity, 1));
 }
 
+.dark\:text-gray-800:where(.dark, .dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
+}
+
 .dark\:placeholder-gray-400:where(.dark, .dark *)::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(156 163 175 / var(--tw-placeholder-opacity, 1));
@@ -5062,6 +5103,11 @@ input:checked + .toggle-bg {
 
 .dark\:hover\:bg-red-900\/20:hover:where(.dark, .dark *) {
   background-color: rgb(119 29 29 / 0.2);
+}
+
+.dark\:hover\:bg-gray-300:hover:where(.dark, .dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
 }
 
 .dark\:hover\:bg-opacity-50:hover:where(.dark, .dark *) {

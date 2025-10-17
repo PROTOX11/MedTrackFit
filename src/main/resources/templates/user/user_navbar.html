@@ -1,11 +1,6 @@
 <nav data-th-fragment="user-navbar" class="fixed top-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-l border-gray-200 dark:border-gray-700 rounded-bl-[35px]">
     <div class="flex items-center p-4">
-        <!-- Mobile Sidebar Toggle Button -->
-        <button id="sidebar-open-toggle" class="sm:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200" aria-label="Open sidebar">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+
         
         <!-- Navbar Content (Dark Mode Toggle and Profile Picture) -->
         <div class="flex items-center space-x-3 ml-auto">
@@ -18,7 +13,6 @@
             <a th:href="@{'/doctor/profile'}" class="flex items-center">
                 <img th:src="${loggedInUser?.profilePicture} ?: 'https://via.placeholder.com/40'" alt="Profile Picture" class="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover hover:border-blue-500 transition-colors" />
             </a>
-
         </div>
     </div>
 </nav>

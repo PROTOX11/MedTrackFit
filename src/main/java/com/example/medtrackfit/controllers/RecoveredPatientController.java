@@ -61,4 +61,14 @@ public class RecoveredPatientController {
         // For now, redirect back to the connect page with a success flag.
         return "redirect:/recoveredpatient/connect_doctor?requested=" + doctorId;
     }
+
+    @GetMapping("/profile")
+    public String profile() {
+        return "recoveredpatient/profile";
+    }
+
+    @GetMapping("/edit-profile")
+    public String editProfile() {
+        return "recoveredpatient/edit-profile";
+    }
 }
