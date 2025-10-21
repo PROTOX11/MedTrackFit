@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Profile - MedTrackFit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white dark:bg-gray-800 shadow-lg min-h-screen">
+            <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Mentor Panel</h2>
+                <nav class="space-y-2">
+                    <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                    </a>
+                    <a href="/mentor/chat" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-comments mr-3"></i>Chat
+                    </a>
+                    <a href="/mentor/blog" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-blog mr-3"></i>Blog
+                    </a>
+                    <a href="/mentor/patients" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-users mr-3"></i>Patients
+                    </a>
+                    <a href="/mentor/profile" class="flex items-center p-3 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <i class="fas fa-user mr-3"></i>Profile
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Profile</h1>
+                <p class="text-gray-600 dark:text-gray-400">Manage your mentor profile and information</p>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-8 mb-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                    <!-- Profile Picture -->
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+                            <span th:text="${mentor != null ? mentor.name.substring(0,1) : 'M'}">M</span>
+                        </div>
+                        <button onclick="openEditProfile()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-edit mr-2"></i>Edit Profile
+                        </button>
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="flex-1 space-y-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${mentor != null ? mentor.name : 'Mentor Name'}">Dr. John Smith</h2>
+                            <p class="text-blue-600 dark:text-blue-400 font-medium">Health Mentor</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-envelope text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" th:text="${mentor != null ? mentor.email : 'mentor@example.com'}">mentor@example.com</span>
+                                </div>
+                                <div class="flex items-center space-x-3" th:if="${mentor != null and mentor.phoneNumber != null}">
+                                    <i class="fas fa-phone text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" th:text="${mentor.phoneNumber}">+1 (555) 123-4567</span>
+                                </div>
+                                <div class="flex items-center space-x-3" th:if="${mentor != null and mentor.areaOfExpertise != null}">
+                                    <i class="fas fa-stethoscope text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" th:text="${mentor.areaOfExpertise}">Cardiology</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3" th:if="${mentor != null and mentor.mentorshipExperience != null}">
+                                    <i class="fas fa-calendar text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" th:text="${mentor.mentorshipExperience + ' years experience'}">5 years experience</span>
+                                </div>
+                                <div class="flex items-center space-x-3" th:if="${mentor != null and mentor.certifications != null}">
+                                    <i class="fas fa-certificate text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300" th:text="${mentor.certifications}">Certified Health Coach</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-users text-gray-400 w-5"></i>
+                                    <span class="text-gray-700 dark:text-gray-300">12 Active Patients</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div th:if="${mentor != null and mentor.about != null}" class="mt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">About</h3>
+                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed" th:text="${mentor.about}">Experienced health mentor dedicated to helping patients achieve their wellness goals through personalized guidance and evidence-based practices.</p>
+                        </div>
+
+                        <div th:if="${mentor != null and mentor.recoveryStory != null}" class="mt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Recovery Story</h3>
+                            <p class="text-gray-700 dark:text-gray-300 leading-relaxed" th:text="${mentor.recoveryStory}">Overcame chronic illness through lifestyle changes and now helps others on their journey to better health.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">12</div>
+                    <div class="text-gray-600 dark:text-gray-400">Active Patients</div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2">47</div>
+                    <div class="text-gray-600 dark:text-gray-400">Sessions Completed</div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-2">4.8</div>
+                    <div class="text-gray-600 dark:text-gray-400">Average Rating</div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 text-center">
+                    <div class="text-3xl font-bold text-orange-600 mb-2">8</div>
+                    <div class="text-gray-600 dark:text-gray-400">Blog Posts</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-plus text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 dark:text-white font-medium">New patient assigned</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Sarah Johnson joined your mentorship program</p>
+                        </div>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm">2 hours ago</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 dark:text-white font-medium">Session completed</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">Weekly check-in with Michael Chen</p>
+                        </div>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm">1 day ago</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-blog text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 dark:text-white font-medium">Blog post published</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">"Managing Diabetes Through Lifestyle Changes"</p>
+                        </div>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm">3 days ago</span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-star text-orange-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-900 dark:text-white font-medium">New review received</p>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">5-star rating from Emily Rodriguez</p>
+                        </div>
+                        <span class="text-gray-500 dark:text-gray-400 text-sm">1 week ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEditProfile() {
+            window.location.href = '/mentor/edit-profile';
+        }
+
+        // Theme management
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                localStorage.setItem('theme', 'auto');
+            }
+        }
+
+        // Load theme preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'auto';
+            setTheme(theme);
+        });
+    </script>
+</body>
+</html>

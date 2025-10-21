@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Patients - MedTrackFit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white dark:bg-gray-800 shadow-lg min-h-screen">
+            <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Mentor Panel</h2>
+                <nav class="space-y-2">
+                    <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                    </a>
+                    <a href="/mentor/chat" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-comments mr-3"></i>Chat
+                    </a>
+                    <a href="/mentor/blog" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-blog mr-3"></i>Blog
+                    </a>
+                    <a href="/mentor/patients" class="flex items-center p-3 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <i class="fas fa-users mr-3"></i>Patients
+                    </a>
+                    <a href="/mentor/profile" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i class="fas fa-user mr-3"></i>Profile
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Patients</h1>
+                <p class="text-gray-600 dark:text-gray-400">Monitor and support your assigned patients</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="searchInput"
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                            placeholder="Search patients by name or condition..." />
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <select id="statusFilter" class="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        <option value="">All Status</option>
+                        <option value="healthy">Healthy</option>
+                        <option value="monitoring">Monitoring</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                    <button onclick="refreshPatients()" class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Patients Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="patientsGrid">
+                <!-- Sample Patient Cards -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                                SJ
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Sarah Johnson</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Diabetes Management</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Healthy</span>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
+                            <span class="text-gray-900 dark:text-white">2 hours ago</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
+                            <span class="text-gray-900 dark:text-white">Tomorrow 10:00 AM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
+                            <span class="text-green-600">85%</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="viewPatientDetails('sarah-johnson')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-eye mr-1"></i>View Details
+                        </button>
+                        <button onclick="startChat('sarah-johnson')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-comments mr-1"></i>Chat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                                MC
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Michael Chen</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Hypertension</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">Monitoring</span>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
+                            <span class="text-gray-900 dark:text-white">1 day ago</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
+                            <span class="text-gray-900 dark:text-white">Friday 2:00 PM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
+                            <span class="text-yellow-600">65%</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="viewPatientDetails('michael-chen')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-eye mr-1"></i>View Details
+                        </button>
+                        <button onclick="startChat('michael-chen')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-comments mr-1"></i>Chat
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                                ER
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Emily Rodriguez</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Post-Surgery Recovery</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">Critical</span>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
+                            <span class="text-gray-900 dark:text-white">30 min ago</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
+                            <span class="text-gray-900 dark:text-white">Today 4:00 PM</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
+                            <span class="text-red-600">40%</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="viewPatientDetails('emily-rodriguez')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-eye mr-1"></i>View Details
+                        </button>
+                        <button onclick="startChat('emily-rodriguez')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-comments mr-1"></i>Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-gray-400 dark:text-gray-500 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No patients found</h3>
+                <p class="text-gray-600 dark:text-gray-400">Try adjusting your search criteria or filters.</p>
+            </div>
+
+            <!-- Patient Details Modal -->
+            <div id="patientModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-75 overflow-y-auto h-full w-full z-50 hidden">
+                <div class="relative top-20 mx-auto p-5 border border-gray-200 dark:border-gray-700 w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-lg rounded-md bg-white dark:bg-gray-800">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg p-4 flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-white" id="patientModalTitle">Patient Details</h3>
+                        <button onclick="closePatientModal()" class="text-white hover:text-gray-200 transition-colors duration-200">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6" id="patientModalContent">
+                        <div class="text-center text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                            <p>Loading patient details...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const patientCards = document.querySelectorAll('#patientsGrid > div');
+            let hasVisibleItems = false;
+
+            patientCards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const condition = card.querySelector('p').textContent.toLowerCase();
+                const status = card.querySelector('.px-3.py-1').textContent.toLowerCase();
+                const matchesSearch = name.includes(searchTerm) || condition.includes(searchTerm);
+                const matchesStatus = !statusFilter || status.includes(statusFilter);
+
+                const isVisible = matchesSearch && matchesStatus;
+                card.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) hasVisibleItems = true;
+            });
+
+            document.getElementById('emptyState').classList.toggle('hidden', hasVisibleItems);
+        });
+
+        // Status filter
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            const searchInput = document.getElementById('searchInput');
+            const event = new Event('input', { bubbles: true });
+            searchInput.dispatchEvent(event);
+        });
+
+        function viewPatientDetails(patientId) {
+            document.getElementById('patientModalTitle').textContent = 'Patient Details - ' + patientId.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            document.getElementById('patientModalContent').innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Patient Information</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Full Name:</span>
+                                <span class="text-gray-900 dark:text-white font-medium">Sarah Johnson</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Age:</span>
+                                <span class="text-gray-900 dark:text-white font-medium">45</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Condition:</span>
+                                <span class="text-gray-900 dark:text-white font-medium">Diabetes Type 2</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Status:</span>
+                                <span class="text-green-600 font-medium">Stable</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-check text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Appointment completed</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-comments text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Message sent</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">1 day ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button onclick="startChat('${patientId}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-comments mr-2"></i>Start Chat
+                    </button>
+                    <button onclick="closePatientModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Close
+                    </button>
+                </div>
+            `;
+            document.getElementById('patientModal').classList.remove('hidden');
+        }
+
+        function startChat(patientId) {
+            // Redirect to chat page with patient
+            window.location.href = '/mentor/chat?patient=' + patientId;
+        }
+
+        function closePatientModal() {
+            document.getElementById('patientModal').classList.add('hidden');
+        }
+
+        function refreshPatients() {
+            // Simulate refresh - in real app this would fetch new data
+            location.reload();
+        }
+
+        // Theme management
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                localStorage.setItem('theme', 'auto');
+            }
+        }
+
+        // Load theme preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'auto';
+            setTheme(theme);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard - MedTrackFit</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+
+    <div class="flex min-h-screen">
+        <!-- Include COMMON Mentor Sidebar -->
+        <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
+        <button id="sidebar-open-btn" class="sm:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow text-gray-700 hover:bg-gray-100 focus:outline-none transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8">
+            <!-- Header -->
+            <header class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    Welcome back, <span th:text="${mentor.name}">Mentor</span>!
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">Here's what's happening with your mentorship today.</p>
+            </header>
+
+            <!-- Stats Grid -->
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Active Patients</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${activePatients != null ? activePatients : '12'}">12</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                            <i class="fas fa-comments text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Messages Today</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${messagesToday != null ? messagesToday : '8'}">8</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
+                            <i class="fas fa-blog text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Blog Posts</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${blogPosts != null ? blogPosts : '5'}">5</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+                            <i class="fas fa-star text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Rating</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${rating != null ? rating : '4.8'}">4.8</p>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Theme management
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                localStorage.setItem('theme', 'auto');
+            }
+        }
+
+        // Load theme preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'auto';
+            setTheme(theme);
+        });
+
+        // Sidebar smooth toggling
+        const sidebar = document.getElementById('mentor-sidebar');
+        const openBtn = document.getElementById('sidebar-open-btn');
+        const closeBtn = document.getElementById('sidebar-close-btn');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        }
+        if(openBtn) openBtn.onclick = openSidebar;
+        if(closeBtn) closeBtn.onclick = closeSidebar;
+        if(backdrop) backdrop.onclick = closeSidebar;
+        // On resize, ensure sidebar visibility for wider screens
+        window.addEventListener('resize', function() {
+            if(window.innerWidth >= 640) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+        // On load, hide sidebar on mobile
+        if(window.innerWidth < 640){ sidebar.classList.add('-translate-x-full'); }
+    </script>
+</body>
+</html>

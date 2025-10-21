@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class PageController {
+
     @Autowired
     private RoleBasedUserService roleBasedUserService;
 
@@ -33,7 +34,7 @@ public class PageController {
     @RequestMapping("/home")
     public String home(Model model) {
         System.out.println("Home page handler");
-        model.addAttribute("github","https://github.com/PROTOX11");
+        model.addAttribute("github", "https://github.com/PROTOX11");
         return "home";
     }
 
@@ -43,12 +44,13 @@ public class PageController {
         System.out.println("About page loading");
         return "about";
     }
-    
+
     @RequestMapping("/services")
     public String servicespage() {
         System.out.println("Services page loading");
         return "services";
     }
+
     @RequestMapping("/login")
     public String login(Model model) {
         UserForm userForm = new UserForm();
@@ -56,11 +58,13 @@ public class PageController {
         System.out.println("Login page loading");
         return "login";
     }
+
     @RequestMapping("/privacy")
     public String privacy() {
         System.out.println("Privacy page loading");
         return "privacy";
     }
+
     @RequestMapping("/logged_home")
 
     public String logged_home() {
@@ -70,8 +74,8 @@ public class PageController {
 
     @RequestMapping("/contact")
     public String contact() {
-    System.out.println("Signup page loading");
-    return "contact";
+        System.out.println("Signup page loading");
+        return "contact";
     }
 
     @RequestMapping("/signup")
@@ -86,6 +90,7 @@ public class PageController {
         System.out.println("Signup page loading");
         return "signup";
     }
+
     @RequestMapping(value = "/do-signup", method = RequestMethod.POST)
     public String processRegister(@Valid @ModelAttribute UserForm userForm, BindingResult rBindingResult, HttpSession session, Model model) {
         System.out.println("Registration page loading");
@@ -108,13 +113,13 @@ public class PageController {
 
             // Save user to appropriate collection based on role
             UserDetails savedUserDetails = roleBasedUserService.saveUserByRole(
-                userForm.getRole(),
-                userForm.getName(),
-                userForm.getEmail(),
-                userForm.getPassword(),
-                userForm.getPhoneNumber(),
-                userForm.getAbout(),
-                defaultProfilePicture
+                    userForm.getRole(),
+                    userForm.getName(),
+                    userForm.getEmail(),
+                    userForm.getPassword(),
+                    userForm.getPhoneNumber(),
+                    userForm.getAbout(),
+                    defaultProfilePicture
             );
 
             System.out.println("User saved to " + userForm.getRole() + " collection: " + userForm.getEmail());
@@ -122,36 +127,40 @@ public class PageController {
             // Automatically log in the user after successful registration
             try {
                 System.out.println("User authorities: " + savedUserDetails.getAuthorities());
-                
+
                 // Store user info in session for authentication
                 session.setAttribute("loggedInUser", savedUserDetails);
                 session.setAttribute("userEmail", savedUserDetails.getUsername());
                 session.setAttribute("userRole", userForm.getRole());
                 session.setAttribute("userAuthorities", savedUserDetails.getAuthorities());
-                
+
                 // Create authentication token with user details (using constructor with authorities)
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    savedUserDetails.getUsername(), // Use email as principal
-                    null, // No credentials needed since we just created the user
-                    savedUserDetails.getAuthorities() // Authorities passed to constructor
+                        savedUserDetails.getUsername(), // Use email as principal
+                        null, // No credentials needed since we just created the user
+                        savedUserDetails.getAuthorities() // Authorities passed to constructor
                 );
-                
+
                 // Set in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
                 System.out.println("User automatically logged in successfully: " + userForm.getEmail());
                 System.out.println("Authentication object: " + authentication);
                 System.out.println("Is authenticated: " + authentication.isAuthenticated());
-                
+
                 // Store authentication in session to persist across redirects
                 session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-                
-                    // Forward to role-specific dashboard instead of redirect to maintain authentication context
-                    return "forward:/" + userForm.getRole().toLowerCase() + "/dashboard";
+
+                // Forward to role-specific dashboard instead of redirect to maintain authentication context
+                String rolePath = userForm.getRole().toLowerCase();
+                if ("healthmentor".equals(rolePath)) {
+                    rolePath = "mentor";
+                }
+                return "forward:/" + rolePath + "/dashboard";
             } catch (Exception authException) {
                 System.out.println("Auto-login failed: " + authException.getMessage());
                 authException.printStackTrace(); // Add stack trace for debugging
-                
+
                 // If auto-login fails, show success message and redirect to login
                 Message message = Message.builder().content("Registration successful! Please log in with your credentials.").type(MessageType.green).build();
                 session.setAttribute("message", message);
@@ -162,7 +171,7 @@ public class PageController {
             System.out.println("Duplicate email error: " + e.getMessage());
             Message message = Message.builder().content("Email already exists. Please use a different email or try logging in.").type(MessageType.red).build();
             session.setAttribute("message", message);
-            
+
             // Re-populate the form with user data
             model.addAttribute("userForm", userForm);
             return "signup";
@@ -172,7 +181,7 @@ public class PageController {
             e.printStackTrace();
             Message message = Message.builder().content("Registration failed. Please try again.").type(MessageType.red).build();
             session.setAttribute("message", message);
-            
+
             // Re-populate the form with user data
             model.addAttribute("userForm", userForm);
             return "signup";

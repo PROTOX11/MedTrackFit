@@ -35,6 +35,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if ("Doctor".equals(userRole)) {
             // Redirect doctors to dashboard page
             response.sendRedirect("/doctor/dashboard");
+        } else if ("HealthMentor".equals(userRole)) {
+            // Redirect health mentors to dashboard page
+            response.sendRedirect("/mentor/dashboard");
         } else if ("SufferingPatient".equals(userRole)) {
             // Redirect suffering patients to dashboard page
             response.sendRedirect("/suff-pat/dashboard");
