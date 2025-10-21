@@ -1,28 +1,57 @@
-<aside th:fragment="mentor-sidebar" id="mentor-sidebar" class="fixed top-0 left-0 h-full w-64 z-50 bg-white dark:bg-gray-800 border-r shadow-lg transform -translate-x-full sm:translate-x-0 transition-transform duration-300 flex flex-col">
-    <div class="flex items-center space-x-3 px-5 pt-6 pb-5">
-        <img src="/images/logo.png" class="w-8 h-8" alt="MedTrackFit logo">
-        <span class="text-2xl font-semibold text-gray-800 dark:text-gray-100">MTF</span>
-        <button id="sidebar-close-btn" class="sm:hidden ml-auto p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 focus:outline-none transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+<aside th:fragment="mentor-sidebar" id="logo-sidebar" class="w-full sm:w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 fixed top-0 left-0 z-40 border-r">
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <button id="sidebar-close-toggle" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 z-50" aria-label="Close sidebar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
+        <a th:href="@{'/mentor/dashboard'}" class="flex items-center space-x-3 rtl:space-x-reverse mb-6">
+            <img th:src="@{'/images/logo.png'}" class="w-8 h-8" alt="MedTrackFit logo">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">MTF</span>
+        </a>    
+        <ul class="space-y-2 font-medium mt-6">
+            <!-- Dashboard -->
+            <li>
+                <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5 2c-.178 0-.356.013-.492.022l-.074.005a1 1 0 0 0-.934.998V11a1 1 0 0 0 1 1h7.975a1 1 0 0 0 .998-.934l.005-.074A7.04 7.04 0 0 0 22 10.5 8.5 8.5 0 0 0 13.5 2Z"/><path d="M11 6.025a1 1 0 0 0-1.065-.998 8.5 8.5 0 1 0 9.038 9.039A1 1 0 0 0 17.975 13H11V6.025Z"/></svg>
+                    <span class="ms-3 sidebar-text-glow">Dashboard</span>
+                </a>
+            </li>
+            <!-- Chat -->
+            <li>
+                <a href="/mentor/chat" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <span class="ms-3 sidebar-text-glow">Chat</span>
+                </a>
+            </li>
+            <!-- Patients -->
+            <li>
+                <a href="/mentor/patients" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z"/></svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Patients</span>
+                </a>
+            </li>
+            <!-- Blog -->
+            <li>
+                <a href="/mentor/blog" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm0 2h16v12H4V6Zm2 2a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H6Zm0 4a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H6Zm0 4a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2H6Z" clip-rule="evenodd"/></svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Blog</span>
+                </a>
+            </li>
+            <!-- Profile -->
+            <li>
+                <a href="/mentor/profile" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clip-rule="evenodd"/></svg>
+                    <span class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow">Profile</span>
+                </a>
+            </li>
+            <!-- Logout -->
+            <li>
+                <form th:action="@{'/do-logout'}" method="post" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
+                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/></svg>
+                    <button type="submit" class="flex-1 ms-3 whitespace-nowrap sidebar-text-glow text-left">Logout</button>
+                </form>
+            </li>
+        </ul>
     </div>
-    <nav class="flex-1 px-4 space-y-2">
-        <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 transform hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 hover:scale-105 focus:outline-none focus:bg-blue-200 focus:text-blue-900">
-            <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
-        </a>
-        <a href="/mentor/chat" class="flex items-center p-3 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 transform hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 hover:scale-105 focus:outline-none focus:bg-blue-200 focus:text-blue-900">
-            <i class="fas fa-comments mr-3"></i>Chat
-        </a>
-        <a href="/mentor/blog" class="flex items-center p-3 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 transform hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 hover:scale-105 focus:outline-none focus:bg-blue-200 focus:text-blue-900">
-            <i class="fas fa-blog mr-3"></i>Blog
-        </a>
-        <a href="/mentor/patients" class="flex items-center p-3 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 transform hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 hover:scale-105 focus:outline-none focus:bg-blue-200 focus:text-blue-900">
-            <i class="fas fa-users mr-3"></i>Patients
-        </a>
-        <a href="/mentor/profile" class="flex items-center p-3 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 transform hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 hover:scale-105 focus:outline-none focus:bg-blue-200 focus:text-blue-900">
-            <i class="fas fa-user mr-3"></i>Profile
-        </a>
-    </nav>
 </aside>

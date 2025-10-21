@@ -12,14 +12,16 @@
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
 
     <div class="flex min-h-screen">
-        <!-- Include COMMON Mentor Sidebar -->
-        <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
-        <button id="sidebar-open-btn" class="sm:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow text-gray-700 hover:bg-gray-100 focus:outline-none transition-transform">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
+        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
         <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        <!-- END MOBILE TOGGLE -->
+        <!-- COMMON MENTOR SIDEBAR -->
+        <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
 
         <!-- Main Content -->
         <main class="flex-1 p-8">
@@ -110,33 +112,35 @@
             setTheme(theme);
         });
 
-        // Sidebar smooth toggling
+        // Sidebar toggle logic
         const sidebar = document.getElementById('mentor-sidebar');
-        const openBtn = document.getElementById('sidebar-open-btn');
-        const closeBtn = document.getElementById('sidebar-close-btn');
-        const backdrop = document.getElementById('sidebar-backdrop');
+        const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-toggle');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
         function openSidebar() {
             sidebar.classList.remove('-translate-x-full');
-            backdrop.classList.remove('hidden');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
         }
         function closeSidebar() {
             sidebar.classList.add('-translate-x-full');
-            backdrop.classList.add('hidden');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
         }
-        if(openBtn) openBtn.onclick = openSidebar;
-        if(closeBtn) closeBtn.onclick = closeSidebar;
-        if(backdrop) backdrop.onclick = closeSidebar;
-        // On resize, ensure sidebar visibility for wider screens
+        if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+        // Hide sidebar initially on mobile
+        if (window.innerWidth < 640 && sidebar) {
+            sidebar.classList.add('-translate-x-full');
+        }
         window.addEventListener('resize', function() {
-            if(window.innerWidth >= 640) {
+            if (window.innerWidth >= 640) {
                 sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.add('hidden');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
             } else {
                 sidebar.classList.add('-translate-x-full');
             }
         });
-        // On load, hide sidebar on mobile
-        if(window.innerWidth < 640){ sidebar.classList.add('-translate-x-full'); }
     </script>
 </body>
 </html>
