@@ -118,7 +118,9 @@ function openSidebar() {
         sidebar.style.pointerEvents = 'auto';
         sidebar.style.zIndex = '40';
     }
-    if (openBtn) openBtn.classList.add('hidden');
+    if (openBtn) {
+        openBtn.style.display = 'none';
+    }
     if (backdrop) {
         backdrop.style.display = 'block';
         backdrop.style.opacity = '1';
@@ -135,7 +137,9 @@ function closeSidebar() {
         sidebar.style.pointerEvents = 'none';
         sidebar.style.zIndex = '-1';
     }
-    if (openBtn) openBtn.classList.remove('hidden');
+    if (openBtn) {
+        openBtn.style.display = '';
+    }
     if (backdrop) {
         backdrop.style.opacity = '0';
         setTimeout(() => backdrop.style.display = 'none', 300);
@@ -199,6 +203,10 @@ function submitBlogPost(event) {
         submitButton.disabled = false;
     });
 }
+
+// Make functions global for onclick attributes
+window.openSidebar = openSidebar;
+window.closeSidebar = closeSidebar;
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
