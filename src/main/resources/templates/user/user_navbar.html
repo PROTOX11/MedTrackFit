@@ -10,7 +10,7 @@
             </button>
 
             <!-- Profile Picture -->
-            <a th:href="@{'/recoveredpatient/profile'}" class="flex items-center">
+            <a th:href="@{'/doctor/profile'}" class="flex items-center">
                 <img th:src="${loggedInUser?.profilePicture} ?: 'https://via.placeholder.com/40'" alt="Profile Picture" class="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover hover:border-blue-500 transition-colors" />
             </a>
         </div>

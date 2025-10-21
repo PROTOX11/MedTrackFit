@@ -39,3 +39,4 @@ application-*.properties
 
 output.css
 src/main/resources/static/css/output.css
+src/main/resources/static/css/output.css
