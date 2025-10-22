@@ -5080,6 +5080,10 @@ input:checked + .toggle-bg {
   background-color: rgb(99 49 18 / 0.2);
 }
 
+.dark\:bg-orange-900\/20:where(.dark, .dark *) {
+  background-color: rgb(119 29 29 / 0.2);
+}
+
 .dark\:bg-opacity-30:where(.dark, .dark *) {
   --tw-bg-opacity: 0.3;
 }

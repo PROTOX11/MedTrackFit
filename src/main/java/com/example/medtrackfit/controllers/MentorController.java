@@ -2,6 +2,8 @@ package com.example.medtrackfit.controllers;
 
 import com.example.medtrackfit.entities.HealthMentor;
 import com.example.medtrackfit.entities.AllBlogPost;
+import com.example.medtrackfit.entities.Connections;
+import com.example.medtrackfit.entities.SufferingPatient;
 import com.example.medtrackfit.services.HealthMentorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping("/mentor")
@@ -64,9 +67,28 @@ public class MentorController {
             }
 
             HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            String mentorId = mentor.getMentorId();
+
+            // Get real statistics from service
+            long activePatients = healthMentorService.getActivePatientsCount(mentorId);
+            long pendingRequests = healthMentorService.getPendingRequestsCount(mentorId);
+            long connectedDoctors = healthMentorService.getConnectedDoctorsCount(mentorId);
+            long messagesToday = healthMentorService.getMessagesTodayCount(mentorId);
+            List<Connections> connectedDoctorsList = healthMentorService.getConnectedDoctors(mentorId);
+            List<SufferingPatient> topPatients = healthMentorService.getTopPatients(mentorId, 5);
+
             model.addAttribute("mentor", mentor);
             model.addAttribute("userRole", userRole);
-            logger.info("Mentor dashboard loaded for: {}", mentor.getName());
+            model.addAttribute("activePatients", activePatients);
+            model.addAttribute("pendingRequests", pendingRequests);
+            model.addAttribute("connectedDoctors", connectedDoctors);
+            model.addAttribute("messagesToday", messagesToday);
+            model.addAttribute("connectedDoctorsList", connectedDoctorsList);
+            model.addAttribute("topPatients", topPatients);
+            model.addAttribute("blogPosts", 5); // Placeholder - would need blog integration
+            model.addAttribute("rating", "4.8"); // Placeholder - would need rating system
+
+            logger.info("Mentor dashboard loaded for: {} with {} active patients", mentor.getName(), activePatients);
         }
 
         return "mentor/dashboard";

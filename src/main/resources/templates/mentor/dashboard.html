@@ -41,7 +41,19 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-sm text-gray-600 dark:text-gray-400">Active Patients</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${activePatients != null ? activePatients : '12'}">12</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${activePatients}">0</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+                            <i class="fas fa-clock text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Pending Requests</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${pendingRequests}">0</p>
                         </div>
                     </div>
                 </article>
@@ -49,23 +61,11 @@
                 <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                     <div class="flex items-center">
                         <div class="p-3 bg-green-100 dark:bg-green-900/20 rounded-lg">
-                            <i class="fas fa-comments text-green-600 text-xl"></i>
+                            <i class="fas fa-user-md text-green-600 text-xl"></i>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Messages Today</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${messagesToday != null ? messagesToday : '8'}">8</p>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
-                            <i class="fas fa-blog text-yellow-600 text-xl"></i>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Blog Posts</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${blogPosts != null ? blogPosts : '5'}">5</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Connected Doctors</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${connectedDoctors}">0</p>
                         </div>
                     </div>
                 </article>
@@ -73,11 +73,11 @@
                 <article class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                     <div class="flex items-center">
                         <div class="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
-                            <i class="fas fa-star text-purple-600 text-xl"></i>
+                            <i class="fas fa-comments text-purple-600 text-xl"></i>
                         </div>
                         <div class="ml-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Rating</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${rating != null ? rating : '4.8'}">4.8</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Messages Today</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white" th:text="${messagesToday}">0</p>
                         </div>
                     </div>
                 </article>
@@ -112,7 +112,7 @@
         });
 
         // Sidebar toggle logic
-        const sidebar = document.getElementById('mentor-sidebar');
+        const sidebar = document.getElementById('logo-sidebar');
         const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
         const sidebarCloseBtn = document.getElementById('sidebar-close-toggle');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
