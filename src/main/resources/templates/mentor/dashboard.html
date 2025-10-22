@@ -120,10 +120,12 @@
         function openSidebar() {
             sidebar.classList.remove('-translate-x-full');
             if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
         }
         function closeSidebar() {
             sidebar.classList.add('-translate-x-full');
             if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
         }
         if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
         if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
