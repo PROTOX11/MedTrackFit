@@ -7,77 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        #logo-sidebar {
-            transition: transform 0.3s ease;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 40;
-            background-color: rgb(249 250 251);
-            width: 16rem;
-        }
-        .dark #logo-sidebar {
-            background-color: rgb(31 41 55);
-        }
-        #sidebar-open-toggle {
-            z-index: 50;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-        }
-        #sidebar-open-toggle.hidden {
-            display: none;
-        }
-        #sidebar-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            z-index: 30;
-            display: none;
-            transition: opacity 0.3s ease;
-        }
-        #sidebar-backdrop.visible {
-            display: block;
-        }
-        @media (min-width: 640px) {
-            #logo-sidebar {
-                position: fixed;
-            }
-            #sidebar-backdrop {
-                display: none !important;
-            }
-            #sidebar-open-toggle {
-                display: none;
-            }
-            #sidebar-close-toggle {
-                display: none;
-            }
-            #main-content {
-                margin-left: 16rem;
-                background-color: rgb(243 244 246);
-                min-height: 100vh;
-            }
-            .dark #main-content {
-                background-color: rgb(17 24 39);
-            }
-        }
-        @media (max-width: 639px) {
-            #logo-sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            #logo-sidebar.open {
-                transform: translateX(0);
-            }
-            #main-content {
-                padding: 1rem;
-            }
-        }
         * {
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
@@ -94,81 +23,23 @@
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
 
-    <!-- Sidebar Toggle Button -->
-    <button id="sidebar-open-toggle" class="sm:hidden p-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-lg fixed top-4 left-4 z-50 hover:bg-gray-700 dark:hover:bg-gray-300 transition-colors duration-200" aria-label="Open sidebar" onclick="openSidebar()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </button>
 
-    <!-- Sidebar Backdrop -->
-    <div id="sidebar-backdrop" onclick="closeSidebar()"></div>
 
-    <!-- Sidebar -->
-    <aside id="logo-sidebar" class="w-64 h-screen transition-transform bg-gray-50 dark:bg-gray-800 fixed top-0 left-0 z-40 border-r">
-        <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-            <button id="sidebar-close-toggle" class="sm:hidden p-2 absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 z-50" aria-label="Close sidebar" onclick="closeSidebar()">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-            <a th:href="@{'/mentor/dashboard'}" class="flex items-center space-x-3 rtl:space-x-reverse mb-6">
-                <img th:src="@{'/images/logo.png'}" class="w-8 h-8" alt="MedTrackFit logo">
-                <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-800 dark:text-gray-200">MTF</span>
-            </a>
-            <ul class="space-y-2 font-medium mt-6">
-                <li>
-                    <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M13.5 2c-.178 0-.356.013-.492.022l-.074.005a1 1 0 0 0-.934.998V11a1 1 0 0 0 1 1h7.975a1 1 0 0 0 .998-.934l.005-.074A7.04 7.04 0 0 0 22 10.5 8.5 8.5 0 0 0 13.5 2Z"/>
-                            <path d="M11 6.025a1 1 0 0 0-1.065-.998 8.5 8.5 0 1 0 9.038 9.039A1 1 0 0 0 17.975 13H11V6.025Z"/>
-                        </svg>
-                        <span class="ms-3">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/mentor/chat" class="flex items-center p-3 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
-                        <svg class="w-6 h-6 text-blue-600 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97Z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ms-3">Chat</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/mentor/blog" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"/>
-                        </svg>
-                        <span class="ms-3">Blog</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/mentor/patients" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <span class="ms-3">Patients</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/mentor/profile" class="flex items-center p-3 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group transition-all duration-200 font-medium hover:shadow-md hover:scale-105">
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 group-hover:text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 12.5 6Zm0 8a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-1.5 0v-.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="ms-3">Profile</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
-        <div
-            class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
+    <div class="flex min-h-screen">
+        <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
+        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        <!-- END MOBILE TOGGLE -->
+        <!-- COMMON MENTOR SIDEBAR -->
+        <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
+        <!-- Main Content -->
+        <main class="flex-1 p-4 sm:p-8 sm:ml-64 max-w-screen-xl mx-auto w-full" id="main-content">
+            <div
+                class="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
             <div class="max-w-7xl mx-auto">
                 <!-- Header -->
                 <div

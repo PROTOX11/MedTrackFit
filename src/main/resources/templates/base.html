@@ -125,6 +125,7 @@
         <!-- Include the appropriate sidebar based on user role -->
         <div th:if="${loggedInUser}" th:switch="${userRole}">
             <div th:case="'Doctor'" th:replace="~{doctor/doctor_sidebar :: doctor-sidebar}"></div>
+            <div th:case="'Mentor'" th:replace="~{mentor/mentor_sidebar :: mentor-sidebar}"></div>
             <div th:case="'SufferingPatient'" th:replace="~{suff-pat/suff-pat_sidebar :: suff-pat-sidebar}"></div>
             <div th:case="*" th:replace="~{user/sidebar :: sidebar}"></div>
         </div>

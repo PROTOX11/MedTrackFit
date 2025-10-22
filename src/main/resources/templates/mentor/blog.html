@@ -29,33 +29,19 @@
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
 
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-white dark:bg-gray-800 shadow-lg min-h-screen">
-            <div class="p-6">
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Mentor Panel</h2>
-                <nav class="space-y-2">
-                    <a href="/mentor/dashboard" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
-                    </a>
-                    <a href="/mentor/chat" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                        <i class="fas fa-comments mr-3"></i>Chat
-                    </a>
-                    <a href="/mentor/blog" class="flex items-center p-3 text-blue-600 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <i class="fas fa-blog mr-3"></i>Blog
-                    </a>
-                    <a href="/mentor/patients" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                        <i class="fas fa-users mr-3"></i>Patients
-                    </a>
-                    <a href="/mentor/profile" class="flex items-center p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-                        <i class="fas fa-user mr-3"></i>Profile
-                    </a>
-                </nav>
-            </div>
-        </div>
-
+    <div class="flex min-h-screen">
+        <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
+        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        <!-- END MOBILE TOGGLE -->
+        <!-- COMMON MENTOR SIDEBAR -->
+        <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
         <!-- Main Content -->
-        <div class="flex-1 p-8">
+        <div class="flex-1 p-4 sm:p-8 sm:ml-64">
             <!-- Header -->
             <div class="mb-8">
                 <div class="flex items-center justify-between">
@@ -63,12 +49,12 @@
                         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Medical Knowledge Hub</h1>
                         <p class="text-gray-600 dark:text-gray-400">Insights from doctors, mentors, and recovered patients</p>
                     </div>
-                    <div class="flex space-x-4">
-                        <button onclick="openCreateBlogModal()" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2">
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button onclick="openCreateBlogModal()" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
                             <i class="fas fa-plus mr-2"></i>
                             <span>Write Blog</span>
                         </button>
-                        <a href="/blog/public" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center space-x-2">
+                        <a href="/blog/public" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
                             <i class="fas fa-globe mr-2"></i>
                             <span>Public View</span>
                         </a>
@@ -98,7 +84,7 @@
 
             <!-- Blog Posts -->
             <div class="space-y-6" th:if="${allBlogs != null and !allBlogs.empty}">
-                <div th:each="blog : ${allBlogs}" class="blog-card rounded-lg p-6"
+                <div th:each="blog : ${allBlogs}" class="blog-card rounded-lg p-4 sm:p-6"
                      th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
