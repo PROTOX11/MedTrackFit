@@ -129,7 +129,15 @@
             <div th:case="'SufferingPatient'" th:replace="~{suff-pat/suff-pat_sidebar :: suff-pat-sidebar}"></div>
             <div th:case="*" th:replace="~{user/sidebar :: sidebar}"></div>
         </div>
-        <div id="sidebar-backdrop"></div>
+        <!-- MOBILE SIDEBAR TOGGLE BUTTON FOR MENTORS -->
+        <div th:if="${userRole == 'HealthMentor'}">
+            <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        </div>
         <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
             <section th:replace="${content}"></section>
             <section th:replace="${power}"></section>
@@ -151,6 +159,40 @@
     
     <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-    <script th:src="@{'/js/script.js'}"></script> 
+    <script th:src="@{'/js/script.js'}"></script>
+    <!-- Sidebar toggle script for mentors -->
+    <script th:if="${userRole == 'HealthMentor'}">
+        // Sidebar toggle logic
+        const sidebar = document.getElementById('logo-sidebar');
+        const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-toggle');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
+        }
+        if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+        // Hide sidebar initially on mobile
+        if (window.innerWidth < 640 && sidebar) {
+            sidebar.classList.add('-translate-x-full');
+        }
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 640) {
+                sidebar.classList.remove('-translate-x-full');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -60,7 +60,7 @@ public class DoctorController {
             
             if (!"Doctor".equals(userRole)) {
                 logger.warn("Non-doctor user attempted to access doctor dashboard: {}", username);
-                return "redirect:/user/dashboard";
+                return "redirect:/";
             }
             
             Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
@@ -86,7 +86,7 @@ public class DoctorController {
         
         if (!"Doctor".equals(userRole)) {
             logger.warn("Non-doctor user attempted to access doctor chat: {}", username);
-            return "redirect:/user/dashboard";
+            return "redirect:/";
         }
         
         Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
@@ -191,7 +191,7 @@ public class DoctorController {
             
             if (!"Doctor".equals(userRole)) {
                 logger.warn("Non-doctor user attempted to access doctor blog: {}", username);
-                return "redirect:/user/dashboard";
+                return "redirect:/";
             }
             
             Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);

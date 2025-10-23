@@ -31,7 +31,7 @@
 
     <div class="flex min-h-screen">
         <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
-        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
@@ -84,13 +84,13 @@
 
             <!-- Blog Posts -->
             <div class="space-y-6" th:if="${allBlogs != null and !allBlogs.empty}">
-                <div th:each="blog : ${allBlogs}" class="blog-card rounded-lg p-4 sm:p-6"
+                <div th:each="blog : ${allBlogs}" class="rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
                      th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
                             <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-semibold mr-4"
-                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'author-doctor' :
-                                          (${blog.authorType.name() == 'MENTOR'} ? 'author-mentor' : 'author-patient')">
+                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'bg-purple-600' :
+                                          (${blog.authorType.name() == 'MENTOR'} ? 'bg-blue-600' : 'bg-orange-500')">
                                 <span th:if="${blog.authorType.name() == 'DOCTOR'}">👨‍⚕️</span>
                                 <span th:if="${blog.authorType.name() == 'MENTOR'}">👨‍🏫</span>
                                 <span th:if="${blog.authorType.name() == 'RECOVERED_PATIENT'}">💪</span>
@@ -103,3 +103,44 @@
                                     <span th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}"> •
                                         <span th:text="${blog.authorSpecialization}">Specialization</span>
                                     </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2" th:text="${blog.summary}">Summary of the blog post...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:if="${blog.status == 'PUBLISHED'}" class="inline-block px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-semibold">Published</span>
+                        <span th:if="${blog.status == 'DRAFT'}" class="inline-block px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold">Draft</span>
+                        <span th:if="${blog.status == 'IN_REVIEW'}" class="inline-block px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold">In Review</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme management
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                localStorage.setItem('theme', 'auto');
+            }
+        }
+        // Load theme preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('theme') || 'auto';
+            setTheme(theme);
+        });
+    </script>
+</body>

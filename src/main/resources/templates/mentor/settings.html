@@ -234,23 +234,15 @@
     </div>
 
     <script>
+        // Theme management
         function setTheme(theme) {
-            // Remove active classes
-            document.getElementById('lightThemeBtn').classList.remove('bg-blue-600', 'text-white');
-            document.getElementById('darkThemeBtn').classList.remove('bg-blue-600', 'text-white');
-            document.getElementById('autoThemeBtn').classList.remove('bg-blue-600', 'text-white');
-
-            // Add active class to selected theme
             if (theme === 'light') {
-                document.getElementById('lightThemeBtn').classList.add('bg-blue-600', 'text-white');
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
             } else if (theme === 'dark') {
-                document.getElementById('darkThemeBtn').classList.add('bg-blue-600', 'text-white');
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             } else if (theme === 'auto') {
-                document.getElementById('autoThemeBtn').classList.add('bg-blue-600', 'text-white');
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (prefersDark) {
                     document.documentElement.classList.add('dark');

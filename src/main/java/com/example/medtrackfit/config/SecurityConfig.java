@@ -44,8 +44,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(authorize -> {
             // Allow unauthenticated access to /actuator/health for health checks
             authorize.requestMatchers("/actuator/health").permitAll();
-            // Require authentication for /user/**, /doctor/**, /suff-pat/**, and /recoveredpatient/**
-            authorize.requestMatchers("/user/**").authenticated();
+            // Require authentication for /doctor/**, /suff-pat/**, and /recoveredpatient/**
             authorize.requestMatchers("/doctor/**").authenticated();
             authorize.requestMatchers("/suff-pat/**").authenticated();
             authorize.requestMatchers("/recoveredpatient/**").authenticated();

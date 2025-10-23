@@ -53,5 +53,29 @@
                 </form>
             </li>
         </ul>
+        <!-- Theme toggle -->
+        <div class="mt-8 flex flex-col items-center">
+          <span class="text-xs text-gray-500 dark:text-gray-400 mb-2">Theme</span>
+          <div class="flex items-center gap-2">
+            <button id="theme-light-btn" onclick="setTheme('light')" class="p-2 rounded-full transition bg-gray-200 text-yellow-500 hover:bg-yellow-100 dark:bg-gray-700 dark:hover:bg-gray-600" title="Light mode"><i class="fas fa-sun"></i></button>
+            <button id="theme-auto-btn" onclick="setTheme('auto')" class="p-2 rounded-full transition bg-gray-200 text-blue-500 hover:bg-blue-100 dark:bg-gray-700 dark:hover:bg-gray-600" title="Follow system"><i class="fas fa-desktop"></i></button>
+            <button id="theme-dark-btn" onclick="setTheme('dark')" class="p-2 rounded-full transition bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600" title="Dark mode"><i class="fas fa-moon"></i></button>
+          </div>
+        </div>
     </div>
 </aside>
+
+<script>
+    // Force navigation for all mentor sidebar links
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('#logo-sidebar a[href]').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                // If default was prevented by other JS, force navigation
+                if (e.defaultPrevented) {
+                    window.location.href = this.getAttribute('href');
+                    return false;
+                }
+            });
+        });
+    });
+</script>
