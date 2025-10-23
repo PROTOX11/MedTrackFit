@@ -1394,6 +1394,10 @@ input:checked + .toggle-bg {
   margin-top: 3rem;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -4199,6 +4203,10 @@ input:checked + .toggle-bg {
     margin-left: 1.5rem;
   }
 
+  .sm\:ml-64 {
+    margin-left: 16rem;
+  }
+
   .sm\:mr-2 {
     margin-right: 0.5rem;
   }
@@ -4213,10 +4221,6 @@ input:checked + .toggle-bg {
 
   .sm\:mt-2 {
     margin-top: 0.5rem;
-  }
-
-  .sm\:ml-64 {
-    margin-left: 16rem;
   }
 
   .sm\:inline {
@@ -5039,6 +5043,10 @@ input:checked + .toggle-bg {
   background-color: rgb(119 29 29 / var(--tw-bg-opacity, 1));
 }
 
+.dark\:bg-orange-900\/20:where(.dark, .dark *) {
+  background-color: rgb(119 29 29 / 0.2);
+}
+
 .dark\:bg-pink-600:where(.dark, .dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(214 31 105 / var(--tw-bg-opacity, 1));
@@ -5074,14 +5082,6 @@ input:checked + .toggle-bg {
 .dark\:bg-yellow-900:where(.dark, .dark *) {
   --tw-bg-opacity: 1;
   background-color: rgb(99 49 18 / var(--tw-bg-opacity, 1));
-}
-
-.dark\:bg-yellow-900\/20:where(.dark, .dark *) {
-  background-color: rgb(99 49 18 / 0.2);
-}
-
-.dark\:bg-orange-900\/20:where(.dark, .dark *) {
-  background-color: rgb(119 29 29 / 0.2);
 }
 
 .dark\:bg-opacity-30:where(.dark, .dark *) {
