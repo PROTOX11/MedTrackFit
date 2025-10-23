@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,31 +13,56 @@
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .blog-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
-        .status-published { background-color: #dcfce7; color: #166534; }
-        .status-draft { background-color: #fef3c7; color: #92400e; }
-        .status-review { background-color: #dbeafe; color: #1e40af; }
 
-        .author-doctor { background-color: #8b5cf6; }
-        .author-mentor { background-color: #3b82f6; }
-        .author-patient { background-color: #f97316; }
+        .status-published {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-draft {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-review {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .author-doctor {
+            background-color: #8b5cf6;
+        }
+
+        .author-mentor {
+            background-color: #3b82f6;
+        }
+
+        .author-patient {
+            background-color: #f97316;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
 
     <div class="flex min-h-screen">
         <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
-        <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">
+        <button id="sidebar-open-toggle"
+            class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        <div id="sidebar-backdrop"
+            class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300">
+        </div>
         <!-- END MOBILE TOGGLE -->
         <!-- COMMON MENTOR SIDEBAR -->
         <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
@@ -47,14 +73,22 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Medical Knowledge Hub</h1>
-                        <p class="text-gray-600 dark:text-gray-400">Insights from doctors, mentors, and recovered patients</p>
+                        <p class="text-gray-600 dark:text-gray-400">Insights from doctors, mentors, and recovered
+                            patients</p>
                     </div>
                     <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button onclick="openCreateBlogModal()" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
+                        <button onclick="openWriteModal()"
+                            class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
                             <i class="fas fa-plus mr-2"></i>
                             <span>Write Blog</span>
                         </button>
-                        <a href="/blog/public" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
+                        <button onclick="openManagePostsModal()"
+                            class="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
+                            <i class="fas fa-cog mr-2"></i>
+                            <span>Manage Posts</span>
+                        </button>
+                        <a href="/blog/public"
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2">
                             <i class="fas fa-globe mr-2"></i>
                             <span>Public View</span>
                         </a>
@@ -64,19 +98,23 @@
 
             <!-- Blog Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
                     <div class="text-3xl font-bold text-purple-600 mb-2" th:text="${totalPosts}">0</div>
                     <div class="text-gray-600 dark:text-gray-400">Total Posts</div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
                     <div class="text-3xl font-bold text-green-600 mb-2" th:text="${doctorPosts}">0</div>
                     <div class="text-gray-600 dark:text-gray-400">Doctor Posts</div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
                     <div class="text-3xl font-bold text-blue-600 mb-2" th:text="${mentorPosts}">0</div>
                     <div class="text-gray-600 dark:text-gray-400">Mentor Posts</div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center border border-gray-200 dark:border-gray-700">
                     <div class="text-3xl font-bold text-orange-600 mb-2" th:text="${patientPosts}">0</div>
                     <div class="text-gray-600 dark:text-gray-400">Patient Stories</div>
                 </div>
@@ -84,39 +122,53 @@
 
             <!-- Blog Posts -->
             <div class="space-y-6" th:if="${allBlogs != null and !allBlogs.empty}">
-                <div th:each="blog : ${allBlogs}" class="rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
-                     th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
+                <div th:each="blog : ${allBlogs}"
+                    class="rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
+                    th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
                             <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-semibold mr-4"
-                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'bg-purple-600' :
+                                th:class="${blog.authorType.name() == 'DOCTOR'} ? 'bg-purple-600' :
                                           (${blog.authorType.name() == 'MENTOR'} ? 'bg-blue-600' : 'bg-orange-500')">
                                 <span th:if="${blog.authorType.name() == 'DOCTOR'}">👨‍⚕️</span>
                                 <span th:if="${blog.authorType.name() == 'MENTOR'}">👨‍🏫</span>
                                 <span th:if="${blog.authorType.name() == 'RECOVERED_PATIENT'}">💪</span>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white" th:text="${blog.title}">Blog Title</h3>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white" th:text="${blog.title}">
+                                    Blog Title</h3>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
                                     <span th:text="${blog.authorName}">Author Name</span> •
                                     <span th:text="${blog.authorType.name()}">Author Type</span>
-                                    <span th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}"> •
+                                    <span
+                                        th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}">
+                                        •
                                         <span th:text="${blog.authorSpecialization}">Specialization</span>
                                     </span>
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300 mb-2" th:text="${blog.summary}">Summary of the blog post...</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2"
+                        th:text="${blog.excerpt != null and !blog.excerpt.empty ? blog.excerpt : #strings.abbreviate(blog.content, 200)}">
+                        Summary of the blog post...</p>
                     <div class="flex flex-wrap gap-2">
-                        <span th:if="${blog.status == 'PUBLISHED'}" class="inline-block px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-semibold">Published</span>
-                        <span th:if="${blog.status == 'DRAFT'}" class="inline-block px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold">Draft</span>
-                        <span th:if="${blog.status == 'IN_REVIEW'}" class="inline-block px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold">In Review</span>
+                        <span th:if="${blog.status == 'PUBLISHED'}"
+                            class="inline-block px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-semibold">Published</span>
+                        <span th:if="${blog.status == 'DRAFT'}"
+                            class="inline-block px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs font-semibold">Draft</span>
+                        <span th:if="${blog.status == 'IN_REVIEW'}"
+                            class="inline-block px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold">In
+                            Review</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Include modals -->
+    <div th:replace="mentor/blog_write_modal.html :: *"></div>
+    <div th:replace="mentor/blog_manage_modal.html :: *"></div>
 
     <script>
         // Theme management
@@ -138,9 +190,43 @@
             }
         }
         // Load theme preference
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const theme = localStorage.getItem('theme') || 'auto';
             setTheme(theme);
         });
+
+        // Sidebar toggle logic
+        const sidebar = document.getElementById('logo-sidebar');
+        const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-toggle');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
+        }
+        if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+        // Hide sidebar initially on mobile
+        if (window.innerWidth < 640 && sidebar) {
+            sidebar.classList.add('-translate-x-full');
+        }
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 640) {
+                sidebar.classList.remove('-translate-x-full');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
     </script>
 </body>
+
+</html>

@@ -1,15 +1,23 @@
-# Remove User Routes Completely
+# Fix Sidebar Redirection Issue
 
-## Tasks
-- [ ] Delete UserController.java
-- [ ] Delete ContactController.java
-- [ ] Remove /user/** authentication from SecurityConfig.java
-- [ ] Update redirects in DoctorController.java from /user/dashboard to /
-- [ ] Update redirects in MentorController.java from /user/dashboard to /
-- [ ] Update CustomAuthenticationSuccessHandler.java redirect from /user/dashboard to /
-- [ ] Update OAuthAuthenticationSuccessHandler.java redirect from /user/dashboard to /
-- [ ] Delete src/main/resources/templates/user/ directory
-- [ ] Update suff-pat_base.html to remove user navbar/footer includes
-- [ ] Update recoveredpatient_base.html to remove user navbar/footer includes
-- [ ] Update mentor templates to remove user navbar/footer includes
-- [ ] Update dashboard HTML files to remove JS fetches to /user/ endpoints
+## Problem
+Sometimes clicking on sidebar options redirects to `/user/dashboard` instead of role-specific routes (e.g., `/doctor/dashboard` for doctors).
+
+## Root Cause Analysis
+- Controllers like `SufferingPatientController` and `RecoveredPatientController` do not have the `@ModelAttribute` method to set `userRole` in the model.
+- When `userRole` is not set, `base.html` falls back to `user/sidebar`, which has `/user/*` links.
+- Role checks in controllers redirect unauthorized users to `/user/dashboard`.
+
+## Plan
+1. Add `@ModelAttribute` method to `SufferingPatientController` to set `userRole` and `loggedInUser`.
+2. Add `@ModelAttribute` method to `RecoveredPatientController` to set `userRole` and `loggedInUser`.
+3. Verify that all role-based controllers have consistent `@ModelAttribute` setup.
+4. Test the fix by ensuring sidebar links point to correct role-specific routes.
+
+## Files to Edit
+- `src/main/java/com/example/medtrackfit/controllers/SufferingPatientController.java`
+- `src/main/java/com/example/medtrackfit/controllers/RecoveredPatientController.java`
+
+## Followup Steps
+- Run the application and test sidebar navigation for different user roles.
+- Ensure no unauthorized redirections occur.

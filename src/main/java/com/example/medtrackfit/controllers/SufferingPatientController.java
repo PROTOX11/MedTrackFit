@@ -5,12 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import com.example.medtrackfit.services.DoctorService;
+import com.example.medtrackfit.services.UniversalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import com.example.medtrackfit.entities.Doctor;
+import com.medtrackfit.helper.Helper;
 
 @Controller
 @RequestMapping("/suff-pat")
@@ -18,6 +20,19 @@ public class SufferingPatientController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private UniversalUserService universalUserService;
+
+    @ModelAttribute
+    public void addLoggedInUserInformation(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+            model.addAttribute("userRole", userRole);
+            model.addAttribute("loggedInUser", universalUserService.getUserByEmail(username));
+        }
+    }
 
     @GetMapping("/dashboard")
     public String dashboard() {

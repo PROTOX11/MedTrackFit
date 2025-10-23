@@ -476,16 +476,9 @@ public class DoctorController {
     }
 
     // Blog creation endpoints
-    @PostMapping(value = "/blog/create", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/blog/create")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> createBlogPost(@RequestParam("title") String title,
-                                                              @RequestParam("content") String content,
-                                                              @RequestParam(value = "excerpt", required = false) String excerpt,
-                                                              @RequestParam(value = "category", required = false) String categoryStr,
-                                                              @RequestParam(value = "tags", required = false) String tags,
-                                                              @RequestParam(value = "metaDescription", required = false) String metaDescription,
-                                                              @RequestParam(value = "metaKeywords", required = false) String metaKeywords,
-                                                              @RequestParam(value = "featuredImage", required = false) MultipartFile featuredImage,
+    public ResponseEntity<Map<String, Object>> createBlogPost(@RequestBody Map<String, Object> blogData,
                                                               Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
@@ -513,6 +506,10 @@ public class DoctorController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            String title = (String) blogData.get("title");
+            String content = (String) blogData.get("content");
+            String tags = (String) blogData.get("tags");
+
             logger.info("Blog post data - title: {}, content length: {}, tags: {}", title, content != null ? content.length() : 0, tags);
 
             if (title == null || title.trim().isEmpty()) {
@@ -528,22 +525,15 @@ public class DoctorController {
             }
 
             AllBlogPost.PostCategory category = AllBlogPost.PostCategory.HEALTH_TIPS;
-            if (categoryStr != null && !categoryStr.trim().isEmpty()) {
-                try {
-                    category = AllBlogPost.PostCategory.valueOf(categoryStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    logger.warn("Invalid category: {}", categoryStr);
-                }
-            }
 
             AllBlogPost blogPost = AllBlogPost.builder()
                     .title(title)
                     .content(content)
-                    .excerpt(excerpt != null ? excerpt : "")
+                    .excerpt("")
                     .category(category)
                     .tags(tags != null ? tags : "")
-                    .metaDescription(metaDescription != null ? metaDescription : "")
-                    .metaKeywords(metaKeywords != null ? metaKeywords : "")
+                    .metaDescription("")
+                    .metaKeywords("")
                     .authorId(doctor.getDoctorId())
                     .authorType(AllBlogPost.AuthorType.DOCTOR)
                     .authorName(doctor.getName())

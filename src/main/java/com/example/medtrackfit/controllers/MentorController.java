@@ -472,30 +472,22 @@ public class MentorController {
                 }
             }
 
-            AllBlogPost blogPost = allBlogPostService.createDraft(
-                mentor.getMentorId(),
-                AllBlogPost.AuthorType.MENTOR,
-                mentor.getName(),
-                title,
-                content,
-                mentor.getAreaOfExpertise(),
-                mentor.getProfilePicture()
-            );
-
-            // Update the post with additional fields
-            blogPost = allBlogPostService.updatePost(
-                blogPost.getPostId(),
-                title,
-                content,
-                excerpt != null ? excerpt : "",
-                category,
-                tags != null ? tags : "",
-                metaDescription != null ? metaDescription : "",
-                metaKeywords != null ? metaKeywords : ""
-            );
-
-            // Publish the post
-            blogPost = allBlogPostService.publishPost(blogPost.getPostId());
+            AllBlogPost blogPost = AllBlogPost.builder()
+                    .title(title)
+                    .content(content)
+                    .excerpt(excerpt != null ? excerpt : "")
+                    .category(category)
+                    .tags(tags != null ? tags : "")
+                    .metaDescription(metaDescription != null ? metaDescription : "")
+                    .metaKeywords(metaKeywords != null ? metaKeywords : "")
+                    .authorId(mentor.getMentorId())
+                    .authorType(AllBlogPost.AuthorType.MENTOR)
+                    .authorName(mentor.getName())
+                    .authorSpecialization(mentor.getAreaOfExpertise())
+                    .authorProfilePicture(mentor.getProfilePicture())
+                    .status(AllBlogPost.PostStatus.PUBLISHED)
+                    .publishedAt(java.time.LocalDateTime.now())
+                    .build();
 
             logger.info("Saving blog post for mentor: {}", mentor.getName());
             AllBlogPost savedPost = allBlogPostService.saveBlogPost(blogPost);
@@ -511,6 +503,273 @@ public class MentorController {
             logger.error("Error creating blog post", e);
             response.put("success", false);
             response.put("message", "Error creating blog post: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/blog/posts")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getMentorPosts(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size,
+                                                             Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can access their posts");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<AllBlogPost> posts = allBlogPostService.findByAuthor(mentor.getMentorId(), AllBlogPost.AuthorType.MENTOR, pageable);
+
+            response.put("success", true);
+            response.put("posts", posts.getContent());
+            response.put("currentPage", posts.getNumber());
+            response.put("totalPages", posts.getTotalPages());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error getting mentor posts", e);
+            response.put("success", false);
+            response.put("message", "Error getting posts: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/blog/submit-review/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> submitForReview(@PathVariable String postId,
+                                                            Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can submit blog posts for review");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            allBlogPostService.submitForReview(postId);
+
+            response.put("success", true);
+            response.put("message", "Blog post submitted for review successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error submitting blog post for review", e);
+            response.put("success", false);
+            response.put("message", "Error submitting blog post for review: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/blog/publish/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> publishPost(@PathVariable String postId,
+                                                          Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can publish blog posts");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            allBlogPostService.publishPost(postId);
+
+            response.put("success", true);
+            response.put("message", "Blog post published successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error publishing blog post", e);
+            response.put("success", false);
+            response.put("message", "Error publishing blog post: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/blog/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getBlogPost(@PathVariable String postId,
+                                                          Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can access blog posts");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            AllBlogPost blogPost = allBlogPostService.findById(postId)
+                    .orElseThrow(() -> new RuntimeException("Blog post not found"));
+
+            response.put("success", true);
+            response.put("postId", blogPost.getPostId());
+            response.put("title", blogPost.getTitle());
+            response.put("content", blogPost.getContent());
+            response.put("excerpt", blogPost.getExcerpt());
+            response.put("category", blogPost.getCategory());
+            response.put("tags", blogPost.getTags());
+            response.put("metaDescription", blogPost.getMetaDescription());
+            response.put("metaKeywords", blogPost.getMetaKeywords());
+            response.put("status", blogPost.getStatus());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error getting blog post", e);
+            response.put("success", false);
+            response.put("message", "Error getting blog post: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/blog/update/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateBlogPost(@PathVariable String postId,
+                                                             @RequestBody Map<String, Object> blogData,
+                                                             Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can update blog posts");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String title = (String) blogData.get("title");
+            String content = (String) blogData.get("content");
+            String excerpt = (String) blogData.get("excerpt");
+            String categoryStr = (String) blogData.get("category");
+            String tags = (String) blogData.get("tags");
+            String metaDescription = (String) blogData.get("metaDescription");
+            String metaKeywords = (String) blogData.get("metaKeywords");
+
+            if (title == null || title.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Title is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (content == null || content.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Content is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            AllBlogPost.PostCategory category = AllBlogPost.PostCategory.HEALTH_TIPS;
+            if (categoryStr != null && !categoryStr.trim().isEmpty()) {
+                try {
+                    category = AllBlogPost.PostCategory.valueOf(categoryStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    logger.warn("Invalid category: {}", categoryStr);
+                }
+            }
+
+            allBlogPostService.updatePost(postId, title, content, excerpt,
+                    category, tags, metaDescription, metaKeywords);
+
+            response.put("success", true);
+            response.put("message", "Blog post updated successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error updating blog post", e);
+            response.put("success", false);
+            response.put("message", "Error updating blog post: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/blog/delete/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteBlogPost(@PathVariable String postId,
+                                                             Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can delete blog posts");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            allBlogPostService.deleteBlogPost(postId);
+
+            response.put("success", true);
+            response.put("message", "Blog post deleted successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error deleting blog post", e);
+            response.put("success", false);
+            response.put("message", "Error deleting blog post: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }
