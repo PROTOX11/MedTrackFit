@@ -201,26 +201,51 @@
         </script>
         <script>
             // Theme management
-            function setTheme(theme) {
-                if (theme === 'light') {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                } else if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                } else if (theme === 'auto') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                    }
-                    localStorage.setItem('theme', 'auto');
+            let currentTheme = getStoredTheme();
+
+            function initTheme() {
+                applyTheme(currentTheme);
+                updateThemeIcon(currentTheme);
+                setupThemeToggle();
+            }
+
+            function setupThemeToggle() {
+                const themeButton = document.getElementById('theme-change-button');
+                if (themeButton) {
+                    themeButton.addEventListener('click', toggleTheme);
                 }
             }
+
+            function toggleTheme() {
+                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+                setStoredTheme(currentTheme);
+                applyTheme(currentTheme);
+                updateThemeIcon(currentTheme);
+            }
+
+            function applyTheme(theme) {
+                const html = document.documentElement;
+                html.classList.remove('light', 'dark');
+                html.classList.add(theme);
+            }
+
+            function updateThemeIcon(theme) {
+                const icon = document.getElementById('theme-icon');
+                if (icon) {
+                    icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+            }
+
+            function getStoredTheme() {
+                return localStorage.getItem('theme') || 'light';
+            }
+
+            function setStoredTheme(theme) {
+                localStorage.setItem('theme', theme);
+            }
+
             document.addEventListener('DOMContentLoaded', function() {
-                const theme = localStorage.getItem('theme') || 'auto';
-                setTheme(theme);
+                initTheme();
             });
 
             // Sidebar toggle logic
