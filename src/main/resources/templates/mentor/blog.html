@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentor Blog - MedTrackFit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .blog-card {
@@ -51,6 +51,7 @@
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+    <div th:replace="user/user_navbar.html :: theme-script"></div>
 
     <div class="flex min-h-screen">
         <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
@@ -143,7 +144,7 @@
                                     <span
                                         th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}">
                                         •
-                                        <span th:text="${blog.authorSpecialization}">Specialization</span>
+                                        <span th:text="${blog.authorSpecializatiovn}">Specialization</span>
                                     </span>
                                 </p>
                             </div>
@@ -180,58 +181,9 @@
 
     <!-- Include modals -->
     <div th:replace="mentor/blog_write_modal.html :: write-modal"></div>
-    <div th:replace="mentor/blog_manage_modal.html :: manage-modal"></div>
+    </div>
 
     <script>
-        // Theme management
-        let currentTheme = getStoredTheme();
-
-        function initTheme() {
-            applyTheme(currentTheme);
-            updateThemeIcon(currentTheme);
-            setupThemeToggle();
-        }
-
-        function setupThemeToggle() {
-            const themeButton = document.getElementById('theme-change-button');
-            if (themeButton) {
-                themeButton.addEventListener('click', toggleTheme);
-            }
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setStoredTheme(currentTheme);
-            applyTheme(currentTheme);
-            updateThemeIcon(currentTheme);
-        }
-
-        function applyTheme(theme) {
-            const html = document.documentElement;
-            html.classList.remove('light', 'dark');
-            html.classList.add(theme);
-        }
-
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-        }
-
-        function getStoredTheme() {
-            return localStorage.getItem('theme') || 'light';
-        }
-
-        function setStoredTheme(theme) {
-            localStorage.setItem('theme', theme);
-        }
-
-        // Load theme preference
-        document.addEventListener('DOMContentLoaded', function () {
-            initTheme();
-        });
-
         // Sidebar toggle logic
         const sidebar = document.getElementById('logo-sidebar');
         const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');

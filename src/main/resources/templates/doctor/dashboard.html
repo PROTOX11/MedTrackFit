@@ -219,20 +219,25 @@
         .dark .feature-card {
             border: 1px solid rgb(55 65 81);
             transition: background-color 0.3s ease;
-            color: rgb(203 213 225); /* text-slate-300 */
+            color: rgb(203 213 225);
+            /* text-slate-300 */
             box-shadow: none;
         }
 
         .dark .feature-card:hover {
-            background-color: rgb(30 41 59); /* bg-slate-800 */
-            color: rgb(241 245 249); /* text-slate-100 */
+            background-color: rgb(30 41 59);
+            /* bg-slate-800 */
+            color: rgb(241 245 249);
+            /* text-slate-100 */
             box-shadow: none;
         }
 
         /* Patient Chat Card Dark Mode Background */
         .dark .patient-chat-card {
-            background-color: #3e0f29; /* much darker dark pink */
-            color: #f3e8ff; /* lighter text for contrast */
+            background-color: #3e0f29;
+            /* much darker dark pink */
+            color: #f3e8ff;
+            /* lighter text for contrast */
         }
 
         .dark .patient-chat-card:hover {
@@ -241,8 +246,10 @@
 
         /* Patient Records Card Dark Mode Background */
         .dark .patient-records-card {
-            background-color: #1e1e7f; /* much darker dark blue */
-            color: #dbeafe; /* lighter text for contrast */
+            background-color: #1e1e7f;
+            /* much darker dark blue */
+            color: #dbeafe;
+            /* lighter text for contrast */
         }
 
         .dark .patient-records-card:hover {
@@ -251,8 +258,10 @@
 
         /* Medical Resources Card Dark Mode Background */
         .dark .feature-card:nth-child(3) {
-            background-color: #3f1d8b; /* much darker dark purple */
-            color: #e0d7f7; /* lighter text for contrast */
+            background-color: #3f1d8b;
+            /* much darker dark purple */
+            color: #e0d7f7;
+            /* lighter text for contrast */
         }
 
         .dark .feature-card:nth-child(3):hover {
@@ -261,7 +270,8 @@
 
         /* Write New Post Card Dark Mode Background */
         .dark .feature-card:nth-child(4) {
-            background-color: #065f46; /* dark teal */
+            background-color: #065f46;
+            /* dark teal */
         }
 
         .dark .feature-card:nth-child(4):hover {
@@ -279,13 +289,16 @@
             border: 1px solid rgb(55 65 81);
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3);
             transition: box-shadow 0.3s ease, background-color 0.3s ease;
-            color: rgb(203 213 225); /* text-slate-300 */
+            color: rgb(203 213 225);
+            /* text-slate-300 */
         }
 
         .dark .stat-card:hover {
             box-shadow: 0 0 40px rgba(16, 185, 129, 0.8), 0 0 80px rgba(16, 185, 129, 0.4), 0 10px 25px rgba(0, 0, 0, 0.5);
-            background-color: rgb(30 41 59); /* bg-slate-800 */
-            color: rgb(241 245 249); /* text-slate-100 */
+            background-color: rgb(30 41 59);
+            /* bg-slate-800 */
+            color: rgb(241 245 249);
+            /* text-slate-100 */
         }
 
         .dark .stat-card div {
@@ -465,14 +478,15 @@
                             </div>
                         </div>
 
-                        <div class="weather-widget">
+                        <!-- Weather Widget in Header (integrate this inside the <div class="text-right space-y-4"> section) -->
+                        <div class="bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl p-5 shadow-lg">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm opacity-90">Today's Weather</p>
-                                    <p class="text-2xl font-bold">22°C</p>
-                                    <p class="text-sm opacity-80">Sunny</p>
+                                    <p class="text-2xl font-bold" id="weather-temp">Loading...</p>
+                                    <p class="text-sm opacity-80" id="weather-condition">Fetching...</p>
                                 </div>
-                                <div class="text-4xl">☀️</div>
+                                <div class="text-4xl" id="weather-icon">⏳</div>
                             </div>
                         </div>
                     </div>
@@ -552,7 +566,7 @@
                     <div class="p-6 bg-purple-50 dark:bg-gray-800">
                         <p class="text-purple-800 dark:text-purple-200 mb-4">Access medical databases, drug information,
                             and treatment protocols.</p>
-                        <a href="/doctor/resources"
+                        <a href="https://www.apollopharmacy.in/salts"
                             class="block w-full bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-center py-3 rounded-lg transition-all duration-300 font-medium shadow-md hover:shadow-lg dark:shadow-indigo-900/50 hover:scale-105 interactive-btn">
                             Access Resources
                         </a>
@@ -768,6 +782,107 @@
             }
         `;
             document.head.appendChild(style);
+        </script>
+        <script>
+            // Temperature API Features Only - Add this script at the end of <body>
+            const API_KEY = '1575d018b5095c72653693c3c7f3e735';
+            const API_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://api.openweathermap.org/data/2.5/weather?');
+
+            // Function to get weather icon emoji based on condition
+            function getWeatherIcon(condition) {
+                const icons = {
+                    'Clear': '☀️',
+                    'Clouds': '☁️',
+                    'Rain': '🌧️',
+                    'Drizzle': '🌦️',
+                    'Thunderstorm': '⛈️',
+                    'Snow': '❄️',
+                    'Mist': '🌫️'
+                };
+                return icons[condition] || '🌤️';
+            }
+
+            // Function to fetch weather data (with CORS proxy)
+            async function fetchWeather(lat, lon) {
+                try {
+                    const response = await fetch(`${API_URL}${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (data.cod !== 200) throw new Error(data.message || 'API error');
+                    return {
+                        temp: Math.round(data.main.temp),
+                        condition: data.weather[0].main,
+                        city: data.name
+                    };
+                } catch (error) {
+                    console.error('Weather API error:', error);
+                    // Fallback to India average (Delhi, Oct 29, 2025)
+                    return { temp: 26, condition: 'Clear', city: 'Delhi (Avg)' };
+                }
+            }
+
+            // Function to get IP-based location as fallback
+            async function getIPLocation() {
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    console.log('IP Location:', data);
+                    if (data.country_code === 'IN') {
+                        return { lat: data.latitude, lon: data.longitude, city: data.city };
+                    }
+                    return null;
+                } catch (error) {
+                    console.error('IP location error:', error);
+                    return null;
+                }
+            }
+
+            // Update weather widget
+            function updateWeatherWidget(data) {
+                document.getElementById('weather-temp').textContent = `${data.temp}°C`;
+                document.getElementById('weather-condition').textContent = data.condition;
+                document.getElementById('weather-icon').textContent = getWeatherIcon(data.condition);
+                document.getElementById('weather-condition').title = `In ${data.city}`;
+            }
+
+            // Initialize weather on load
+            async function initWeather() {
+                let lat = 28.6139; // Default Delhi
+                let lon = 77.2090;
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            lat = position.coords.latitude;
+                            lon = position.coords.longitude;
+                            console.log('Using geolocation:', lat, lon);
+                            const data = await fetchWeather(lat, lon);
+                            updateWeatherWidget(data);
+                        },
+                        async () => {
+                            console.log('Geolocation denied, using IP...');
+                            const ipData = await getIPLocation();
+                            if (ipData) {
+                                lat = ipData.lat;
+                                lon = ipData.lon;
+                            }
+                            const data = await fetchWeather(lat, lon);
+                            updateWeatherWidget(data);
+                        }
+                    );
+                } else {
+                    const ipData = await getIPLocation();
+                    if (ipData) {
+                        lat = ipData.lat;
+                        lon = ipData.lon;
+                    }
+                    const data = await fetchWeather(lat, lon);
+                    updateWeatherWidget(data);
+                }
+            }
+
+            // Call initWeather on DOM load
+            document.addEventListener('DOMContentLoaded', initWeather);
         </script>
 </body>
 

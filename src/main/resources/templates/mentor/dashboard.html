@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentor Dashboard - MedTrackFit</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Add this config to enable 'class' strategy for JS control over dark mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+    <div th:replace="user/user_navbar.html :: theme-script"></div>
 
     <div class="flex min-h-screen">
         <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
@@ -86,55 +93,6 @@
     </div>
 
     <script>
-        // Theme management
-        let currentTheme = getStoredTheme();
-
-        function initTheme() {
-            applyTheme(currentTheme);
-            updateThemeIcon(currentTheme);
-            setupThemeToggle();
-        }
-
-        function setupThemeToggle() {
-            const themeButton = document.getElementById('theme-change-button');
-            if (themeButton) {
-                themeButton.addEventListener('click', toggleTheme);
-            }
-        }
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setStoredTheme(currentTheme);
-            applyTheme(currentTheme);
-            updateThemeIcon(currentTheme);
-        }
-
-        function applyTheme(theme) {
-            const html = document.documentElement;
-            html.classList.remove('light', 'dark');
-            html.classList.add(theme);
-        }
-
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-        }
-
-        function getStoredTheme() {
-            return localStorage.getItem('theme') || 'light';
-        }
-
-        function setStoredTheme(theme) {
-            localStorage.setItem('theme', theme);
-        }
-
-        // Load theme preference
-        document.addEventListener('DOMContentLoaded', function() {
-            initTheme();
-        });
-
         // Sidebar toggle logic
         const sidebar = document.getElementById('logo-sidebar');
         const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');

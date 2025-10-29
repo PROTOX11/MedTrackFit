@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -39,6 +40,9 @@ public class DoctorController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private com.example.medtrackfit.services.SufferingPatientService sufferingPatientService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -224,21 +228,25 @@ public class DoctorController {
     @RequestMapping("/patients")
     public String doctorPatients(Model model, Authentication authentication) {
         logger.info("Doctor patients page accessed");
-        
+
         if (authentication != null) {
             String username = Helper.getEmailOfLoggedInUser(authentication);
             String userRole = universalUserService.getUserRole(username);
-            
+
             if (!"Doctor".equals(userRole)) {
                 logger.warn("Non-doctor user attempted to access doctor patients: {}", username);
                 return "redirect:/user/dashboard";
             }
-            
+
             Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
             model.addAttribute("doctor", doctor);
             model.addAttribute("userRole", userRole);
+
+            // Fetch suffering patients from database
+            List<com.example.medtrackfit.entities.SufferingPatient> sufferingPatients = sufferingPatientService.getAllSufferingPatients();
+            model.addAttribute("sufferingPatients", sufferingPatients);
         }
-        
+
         return "doctor/patients";
     }
 

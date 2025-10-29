@@ -1,18 +1,99 @@
-<nav data-th-fragment="user-navbar" class="fixed top-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-l border-gray-200 dark:border-gray-700 rounded-bl-[35px]">
+<nav data-th-fragment="user-navbar"
+    class="fixed top-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-l border-gray-200 dark:border-gray-700 rounded-bl-[35px]">
     <div class="flex items-center p-4">
 
-        
+
         <!-- Navbar Content (Dark Mode Toggle and Profile Picture) -->
         <div class="flex items-center space-x-3 ml-auto">
             <!-- Dark Mode Toggle -->
-            <button id="theme-change-button" class="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" title="Toggle theme">
+            <button id="theme-change-button"
+                class="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                title="Toggle theme">
                 <i id="theme-icon" class="fa-solid fa-sun"></i>
             </button>
 
             <!-- Profile Picture -->
-            <a th:href="@{${userRole == 'Doctor' ? '/doctor/profile' : userRole == 'RecoveredPatient' ? '/recoveredpatient/profile' : userRole == 'SufferingPatient' ? '/suff-pat/profile' : '/user/profile'}}" class="flex items-center">
-                <img th:src="${loggedInUser?.profilePicture} ?: 'https://via.placeholder.com/40'" alt="Profile Picture" class="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover hover:border-blue-500 transition-colors" />
+            <a th:href="@{${userRole == 'Doctor' ? '/doctor/profile' : userRole == 'RecoveredPatient' ? '/recoveredpatient/profile' : userRole == 'SufferingPatient' ? '/suff-pat/profile' : '/user/profile'}}"
+                class="flex items-center">
+                <img th:src="${loggedInUser?.profilePicture} ?: 'https://via.placeholder.com/40'" alt="Profile Picture"
+                    class="w-10 h-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover hover:border-blue-500 transition-colors" />
             </a>
         </div>
     </div>
 </nav>
+
+<script th:fragment="theme-script">
+    // Theme management - force light mode for mentor pages
+    (function () {
+        // Immediately set to light mode
+        localStorage.setItem('theme', 'light');
+        document.documentElement.classList.remove('dark');
+
+        // Update icon if button exists
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            icon.className = 'fa-solid fa-sun';
+        }
+    })();
+
+    let currentTheme = 'light';
+
+    function initTheme() {
+        setStoredTheme('light');
+        applyTheme(currentTheme);
+        updateThemeIcon(currentTheme);
+        setupThemeToggle();
+    }
+
+    function setupThemeToggle() {
+        const themeButton = document.getElementById('theme-change-button');
+        if (themeButton) {
+            themeButton.addEventListener('click', toggleTheme);
+        }
+    }
+
+    function toggleTheme() {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setStoredTheme(currentTheme);
+        applyTheme(currentTheme);
+        updateThemeIcon(currentTheme);
+    }
+
+    function setTheme(theme) {
+        if (theme === 'auto') {
+            currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        } else {
+            currentTheme = theme;
+        }
+        setStoredTheme(theme);
+        applyTheme(currentTheme);
+        updateThemeIcon(currentTheme);
+    }
+
+    function applyTheme(theme) {
+        const html = document.documentElement;
+        if (theme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+    }
+
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+            icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+    }
+
+    function getStoredTheme() {
+        return localStorage.getItem('theme') || 'light';
+    }
+
+    function setStoredTheme(theme) {
+        localStorage.setItem('theme', theme);
+    }
+
+    // Initialize theme after DOM elements are available
+    document.addEventListener('DOMContentLoaded', initTheme);
+</script>

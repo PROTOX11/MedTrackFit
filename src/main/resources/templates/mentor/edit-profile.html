@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - MedTrackFit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <!-- Navigation -->
     <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+    <div th:replace="user/user_navbar.html :: theme-script"></div>
 
     <div class="flex min-h-screen">
         <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
@@ -154,28 +155,36 @@
     </div>
 
     <script>
-        // Theme management
-        function setTheme(theme) {
-            if (theme === 'light') {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else if (theme === 'auto') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-                localStorage.setItem('theme', 'auto');
-            }
+        // Sidebar toggle logic
+        const sidebar = document.getElementById('logo-sidebar');
+        const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
+        const sidebarCloseBtn = document.getElementById('sidebar-close-toggle');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
         }
-        // Load theme preference
-        document.addEventListener('DOMContentLoaded', function() {
-            const theme = localStorage.getItem('theme') || 'auto';
-            setTheme(theme);
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
+        }
+        if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
+        if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
+        if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+        // Hide sidebar initially on mobile
+        if (window.innerWidth < 640 && sidebar) {
+            sidebar.classList.add('-translate-x-full');
+        }
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 640) {
+                sidebar.classList.remove('-translate-x-full');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
         });
     </script>
 </body>

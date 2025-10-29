@@ -1892,6 +1892,22 @@ input:checked + .toggle-bg {
   animation: spin 1s linear infinite;
 }
 
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
 .cursor-default {
   cursor: default;
 }
@@ -2348,6 +2364,10 @@ input:checked + .toggle-bg {
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
 
+.border-white\/20 {
+  border-color: rgb(255 255 255 / 0.2);
+}
+
 .\!bg-gray-50 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1)) !important;
@@ -2594,6 +2614,38 @@ input:checked + .toggle-bg {
   background-color: rgb(159 88 10 / var(--tw-bg-opacity, 1));
 }
 
+.bg-blue-500\/10 {
+  background-color: rgb(63 131 248 / 0.1);
+}
+
+.bg-green-500\/10 {
+  background-color: rgb(14 159 110 / 0.1);
+}
+
+.bg-purple-500\/10 {
+  background-color: rgb(144 97 249 / 0.1);
+}
+
+.bg-white\/10 {
+  background-color: rgb(255 255 255 / 0.1);
+}
+
+.bg-white\/15 {
+  background-color: rgb(255 255 255 / 0.15);
+}
+
+.bg-white\/20 {
+  background-color: rgb(255 255 255 / 0.2);
+}
+
+.bg-white\/5 {
+  background-color: rgb(255 255 255 / 0.05);
+}
+
+.bg-yellow-500\/10 {
+  background-color: rgb(194 120 3 / 0.1);
+}
+
 .bg-opacity-10 {
   --tw-bg-opacity: 0.1;
 }
@@ -2762,6 +2814,18 @@ input:checked + .toggle-bg {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
+.from-emerald-500 {
+  --tw-gradient-from: #10b981 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(16 185 129 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-indigo-500 {
+  --tw-gradient-from: #6875F5 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(104 117 245 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
 .via-purple-600 {
   --tw-gradient-to: rgb(126 58 242 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), #7E3AF2 var(--tw-gradient-via-position), var(--tw-gradient-to);
@@ -2845,6 +2909,23 @@ input:checked + .toggle-bg {
 
 .to-yellow-300 {
   --tw-gradient-to: #FACA15 var(--tw-gradient-to-position);
+}
+
+.to-blue-600 {
+  --tw-gradient-to: #1C64F2 var(--tw-gradient-to-position);
+}
+
+.to-rose-500 {
+  --tw-gradient-to: #f43f5e var(--tw-gradient-to-position);
+}
+
+.to-teal-500 {
+  --tw-gradient-to: #0694A2 var(--tw-gradient-to-position);
+}
+
+.bg-clip-text {
+  -webkit-background-clip: text;
+          background-clip: text;
 }
 
 .object-cover {
@@ -3428,6 +3509,10 @@ input:checked + .toggle-bg {
   color: rgb(114 59 19 / var(--tw-text-opacity, 1));
 }
 
+.text-transparent {
+  color: transparent;
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -3680,6 +3765,11 @@ input:checked + .toggle-bg {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.hover\:-translate-y-2:hover {
+  --tw-translate-y: -0.5rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .hover\:scale-105:hover {
   --tw-scale-x: 1.05;
   --tw-scale-y: 1.05;
@@ -3861,6 +3951,10 @@ input:checked + .toggle-bg {
 .hover\:bg-yellow-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(142 75 16 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-white\/30:hover {
+  background-color: rgb(255 255 255 / 0.3);
 }
 
 .hover\:bg-opacity-20:hover {
@@ -4965,6 +5059,22 @@ input:checked + .toggle-bg {
 
 .dark\:border-transparent:where(.dark, .dark *) {
   border-color: transparent;
+}
+
+.dark\:border-blue-800\/50:where(.dark, .dark *) {
+  border-color: rgb(30 66 159 / 0.5);
+}
+
+.dark\:border-emerald-800\/50:where(.dark, .dark *) {
+  border-color: rgb(6 95 70 / 0.5);
+}
+
+.dark\:border-pink-800\/50:where(.dark, .dark *) {
+  border-color: rgb(153 21 75 / 0.5);
+}
+
+.dark\:border-purple-800\/50:where(.dark, .dark *) {
+  border-color: rgb(85 33 181 / 0.5);
 }
 
 .dark\:\!bg-gray-700:where(.dark, .dark *) {
