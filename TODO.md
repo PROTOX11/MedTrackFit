@@ -1,23 +1,16 @@
-# Fix Sidebar Redirection Issue
-
-## Problem
-Sometimes clicking on sidebar options redirects to `/user/dashboard` instead of role-specific routes (e.g., `/doctor/dashboard` for doctors).
-
-## Root Cause Analysis
-- Controllers like `SufferingPatientController` and `RecoveredPatientController` do not have the `@ModelAttribute` method to set `userRole` in the model.
-- When `userRole` is not set, `base.html` falls back to `user/sidebar`, which has `/user/*` links.
-- Role checks in controllers redirect unauthorized users to `/user/dashboard`.
-
-## Plan
-1. Add `@ModelAttribute` method to `SufferingPatientController` to set `userRole` and `loggedInUser`.
-2. Add `@ModelAttribute` method to `RecoveredPatientController` to set `userRole` and `loggedInUser`.
-3. Verify that all role-based controllers have consistent `@ModelAttribute` setup.
-4. Test the fix by ensuring sidebar links point to correct role-specific routes.
-
-## Files to Edit
-- `src/main/java/com/example/medtrackfit/controllers/SufferingPatientController.java`
-- `src/main/java/com/example/medtrackfit/controllers/RecoveredPatientController.java`
-
-## Followup Steps
-- Run the application and test sidebar navigation for different user roles.
-- Ensure no unauthorized redirections occur.
+- [x] Add search functionality to SufferingPatientService for searching by name
+- [x] Update DoctorController to handle search requests and pass search results to template
+- [x] Update patients.html to display dynamic suffering patients data
+- [x] Add a new search card in patients.html for searching patients
+- [x] Add JavaScript for client-side search functionality
+- [x] Add getConnectedPatients method to SufferingPatientService
+- [x] Add getSufferingPatientById method to SufferingPatientService
+- [x] Add findByPatientId query to SufferingPatientRepository
+- [x] Update DoctorController to fetch and display connected patients
+- [x] Update patients.html to display connected patients instead of all patients
+- [x] Add "All Suffering Patients" section below search card to show complete patient list from database
+- [x] Add connect-patient endpoint to DoctorController for connecting patients to doctors
+- [x] Add connectPatientToDoctor method to SufferingPatientService
+- [x] Add doctorId field to SufferingPatient entity
+- [x] Add findByDoctorId method to SufferingPatientRepository
+- [x] Update getConnectedPatients implementation in SufferingPatientServiceImpl

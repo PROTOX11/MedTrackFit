@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" th:replace="~{base :: parent(~{::#content},~{::title},~{},~{})}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +10,36 @@
         .patient-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .patient-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
+
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
         }
-        .status-active { background-color: #dcfce7; color: #166534; }
-        .status-recovering { background-color: #fef3c7; color: #92400e; }
-        .status-critical { background-color: #fee2e2; color: #991b1b; }
+
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-recovering {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-critical {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
+
 <body>
     <div id="content">
         <!-- Header -->
@@ -35,62 +51,167 @@
                         <p class="text-blue-100 text-sm md:text-base">Manage your patients and their medical records</p>
                     </div>
                     <div class="flex flex-wrap gap-2 md:gap-4">
-                        <button class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
+                        <button
+                            class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
                             Find Patient
                         </button>
-                        <button class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
+                        <button
+                            class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
                             Add New Patient
                         </button>
-                        <button class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
+                        <button
+                            class="bg-white bg-opacity-20 px-3 py-2 md:px-4 rounded-lg hover:bg-opacity-30 transition duration-300 dark:bg-gray-700 dark:bg-opacity-30 dark:hover:bg-opacity-50 text-sm md:text-base">
                             Export Records
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+        <br>
+        <!-- Patient Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-blue-400 dark:text-blue-500 mb-2">24</div>
+                <div class="text-gray-600 dark:text-gray-400">Total Patients</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-green-400 dark:text-green-500 mb-2">18</div>
+                <div class="text-gray-600 dark:text-gray-400">Active Cases</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-yellow-400 dark:text-yellow-500 mb-2">4</div>
+                <div class="text-gray-600 dark:text-gray-400">Recovering</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-red-400 dark:text-red-500 mb-2">2</div>
+                <div class="text-gray-600 dark:text-gray-400">Critical</div>
+            </div>
+        </div>
 
         <div class="container mx-auto px-4 py-8">
-        <!-- Search and Filters -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-                <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1">
-                        <input type="text" placeholder="Search patients by name, ID, or condition..."
-                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                    </div>
-                    <div class="flex gap-2">
-                        <select class="px-2 py-1 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                            <option>All Status</option>
-                            <option>Active</option>
-                            <option>Recovering</option>
-                            <option>Critical</option>
-                        </select>
-                        <select class="px-2 py-1 text-xs md:text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100">
-                            <option>All Specializations</option>
-                            <option>Cardiology</option>
-                            <option>Neurology</option>
-                            <option>Oncology</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Patient Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-blue-400 dark:text-blue-500 mb-2">24</div>
-                    <div class="text-gray-600 dark:text-gray-400">Total Patients</div>
+            <!-- Search Patient & All Suffering Patients Combined Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Search & All Suffering Patients
+                    </h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Search patients by name or view complete
+                        list of all patients in the system</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-green-400 dark:text-green-500 mb-2">18</div>
-                    <div class="text-gray-600 dark:text-gray-400">Active Cases</div>
+
+                <!-- Search Section -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <form method="GET" action="/doctor/patients" class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <input type="text" name="search" id="patientSearchInput" placeholder="Enter patient name to search..."
+                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                                th:value="${searchQuery != null ? searchQuery : ''}">
+                        </div>
+                        <input type="hidden" name="page" th:value="${currentPage != null ? currentPage : 0}">
+                        <input type="hidden" name="size" th:value="10">
+                        <button type="submit" id="searchPatientBtn"
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300">
+                            Search Patient
+                        </button>
+                        <a href="/doctor/patients" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300">
+                            Clear Search
+                        </a>
+                    </form>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-yellow-400 dark:text-yellow-500 mb-2">4</div>
-                    <div class="text-gray-600 dark:text-gray-400">Recovering</div>
+
+                <!-- Patients Table Section -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Patient</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Condition</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Connect</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
+                            th:if="${sufferingPatients != null and !sufferingPatients.isEmpty()}"
+                            th:each="patient : ${sufferingPatients}">
+                            <tr class="patient-card">
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
+                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm"
+                                                th:text="${#strings.substring(patient.name, 0, 1)} + ${#strings.substring(patient.name, patient.name.indexOf(' ') + 1, patient.name.indexOf(' ') + 2)}">
+                                            </div>
+                                        </div>
+                                        <div class="ml-2 md:ml-4">
+                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100"
+                                                th:text="${patient.name}"></div>
+                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400"
+                                                th:text="${patient.email}"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100"
+                                    th:text="'#' + ${#strings.substring(patient.patientId, 0, 8)}"></td>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100"
+                                    th:text="${patient.medicalCondition != null ? patient.medicalCondition : 'Not specified'}">
+                                </td>
+                                <!-- UPDATED CONNECT BUTTON -->
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                                    <button
+                                        class="px-3 py-1 text-white text-xs rounded-lg transition duration-300 connect-btn"
+                                        th:classappend="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'"
+                                        th:disabled="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)}"
+                                        th:text="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'Connected' : 'Connect'"
+                                        th:data-patient-id="${patient.patientId}"
+                                        th:onclick="${connectedPatientIds == null or !connectedPatientIds.contains(patient.patientId)} ? 'handleConnect(this, &quot;${patient.patientId}&quot;)' : ''">
+                                    </button>
+                                </td>
+                                <!-- END UPDATED BUTTON -->
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
+                                    <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
+                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody th:if="${sufferingPatients == null or sufferingPatients.isEmpty()}">
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    No suffering patients found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-                    <div class="text-3xl font-bold text-red-400 dark:text-red-500 mb-2">2</div>
-                    <div class="text-gray-600 dark:text-gray-400">Critical</div>
+
+                <!-- Pagination Controls -->
+                <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700" th:if="${totalPages > 1}">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700 dark:text-gray-300">
+                            Showing <span th:text="${currentPage * 10 + 1}"></span> to <span th:text="${currentPage * 10 + sufferingPatients.size()}"></span> of <span th:text="${totalElements}"></span> results
+                        </div>
+                        <div class="flex space-x-2">
+                            <a th:if="${currentPage > 0}" th:href="@{/doctor/patients(page=${currentPage - 1}, size=10, search=${searchQuery != null ? searchQuery : ''})}"
+                               class="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
+                                Previous
+                            </a>
+                            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="px-3 py-1 text-sm">
+                                <a th:if="${i == currentPage}" th:text="${i + 1}" class="bg-blue-500 text-white rounded px-2 py-1"></a>
+                                <a th:if="${i != currentPage}" th:text="${i + 1}"
+                                   th:href="@{/doctor/patients(page=${i}, size=10, search=${searchQuery != null ? searchQuery : ''})}"
+                                   class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-300"></a>
+                            </span>
+                            <a th:if="${currentPage < totalPages - 1}" th:href="@{/doctor/patients(page=${currentPage + 1}, size=10, search=${searchQuery != null ? searchQuery : ''})}"
+                               class="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
+                                Next
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -103,109 +224,60 @@
                     <table class="w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Patient</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Condition</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Last Visit</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Patient</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Condition</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Last Visit</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
+                            th:if="${connectedPatients != null and !connectedPatients.isEmpty()}"
+                            th:each="patient : ${connectedPatients}">
                             <tr class="patient-card">
                                 <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
-                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm">JS</div>
+                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm"
+                                                th:text="${#strings.substring(patient.name, 0, 1)} + ${#strings.substring(patient.name, patient.name.indexOf(' ') + 1, patient.name.indexOf(' ') + 2)}">
+                                            </div>
                                         </div>
                                         <div class="ml-2 md:ml-4">
-                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100">John Smith</div>
-                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Male, 45 years</div>
+                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100"
+                                                th:text="${patient.name}"></div>
+                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400"
+                                                th:text="${patient.email}"></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100">#P001</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100">Hypertension</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <span class="status-badge status-active text-xs">Active</span>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100"
+                                    th:text="'#' + ${#strings.substring(patient.patientId, 0, 8)}"></td>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100"
+                                    th:text="${patient.medicalCondition != null ? patient.medicalCondition : 'Not specified'}">
                                 </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500 dark:text-gray-400">2 days ago</td>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
+                                    <span class="status-badge status-active text-xs">Connected</span>
+                                </td>
+                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                                    Recent</td>
                                 <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
                                     <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
                                     <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
                                     <button class="text-gray-600 hover:text-gray-900">Edit</button>
                                 </td>
                             </tr>
-                            <tr class="patient-card">
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
-                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-pink-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm">MJ</div>
-                                        </div>
-                                        <div class="ml-2 md:ml-4">
-                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100">Mary Johnson</div>
-                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Female, 38 years</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">#P002</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">Diabetes Type 2</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <span class="status-badge status-recovering text-xs">Recovering</span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">1 week ago</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
-                                    <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
-                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
-                                </td>
-                            </tr>
-                            <tr class="patient-card">
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
-                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-red-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm">RB</div>
-                                        </div>
-                                        <div class="ml-2 md:ml-4">
-                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100">Robert Brown</div>
-                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Male, 62 years</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">#P003</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">Heart Disease</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <span class="status-badge status-critical text-xs">Critical</span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">3 hours ago</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
-                                    <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
-                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
-                                </td>
-                            </tr>
-                            <tr class="patient-card">
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8 md:h-10 md:w-10">
-                                            <div class="h-8 w-8 md:h-10 md:w-10 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold text-xs md:text-sm">SD</div>
-                                        </div>
-                                        <div class="ml-2 md:ml-4">
-                                            <div class="text-xs md:text-sm font-medium text-gray-900 dark:text-gray-100">Sarah Davis</div>
-                                            <div class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Female, 29 years</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">#P004</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">Asthma</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
-                                    <span class="status-badge status-active text-xs">Active</span>
-                                </td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-500">5 days ago</td>
-                                <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
-                                    <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
-                                    <button class="text-gray-600 hover:text-gray-900">Edit</button>
+                        </tbody>
+                        <tbody th:if="${connectedPatients == null or connectedPatients.isEmpty()}">
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    No connected patients found.
                                 </td>
                             </tr>
                         </tbody>
@@ -214,5 +286,77 @@
             </div>
         </div>
     </div>
+
+    <script>
+    // -------------------------------------------------
+    //  GLOBAL: handleConnect – available immediately
+    // -------------------------------------------------
+    window.handleConnect = function(btn, patientId) {
+        // Prevent double-click
+        if (btn.disabled) return;
+
+        // 1. Instant UI update
+        btn.textContent = 'Connected';
+        btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+        btn.classList.add('bg-gray-500', 'cursor-not-allowed');
+        btn.disabled = true;
+        btn.onclick = null;
+
+        // 2. Call server
+        fetch('/doctor/connect-patient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify({ patientId: patientId })
+        })
+        .then(r => r.ok ? r.json() : Promise.reject('Network error'))
+        .then(data => {
+            if (data.success) {
+                showNotification('Connected!', 'success');
+                setTimeout(() => location.reload(), 800);
+            } else {
+                throw new Error(data.message || 'Failed');
+            }
+        })
+        .catch(err => {
+            console.error('Connect failed:', err);
+            // Revert UI
+            btn.textContent = 'Connect';
+            btn.classList.remove('bg-gray-500', 'cursor-not-allowed');
+            btn.classList.add('bg-green-500', 'hover:bg-green-600');
+            btn.disabled = false;
+            btn.onclick = () => handleConnect(btn, patientId);
+            showNotification('Failed. Try again.', 'error');
+        });
+    };
+
+    function showNotification(msg, type) {
+        const el = document.createElement('div');
+        el.textContent = msg;
+        el.className = `fixed top-4 right-4 px-4 py-2 rounded text-white text-sm font-medium z-50 shadow-lg ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+    }
+
+    // -------------------------------------------------
+    //  DOM Ready – search input persistence
+    // -------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('patientSearchInput');
+
+        // Optional: Auto-submit on enter
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.querySelector('form').submit();
+            }
+        });
+    });
+</script>
 </body>
+
 </html>

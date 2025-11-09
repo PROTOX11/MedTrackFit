@@ -23,11 +23,27 @@ public class Doctor implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String doctorId;
 
+    public String getDoctorId() {
+        return doctorId;
+    }
+
     @Column(name = "name", nullable = false)
     private String name;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Column(unique = true, nullable = false)
     private String email;
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @Getter(AccessLevel.NONE)
     private String password;
@@ -35,23 +51,55 @@ public class Doctor implements UserDetails {
     @Column(length = 1000)
     private String about;
 
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
     @Column(length = 1000)
     private String phoneNumber;
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
     @Column(name = "license_number")
     private String licenseNumber;
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
 
     @Column(name = "specialization")
     private String specialization;
 
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
     @Column(name = "years_of_experience")
     private Integer yearsOfExperience;
 
+    public void setYearsOfExperience(int yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
+    }
+
     @Column(name = "qualification")
     private String qualification;
+
+    public void setQualification(String qualification) {
+        this.qualification = qualification;
+    }
 
     @Column(name = "school")
     private String school;

@@ -55,6 +55,13 @@ public class SufferingPatient implements UserDetails {
     @Column(name = "preferred_mentor_type")
     private String preferredMentorType;
 
+    @Column(name = "doctor_id")
+    private String doctorId;
+
+    public void setDoctorId(String doctorId) {
+        this.doctorId = doctorId;
+    }
+
     @Builder.Default
     private boolean enabled = true;
     

@@ -152,8 +152,8 @@ public class HealthMentorServiceImpl implements HealthMentorService {
 
         Connections connection = Connections.builder()
                 .id(connectionId)
-                .user(patient)
-                .connectedUser(doctor)
+                .user(null)
+                .connectedUser(null)
                 .build();
 
         Connections savedConnection = connectionsRepo.save(connection);
