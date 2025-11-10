@@ -17,71 +17,61 @@
 
             <select id="recovery-area-filter" class="px-3 py-2 border rounded-lg bg-white">
                 <option value="">All Recovery Areas</option>
-                <option th:each="r : ${recoveredPatients}" th:value="${r.recoveryArea}" th:text="${r.recoveryArea}"></option>
+                <option th:each="r : ${recoveredPatients}" th:value="${r.previousCondition}" th:text="${r.previousCondition}"></option>
             </select>
         </div>
     </div>
 
-    <div th:if="${not #lists.isEmpty(recoveredPatients)}" class="space-y-4">
-        <div th:each="recoveredPatient : ${recoveredPatients}" class="recovered-patient-card w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition">
-            <div class="flex flex-col sm:flex-row sm:items-center w-full gap-4">
-                <!-- Profile / avatar -->
-                <div class="flex items-center sm:items-start w-full sm:w-1/6">
-                    <div class="w-24 h-24 rounded-md overflow-hidden flex items-center justify-center text-3xl text-gray-700 dark:text-gray-200 border-2 border-blue-100 dark:border-blue-900">
+    <div th:if="${not #lists.isEmpty(recoveredPatients)}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div th:each="recoveredPatient : ${recoveredPatients}" class="recovered-patient-card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-6">
+            <!-- Header with avatar and availability -->
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center text-xl text-gray-700 dark:text-gray-200 border-2 border-blue-100 dark:border-blue-900 bg-gray-50">
                         <img th:if="${recoveredPatient.profilePicture != null}" th:src="${recoveredPatient.profilePicture}" alt="Profile" class="w-full h-full object-cover" />
                         <span th:if="${recoveredPatient.profilePicture == null}" th:text="${recoveredPatient.name != null ? recoveredPatient.name.substring(0,1) : 'R'}"></span>
                     </div>
-                </div>
-
-                <!-- Main details -->
-                <div class="flex-1 w-full sm:w-3/5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
-                                <span th:text="${recoveredPatient.name}">Recovered Patient Name</span>
-                                <span class="text-xs text-gray-500 font-medium" th:if="${recoveredPatient.recoveryArea}" th:text="${recoveredPatient.recoveryArea}"></span>
-                            </h3>
-
-                            <!-- rating -->
-                            <div class="mt-2 flex items-center gap-2">
-                                <div class="flex items-center text-yellow-400">
-                                    <span th:each="i : ${#numbers.sequence(1,5)}" class="mr-0.5" th:classappend="${(recoveredPatient.recoveryPerformance != null and recoveredPatient.recoveryPerformance.rating >= i) ? 'text-yellow-400' : 'text-gray-300'}">&#9733;</span>
-                                </div>
-                                <div class="text-sm text-gray-600" th:text="${recoveredPatient.recoveryPerformance != null ? recoveredPatient.recoveryPerformance.rating : 0}">0.0</div>
-                                <div class="text-xs text-gray-400 ml-2" th:if="${recoveredPatient.recoveryPerformance != null}">(<span th:text="${recoveredPatient.recoveryPerformance.peopleHelped}">0</span> people helped)</div>
-                            </div>
-
-                            <p class="mt-3 text-sm text-gray-700 dark:text-gray-300" th:if="${recoveredPatient.about != null}" th:text="${#strings.abbreviate(recoveredPatient.about, 350)}"></p>
-
-                            <div class="mt-3 flex flex-wrap gap-2">
-                                <span class="inline-block text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded" th:if="${recoveredPatient.qualification}" th:text="${recoveredPatient.qualification}"></span>
-                                <span class="inline-block text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded" th:if="${recoveredPatient.school}" th:text="${recoveredPatient.school}"></span>
-                                <span class="inline-block text-xs px-2 py-1 bg-green-100 text-green-800 rounded" th:if="${recoveredPatient.yearsSinceRecovery != null}">Recovered: <span th:text="${recoveredPatient.yearsSinceRecovery}">0</span> yrs ago</span>
-                            </div>
-                        </div>
-
-                        <!-- availability pill -->
-                        <div class="text-right">
-                            <div th:if="${recoveredPatient.patientConnectedId == null}" class="inline-block px-3 py-1 bg-green-50 text-green-800 text-xs rounded">Available</div>
-                            <div th:if="${recoveredPatient.patientConnectedId != null}" class="inline-block px-3 py-1 bg-red-50 text-red-700 text-xs rounded">In Session</div>
-                        </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100" th:text="${recoveredPatient.name}">Recovered Patient Name</h3>
+                        <span class="text-sm text-gray-500" th:if="${recoveredPatient.previousCondition}" th:text="${recoveredPatient.previousCondition}"></span>
                     </div>
                 </div>
+                <div class="inline-block px-2 py-1 bg-green-50 text-green-800 text-xs rounded-full">Available</div>
+            </div>
 
-                <!-- Actions / contact -->
-                <div class="w-full sm:w-1/6 flex flex-col sm:items-end justify-between">
-                    <div class="flex flex-col sm:items-end gap-2">
-                        <div class="flex gap-2">
-                            <a th:href="@{'/suff-pat/connect_recovered_patient/request/' + ${recoveredPatient.recoveredPatientId}}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Connect</a>
-                            <a th:href="@{'/recovered_patient/profile?recoveredPatientId=' + ${recoveredPatient.recoveredPatientId}}" class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">View profile</a>
-                        </div>
-
-                        <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                            <div th:if="${recoveredPatient.phoneNumber != null}" class="flex items-center gap-2"><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 0 1 2-2h3.28a2 2 0 0 1 1.91 1.37l.7 2.1a2 2 0 0 1-.45 2.09L8.7 11.7a11.05 11.05 0 0 0 5.6 5.6l2.1-1.74a2 2 0 0 1 2.09-.45l2.1.7A2 2 0 0 1 21 17.72V21a2 2 0 0 1-2 2H19c-9.39 0-17-7.61-17-17V5z"></path></svg><span th:text="${recoveredPatient.phoneNumber}"></span></div>
-                            <div th:if="${recoveredPatient.email != null}" class="flex items-center gap-2 mt-1"><svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path></svg><span th:text="${recoveredPatient.email}"></span></div>
-                        </div>
+            <!-- Rating and stats -->
+            <div class="mb-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="flex items-center text-yellow-400">
+                        <span th:each="i : ${#numbers.sequence(1,5)}" class="text-sm" th:classappend="${(recoveredPatient.recoveredPatientPerformance != null and recoveredPatient.recoveredPatientPerformance.mentorRating >= i) ? 'text-yellow-400' : 'text-gray-300'}">&#9733;</span>
                     </div>
+                    <span class="text-sm text-gray-600" th:text="${recoveredPatient.recoveredPatientPerformance != null ? recoveredPatient.recoveredPatientPerformance.mentorRating : 0}">0.0</span>
+                    <span class="text-xs text-gray-400" th:if="${recoveredPatient.recoveredPatientPerformance != null}">(<span th:text="${recoveredPatient.recoveredPatientPerformance.livesImpacted}">0</span> helped)</span>
                 </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-block text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full" th:if="${recoveredPatient.recoveryDuration != null}">Recovered: <span th:text="${recoveredPatient.recoveryDuration}">0</span></span>
+                </div>
+            </div>
+
+            <!-- About -->
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-4 line-clamp-3" th:if="${recoveredPatient.about != null}" th:text="${#strings.abbreviate(recoveredPatient.about, 150)}"></p>
+
+            <!-- Contact info -->
+            <div class="mb-4 space-y-1">
+                <div th:if="${recoveredPatient.phoneNumber != null}" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 0 1 2-2h3.28a2 2 0 0 1 1.91 1.37l.7 2.1a2 2 0 0 1-.45 2.09L8.7 11.7a11.05 11.05 0 0 0 5.6 5.6l2.1-1.74a2 2 0 0 1 2.09-.45l2.1.7A2 2 0 0 1 21 17.72V21a2 2 0 0 1-2 2H19c-9.39 0-17-7.61-17-17V5z"></path></svg>
+                    <span th:text="${recoveredPatient.phoneNumber}"></span>
+                </div>
+                <div th:if="${recoveredPatient.email != null}" class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path></svg>
+                    <span th:text="${recoveredPatient.email}"></span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2">
+                <a th:href="@{'/suff-pat/connect_recovered_patient/request/' + ${recoveredPatient.patientId}}" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">Connect</a>
+                <a th:href="@{'/recovered_patient/profile?recoveredPatientId=' + ${recoveredPatient.patientId}}" class="flex-1 text-center px-4 py-2 bg-gray-200 text-gray-800 text-sm rounded-md hover:bg-gray-300 transition-colors">View Profile</a>
             </div>
         </div>
     </div>
@@ -123,7 +113,18 @@
                 })
             }
 
-            if(searchInput) searchInput.addEventListener('input', filterCards);
+            // Debounce function to limit filter calls
+            function debounce(func, delay) {
+                let timeoutId;
+                return function(...args) {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            const debouncedFilterCards = debounce(filterCards, 300);
+
+            if(searchInput) searchInput.addEventListener('input', debouncedFilterCards);
             if(areaFilter) areaFilter.addEventListener('change', filterCards);
 
             // auto-hide toast after 4s

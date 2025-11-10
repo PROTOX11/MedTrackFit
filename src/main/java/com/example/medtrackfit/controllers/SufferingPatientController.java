@@ -11,15 +11,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import com.example.medtrackfit.services.AllBlogPostService;
 import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.HealthMentorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
+
 import com.example.medtrackfit.entities.Doctor;
 import com.example.medtrackfit.entities.HealthMentor;
+import com.example.medtrackfit.entities.RecoveredPatient;
+import com.example.medtrackfit.services.RecoveredPatientService;
 import com.medtrackfit.helper.Helper;
 
 @Controller
@@ -38,6 +44,9 @@ public class SufferingPatientController {
     @Autowired
     private HealthMentorService healthMentorService;
 
+    @Autowired
+    private RecoveredPatientService recoveredPatientService;
+
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -54,8 +63,17 @@ public class SufferingPatientController {
     }
 
     @GetMapping("/connect_recovered")
-    public String connectRecovered() {
+    public String connectRecovered(Model model) {
+        List<RecoveredPatient> recoveredPatients = recoveredPatientService.getAllRecoveredPatients();
+        model.addAttribute("recoveredPatients", recoveredPatients);
         return "suff-pat/connect_recovered";
+    }
+
+    @GetMapping("/connect_recovered_patient/request/{patientId}")
+    public String requestConnectRecoveredPatient(@PathVariable String patientId, Model model, Authentication authentication) {
+        // Minimal implementation: in a full app we would create a connection request record and notify the recovered patient.
+        // For now, redirect back to the connect page with a success flag.
+        return "redirect:/suff-pat/connect_recovered?requested=" + patientId;
     }
 
     @GetMapping("/connect_doctor")
