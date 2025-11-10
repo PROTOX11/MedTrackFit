@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.example.medtrackfit.services.AllBlogPostService;
+import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +29,9 @@ public class SufferingPatientController {
 
     @Autowired
     private UniversalUserService universalUserService;
+
+    @Autowired
+    private AllBlogPostService allBlogPostService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -61,5 +70,32 @@ public class SufferingPatientController {
         // Minimal implementation: in a full app we would create a connection request record and notify the doctor.
         // For now, redirect back to the connect page with a success flag.
         return "redirect:/suff-pat/connect_doctor?requested=" + doctorId;
+    }
+
+    @GetMapping("/blog")
+    public String blog(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        // Fetch all public blogs from all user types
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AllBlogPost> allBlogs = allBlogPostService.findAllPublicBlogs(pageable);
+
+        // Get blog statistics
+        long totalPosts = allBlogPostService.countByStatus(AllBlogPost.PostStatus.PUBLISHED);
+        long doctorPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.DOCTOR, AllBlogPost.PostStatus.PUBLISHED);
+        long mentorPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.MENTOR, AllBlogPost.PostStatus.PUBLISHED);
+        long patientPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.RECOVERED_PATIENT, AllBlogPost.PostStatus.PUBLISHED);
+
+        model.addAttribute("allBlogs", allBlogs.getContent());
+        model.addAttribute("currentPage", allBlogs.getNumber());
+        model.addAttribute("totalPages", allBlogs.getTotalPages());
+        model.addAttribute("totalElements", allBlogs.getTotalElements());
+        model.addAttribute("totalPosts", totalPosts);
+        model.addAttribute("doctorPosts", doctorPosts);
+        model.addAttribute("mentorPosts", mentorPosts);
+        model.addAttribute("patientPosts", patientPosts);
+        model.addAttribute("baseUrl", "/suff-pat/blog");
+
+        return "suff-pat/blog";
     }
 }

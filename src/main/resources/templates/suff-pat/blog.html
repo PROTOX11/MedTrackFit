@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Public Medical Blog - MedTrackFit</title>
+    <title>Medical Blog - Suffering Patient</title>
     <link rel="stylesheet" data-th-href="@{'/css/output.css'}">
     <style>
         .blog-card {
@@ -16,7 +16,7 @@
         .status-published { background-color: #dcfce7; color: #166534; }
         .status-draft { background-color: #fef3c7; color: #92400e; }
         .status-review { background-color: #dbeafe; color: #1e40af; }
-        
+
         .author-doctor { background-color: #8b5cf6; }
         .author-mentor { background-color: #3b82f6; }
         .author-patient { background-color: #f97316; }
@@ -33,11 +33,11 @@
                         <p class="text-purple-100">Insights from doctors, mentors, and recovered patients</p>
                     </div>
                     <div class="flex space-x-4">
-                        <a href="/doctor/blog" class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
-                            Doctor Blog
+                        <a href="/suff-pat/dashboard" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
+                            Dashboard
                         </a>
-                        <a href="/user/dashboard" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
-                            User Dashboard
+                        <a href="/suff-pat/connect_doctor" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-lg">
+                            Connect Doctor
                         </a>
                     </div>
                 </div>
@@ -68,12 +68,12 @@
             <!-- Blog Posts -->
             <div class="space-y-6" th:if="${allBlogs != null and !allBlogs.empty}">
                 <!-- Dynamic Blog Posts -->
-                <div th:each="blog : ${allBlogs}" class="blog-card bg-white rounded-lg shadow-lg p-6" 
+                <div th:each="blog : ${allBlogs}" class="blog-card bg-white rounded-lg shadow-lg p-6"
                      th:classappend="${blog.isFeatured} ? 'border-l-4 border-green-500' : ''">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center">
                             <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-semibold mr-4"
-                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'author-doctor' : 
+                                 th:class="${blog.authorType.name() == 'DOCTOR'} ? 'author-doctor' :
                                           (${blog.authorType.name() == 'MENTOR'} ? 'author-mentor' : 'author-patient')">
                                 <span th:if="${blog.authorType.name() == 'DOCTOR'}">👨‍⚕️</span>
                                 <span th:if="${blog.authorType.name() == 'MENTOR'}">👨‍🏫</span>
@@ -82,9 +82,9 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900" th:text="${blog.title}">Blog Title</h3>
                                 <p class="text-sm text-gray-600">
-                                    <span th:text="${blog.authorName}">Author Name</span> • 
+                                    <span th:text="${blog.authorName}">Author Name</span> •
                                     <span th:text="${blog.authorType.name()}">Author Type</span>
-                                    <span th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}"> • 
+                                    <span th:if="${blog.authorSpecialization != null and !blog.authorSpecialization.empty}"> •
                                         <span th:text="${blog.authorSpecialization}">Specialization</span>
                                     </span>
                                 </p>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="flex items-center space-x-2">
                             <span class="px-3 py-1 rounded-full text-sm font-medium"
-                                  th:class="${blog.status.name() == 'PUBLISHED'} ? 'status-published' : 
+                                  th:class="${blog.status.name() == 'PUBLISHED'} ? 'status-published' :
                                            (${blog.status.name() == 'DRAFT'} ? 'status-draft' : 'status-review')"
                                   th:text="${blog.status.name()}">Status</span>
                             <span class="text-sm text-gray-500" th:text="${blog.viewCount} + ' views'">0 views</span>
@@ -116,7 +116,8 @@
                         </div>
                         <div class="flex space-x-2">
                             <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300"
-                                    th:onclick="'viewBlog(\'' + ${blog.postId} + '\')'">View Post</button>
+                                    th:data-post-id="${blog.postId}"
+                                    onclick="viewBlog(this.getAttribute('data-post-id'))">View Post</button>
                         </div>
                     </div>
                 </div>
@@ -132,14 +133,14 @@
             <div th:if="${totalPages > 1}" class="mt-8 flex justify-center">
                 <nav class="flex space-x-2">
                     <a th:if="${currentPage > 0}"
-                       th:href="@{/suff-pat/blog(page=${currentPage - 1})}"
+                       th:href="@{${baseUrl}(page=${currentPage - 1})}"
                        class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300">
                         Previous
                     </a>
                     <span th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
                           th:if="${page >= currentPage - 2 and page <= currentPage + 2}">
                         <a th:if="${page != currentPage}"
-                           th:href="@{/suff-pat/blog(page=${page})}"
+                           th:href="@{${baseUrl}(page=${page})}"
                            class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300"
                            th:text="${page + 1}">1</a>
                         <span th:if="${page == currentPage}"
@@ -147,7 +148,7 @@
                               th:text="${page + 1}">1</span>
                     </span>
                     <a th:if="${currentPage < totalPages - 1}"
-                       th:href="@{/suff-pat/blog(page=${currentPage + 1})}"
+                       th:href="@{${baseUrl}(page=${currentPage + 1})}"
                        class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300">
                         Next
                     </a>
@@ -155,7 +156,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         function viewBlog(postId) {
             // For now, just show an alert. In a real application, this would open a detailed view

@@ -1,16 +1,4 @@
-- [x] Add search functionality to SufferingPatientService for searching by name
-- [x] Update DoctorController to handle search requests and pass search results to template
-- [x] Update patients.html to display dynamic suffering patients data
-- [x] Add a new search card in patients.html for searching patients
-- [x] Add JavaScript for client-side search functionality
-- [x] Add getConnectedPatients method to SufferingPatientService
-- [x] Add getSufferingPatientById method to SufferingPatientService
-- [x] Add findByPatientId query to SufferingPatientRepository
-- [x] Update DoctorController to fetch and display connected patients
-- [x] Update patients.html to display connected patients instead of all patients
-- [x] Add "All Suffering Patients" section below search card to show complete patient list from database
-- [x] Add connect-patient endpoint to DoctorController for connecting patients to doctors
-- [x] Add connectPatientToDoctor method to SufferingPatientService
-- [x] Add doctorId field to SufferingPatient entity
-- [x] Add findByDoctorId method to SufferingPatientRepository
-- [x] Update getConnectedPatients implementation in SufferingPatientServiceImpl
+- [x] Add @GetMapping("/blog") in SufferingPatientController.java to return "blog/public"
+- [x] Add Blog menu item in suff-pat_sidebar.html with link to /suff-pat/blog
+- [x] Update SufferingPatientController to fetch blogs and add baseUrl for pagination
+- [x] Update blog/public.html pagination to use baseUrl
