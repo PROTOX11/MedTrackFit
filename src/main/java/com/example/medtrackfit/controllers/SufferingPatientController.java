@@ -15,9 +15,11 @@ import com.example.medtrackfit.services.AllBlogPostService;
 import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.UniversalUserService;
+import com.example.medtrackfit.services.HealthMentorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import com.example.medtrackfit.entities.Doctor;
+import com.example.medtrackfit.entities.HealthMentor;
 import com.medtrackfit.helper.Helper;
 
 @Controller
@@ -32,6 +34,9 @@ public class SufferingPatientController {
 
     @Autowired
     private AllBlogPostService allBlogPostService;
+
+    @Autowired
+    private HealthMentorService healthMentorService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -61,7 +66,9 @@ public class SufferingPatientController {
     }
 
     @GetMapping("/connect_mentor")
-    public String connectMentor() {
+    public String connectMentor(Model model) {
+        List<HealthMentor> mentors = healthMentorService.getAllHealthMentors();
+        model.addAttribute("mentors", mentors);
         return "suff-pat/connect_mentor";
     }
 

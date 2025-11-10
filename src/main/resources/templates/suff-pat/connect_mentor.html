@@ -18,9 +18,9 @@
                 <input id="mentor-search" type="search" placeholder="Search by name or expertise"
                     class="px-3 py-2 border rounded-lg w-60 sm:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-                <select id="expertise-filter" class="px-3 py-2 border rounded-lg bg-white">
+                                <select id="expertise-filter" class="px-3 py-2 border rounded-lg bg-white">
                     <option value="">All Expertise Areas</option>
-                    <option th:each="m : ${mentors}" th:value="${m.expertise}" th:text="${m.expertise}"></option>
+                    <option th:each="m : ${mentors}" th:value="${m.areaOfExpertise}" th:text="${m.areaOfExpertise}"></option>
                 </select>
             </div>
         </div>
@@ -46,18 +46,18 @@
                             <div>
                                 <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                                     <span th:text="${mentor.name}">Mentor Name</span>
-                                    <span class="text-xs text-gray-500 font-medium" th:if="${mentor.expertise}"
-                                        th:text="${mentor.expertise}"></span>
+                                    <span class="text-xs text-gray-500 font-medium" th:if="${mentor.areaOfExpertise}"
+                                        th:text="${mentor.areaOfExpertise}"></span>
                                 </h3>
 
                                 <!-- rating -->
                                 <div class="mt-2 flex items-center gap-2">
                                     <div class="flex items-center text-yellow-400">
                                         <span th:each="i : ${#numbers.sequence(1,5)}" class="mr-0.5"
-                                            th:classappend="${(mentor.mentorPerformance != null and mentor.mentorPerformance.rating >= i) ? 'text-yellow-400' : 'text-gray-300'}">&#9733;</span>
+                                            th:classappend="${(mentor.mentorPerformance != null and mentor.mentorPerformance.mentorshipRating >= i) ? 'text-yellow-400' : 'text-gray-300'}">&#9733;</span>
                                     </div>
                                     <div class="text-sm text-gray-600"
-                                        th:text="${mentor.mentorPerformance != null ? mentor.mentorPerformance.rating : 0}">
+                                        th:text="${mentor.mentorPerformance != null ? mentor.mentorPerformance.mentorshipRating : 0}">
                                         0.0</div>
                                     <div class="text-xs text-gray-400 ml-2" th:if="${mentor.mentorPerformance != null}">
                                         (<span th:text="${mentor.mentorPerformance.menteesHelped}">0</span> mentees)
@@ -70,23 +70,16 @@
                                 <div class="mt-3 flex flex-wrap gap-2">
                                     <span
                                         class="inline-block text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded"
-                                        th:if="${mentor.qualification}" th:text="${mentor.qualification}"></span>
-                                    <span
-                                        class="inline-block text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded"
-                                        th:if="${mentor.school}" th:text="${mentor.school}"></span>
+                                        th:if="${mentor.certifications}" th:text="${mentor.certifications}"></span>
                                     <span class="inline-block text-xs px-2 py-1 bg-green-100 text-green-800 rounded"
-                                        th:if="${mentor.yearsOfExperience != null}">Exp: <span
-                                            th:text="${mentor.yearsOfExperience}">0</span> yrs</span>
+                                        th:if="${mentor.mentorshipExperience != null}">Exp: <span
+                                            th:text="${mentor.mentorshipExperience}">0</span> yrs</span>
                                 </div>
                             </div>
 
                             <!-- availability pill -->
                             <div class="text-right">
-                                <div th:if="${mentor.patientConnectedId == null}"
-                                    class="inline-block px-3 py-1 bg-green-50 text-green-800 text-xs rounded">Available
-                                </div>
-                                <div th:if="${mentor.patientConnectedId != null}"
-                                    class="inline-block px-3 py-1 bg-red-50 text-red-700 text-xs rounded">In Session
+                                <div class="inline-block px-3 py-1 bg-green-50 text-green-800 text-xs rounded">Available
                                 </div>
                             </div>
                         </div>
