@@ -62,6 +62,11 @@ public class SufferingPatientController {
         return "suff-pat/dashboard";
     }
 
+    @GetMapping("/profile")
+    public String profile() {
+        return "suff-pat/profile";
+    }
+
     @GetMapping("/connect_recovered")
     public String connectRecovered(Model model) {
         List<RecoveredPatient> recoveredPatients = recoveredPatientService.getAllRecoveredPatients();
