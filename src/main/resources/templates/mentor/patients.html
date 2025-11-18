@@ -59,113 +59,39 @@
 
             <!-- Patients Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="patientsGrid">
-                <!-- Sample Patient Cards -->
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <!-- Dynamic Patient Cards -->
+                <div th:each="patient : ${patients}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                                SJ
+                                <span th:text="${#strings.substring(patient.name, 0, 1)} + ${#strings.substring(patient.name, #strings.indexOf(patient.name, ' ') + 1, #strings.indexOf(patient.name, ' ') + 2)}"></span>
                             </div>
                             <div>
-                                <h3 class="font-semibold text-gray-900 dark:text-white">Sarah Johnson</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Diabetes Management</p>
+                                <h3 class="font-semibold text-gray-900 dark:text-white" th:text="${patient.name}"></h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${patient.medicalCondition != null ? patient.medicalCondition : 'No condition specified'}"></p>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Healthy</span>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Active</span>
                     </div>
                     <div class="space-y-2 mb-4">
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
-                            <span class="text-gray-900 dark:text-white">2 hours ago</span>
+                            <span class="text-gray-600 dark:text-gray-400">Email:</span>
+                            <span class="text-gray-900 dark:text-white" th:text="${patient.email}"></span>
                         </div>
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
-                            <span class="text-gray-900 dark:text-white">Tomorrow 10:00 AM</span>
+                            <span class="text-gray-600 dark:text-gray-400">Phone:</span>
+                            <span class="text-gray-900 dark:text-white" th:text="${patient.phoneNumber != null ? patient.phoneNumber : 'Not provided'}"></span>
                         </div>
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
-                            <span class="text-green-600">85%</span>
+                            <span class="text-gray-600 dark:text-gray-400">Symptoms:</span>
+                            <span class="text-gray-900 dark:text-white" th:text="${patient.currentSymptoms != null ? #strings.abbreviate(patient.currentSymptoms, 20) : 'None'}"></span>
                         </div>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="viewPatientDetails('sarah-johnson')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                        <button th:data-patient-id="${patient.patientId}" onclick="viewPatientDetails(this.getAttribute('data-patient-id'))" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
                             <i class="fas fa-eye mr-1"></i>View Details
                         </button>
-                        <button onclick="startChat('sarah-johnson')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <i class="fas fa-comments mr-1"></i>Chat
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
-                                MC
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 dark:text-white">Michael Chen</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Hypertension</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">Monitoring</span>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
-                            <span class="text-gray-900 dark:text-white">1 day ago</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
-                            <span class="text-gray-900 dark:text-white">Friday 2:00 PM</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
-                            <span class="text-yellow-600">65%</span>
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="viewPatientDetails('michael-chen')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <i class="fas fa-eye mr-1"></i>View Details
-                        </button>
-                        <button onclick="startChat('michael-chen')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <i class="fas fa-comments mr-1"></i>Chat
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                                ER
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-gray-900 dark:text-white">Emily Rodriguez</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Post-Surgery Recovery</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">Critical</span>
-                    </div>
-                    <div class="space-y-2 mb-4">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Last Check-in:</span>
-                            <span class="text-gray-900 dark:text-white">30 min ago</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Next Appointment:</span>
-                            <span class="text-gray-900 dark:text-white">Today 4:00 PM</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600 dark:text-gray-400">Progress:</span>
-                            <span class="text-red-600">40%</span>
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="viewPatientDetails('emily-rodriguez')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <i class="fas fa-eye mr-1"></i>View Details
-                        </button>
-                        <button onclick="startChat('emily-rodriguez')" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                        <button th:data-patient-id="${patient.patientId}" onclick="startChat(this.getAttribute('data-patient-id'))" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
                             <i class="fas fa-comments mr-1"></i>Chat
                         </button>
                     </div>

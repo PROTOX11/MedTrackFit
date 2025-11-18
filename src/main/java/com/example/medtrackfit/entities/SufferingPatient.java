@@ -127,4 +127,41 @@ public class SufferingPatient implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+
+    // Additional getters and setters for missing methods
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setMedicalCondition(String medicalCondition) {
+        this.medicalCondition = medicalCondition;
+    }
+
+    public void setCurrentSymptoms(String currentSymptoms) {
+        this.currentSymptoms = currentSymptoms;
+    }
+
+    public void setTreatmentDuration(String treatmentDuration) {
+        this.treatmentDuration = treatmentDuration;
+    }
+
+    public void setEmergencyContact(String emergencyContact) {
+        this.emergencyContact = emergencyContact;
+    }
+
+    public void setPreferredMentorType(String preferredMentorType) {
+        this.preferredMentorType = preferredMentorType;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
 }

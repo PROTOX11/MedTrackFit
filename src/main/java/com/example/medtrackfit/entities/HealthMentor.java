@@ -117,4 +117,41 @@ public class HealthMentor implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+
+    // Additional getters and setters for missing methods
+    public String getMentorId() {
+        return mentorId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setAreaOfExpertise(String areaOfExpertise) {
+        this.areaOfExpertise = areaOfExpertise;
+    }
+
+    public void setMentorshipExperience(Integer mentorshipExperience) {
+        this.mentorshipExperience = mentorshipExperience;
+    }
+
+    public void setCertifications(String certifications) {
+        this.certifications = certifications;
+    }
+
+    public void setRecoveryStory(String recoveryStory) {
+        this.recoveryStory = recoveryStory;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
 }

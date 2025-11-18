@@ -8,6 +8,7 @@ import com.example.medtrackfit.services.HealthMentorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
 import com.example.medtrackfit.services.CloudinaryService;
+import com.example.medtrackfit.services.SufferingPatientService;
 import com.medtrackfit.helper.Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class MentorController {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private SufferingPatientService sufferingPatientService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -234,6 +238,11 @@ public class MentorController {
             HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
             model.addAttribute("mentor", mentor);
             model.addAttribute("userRole", userRole);
+
+            // Fetch all suffering patients from the database
+            List<SufferingPatient> patients = sufferingPatientService.getAllSufferingPatients();
+            model.addAttribute("patients", patients);
+            logger.info("Fetched {} suffering patients for mentor: {}", patients.size(), mentor.getName());
         }
 
         return "mentor/patients";

@@ -174,4 +174,41 @@ public class AllBlogPost {
         MENTOR,
         RECOVERED_PATIENT
     }
+
+    // Additional getters and setters for missing methods
+    public String getPostId() {
+        return postId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getExcerpt() {
+        return excerpt;
+    }
+
+    public PostCategory getCategory() {
+        return category;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    public String getMetaKeywords() {
+        return metaKeywords;
+    }
+
+    public PostStatus getStatus() {
+        return status;
+    }
 }
