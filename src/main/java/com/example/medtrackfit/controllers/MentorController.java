@@ -5,6 +5,7 @@ import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.entities.Connections;
 import com.example.medtrackfit.entities.SufferingPatient;
 import com.example.medtrackfit.services.HealthMentorService;
+import com.example.medtrackfit.services.NutritionService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
 import com.example.medtrackfit.services.CloudinaryService;
@@ -45,6 +46,9 @@ public class MentorController {
 
     @Autowired
     private SufferingPatientService sufferingPatientService;
+
+    @Autowired
+    private NutritionService nutritionService;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -901,11 +905,56 @@ public class MentorController {
 
     @PostMapping("/food/save")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> saveFoodEntries(@RequestBody List<Object> foodItems) {
+    public ResponseEntity<Map<String, Object>> saveFoodEntries(@RequestBody List<Object> foodItems, Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
         try {
+            logger.info("=== FOOD SAVE REQUEST RECEIVED ===");
+            logger.info("Received food save request with {} items", foodItems.size());
+            logger.info("Food items details: {}", foodItems);
+
+            if (authentication == null) {
+                logger.error("Authentication is null");
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            logger.info("Username from authentication: {}", username);
+
+            String userRole = universalUserService.getUserRole(username);
+            logger.info("User role: {}", userRole);
+
+            if (!"HealthMentor".equals(userRole)) {
+                logger.error("User is not a mentor: {}", userRole);
+                response.put("success", false);
+                response.put("message", "Only mentors can save food entries");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Object userObj = universalUserService.getUserByEmail(username);
+            logger.info("User object from service: {}", userObj);
+
+            if (!(userObj instanceof HealthMentor)) {
+                logger.error("User is not a HealthMentor instance. Actual type: {}", userObj.getClass().getSimpleName());
+                response.put("success", false);
+                response.put("message", "Invalid user type");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthMentor mentor = (HealthMentor) userObj;
+            logger.info("Found mentor: {} with mentorId: {}", mentor.getName(), mentor.getMentorId());
+
+            // Calculate nutrition score
             int nutritionScore = healthMentorService.calculateNutritionScore(foodItems);
+            logger.info("Calculated nutrition score: {}", nutritionScore);
+
+            // Update mentor's nutrition score
+            healthMentorService.updateNutritionScore(mentor.getMentorId(), nutritionScore);
+
+            logger.info("Food entries saved for mentor {}: {} items, nutrition score: {}",
+                       mentor.getMentorId(), foodItems.size(), nutritionScore);
 
             response.put("success", true);
             response.put("nutritionScore", nutritionScore);
@@ -932,7 +981,7 @@ public class MentorController {
             if (query != null && !query.trim().isEmpty()) {
                 String lowerQuery = query.toLowerCase();
 
-                // Sample food data
+                // Sample food data with detailed nutritional information
                 if (lowerQuery.contains("apple")) {
                     Map<String, Object> apple = new HashMap<>();
                     apple.put("description", "Apple, raw, with skin");
@@ -941,7 +990,7 @@ public class MentorController {
                     apple.put("fiber", 2.4);
                     apple.put("vitamins", 0.5);
                     apple.put("sugar", 10.4);
-                    apple.put("saturatedFat", 0.0);
+                    apple.put("saturatedFat", 0.1);
                     apple.put("sodium", 1.0);
                     apple.put("minerals", 0.2);
                     apple.put("transFat", false);
@@ -965,6 +1014,23 @@ public class MentorController {
                     banana.put("unit", "pieces");
                     banana.put("fdcId", "banana_1");
                     foodResults.add(banana);
+                }
+
+                if (lowerQuery.contains("mango")) {
+                    Map<String, Object> mango = new HashMap<>();
+                    mango.put("description", "Mango, raw");
+                    mango.put("calories", 60.0);
+                    mango.put("protein", 0.8);
+                    mango.put("fiber", 1.6);
+                    mango.put("vitamins", 0.4);
+                    mango.put("sugar", 13.7);
+                    mango.put("saturatedFat", 0.1);
+                    mango.put("sodium", 1.0);
+                    mango.put("minerals", 0.2);
+                    mango.put("transFat", false);
+                    mango.put("unit", "pieces");
+                    mango.put("fdcId", "mango_1");
+                    foodResults.add(mango);
                 }
 
                 if (lowerQuery.contains("chicken")) {
@@ -1041,6 +1107,99 @@ public class MentorController {
         } catch (Exception e) {
             logger.error("Error searching foods", e);
             return ResponseEntity.internalServerError().body(foodResults);
+        }
+    }
+
+    // Nutrition endpoints
+    @PostMapping("/eat")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> eat(@RequestBody Map<String, Object> body, Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can track nutrition");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            String mentorId = mentor.getMentorId();
+
+            String foodName = (String) body.get("foodName");
+            Double foodScore = Double.parseDouble(body.get("foodScore").toString());
+
+            if (foodName == null || foodScore == null) {
+                response.put("success", false);
+                response.put("message", "foodName and foodScore are required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            double newScore = nutritionService.eatFood(mentorId, foodName, foodScore);
+
+            logger.info("Mentor {} ate {} (score: {}). New daily score: {}",
+                       mentorId, foodName, foodScore, newScore);
+
+            response.put("success", true);
+            response.put("message", "Food eaten! Daily score updated");
+            response.put("newDailyScore", newScore);
+            response.put("food", foodName);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error processing eat request", e);
+            response.put("success", false);
+            response.put("message", "Error processing request: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/score")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getScore(Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can access nutrition score");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            String mentorId = mentor.getMentorId();
+
+            double currentScore = nutritionService.getCurrentScore(mentorId);
+
+            response.put("success", true);
+            response.put("currentScore", currentScore);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error getting nutrition score", e);
+            response.put("success", false);
+            response.put("message", "Error getting score: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 }

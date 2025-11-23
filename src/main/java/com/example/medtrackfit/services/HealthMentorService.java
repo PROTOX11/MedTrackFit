@@ -32,5 +32,6 @@ public interface HealthMentorService extends UserDetailsService {
     void updateMeditationScore(String mentorId, int sessionSeconds);
     void updateBreatheScore(String mentorId, Integer breatheScore);
     void updateHydrationScore(String mentorId, int hydrationAmount);
+    void updateNutritionScore(String mentorId, int nutritionScore);
     int calculateNutritionScore(List<Object> foodItems);
 }

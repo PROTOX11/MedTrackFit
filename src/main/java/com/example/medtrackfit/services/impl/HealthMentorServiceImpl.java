@@ -308,11 +308,39 @@ public class HealthMentorServiceImpl implements HealthMentorService {
         }
 
         // Add hydration amount to current score
-        int currentScore = performance.getHydrationScore();
+        int currentScore = performance.getHydrationScore() != null ? performance.getHydrationScore() : 0;
         performance.setHydrationScore(currentScore + hydrationAmount);
 
         healthMentorRepository.save(mentor);
         logger.info("Updated hydration score for mentor {}: +{} ml", mentorId, hydrationAmount);
+    }
+
+    @Override
+    @Transactional
+    public void updateNutritionScore(String mentorId, int nutritionScore) {
+        HealthMentor mentor = healthMentorRepository.findById(mentorId)
+                .orElseThrow(() -> new RuntimeException("Mentor not found: " + mentorId));
+
+        MentorPerformance performance = mentor.getMentorPerformance();
+        if (performance == null) {
+            performance = MentorPerformance.builder()
+                    .mentor(mentor)
+                    .menteesHelped(0)
+                    .sessionsConducted(0)
+                    .successRate(0.0)
+                    .mentorshipRating(0.0)
+                    .recoveryStoriesShared(0)
+                    .meditationScore(null)
+                    .breatheScore(null)
+                    .hydrationScore(null)
+                    .nutritionScore(null)
+                    .build();
+            mentor.setMentorPerformance(performance);
+        }
+
+        performance.setNutritionScore(nutritionScore);
+        healthMentorRepository.save(mentor);
+        logger.info("Updated nutrition score for mentor {}: {}", mentorId, nutritionScore);
     }
 
     @Override

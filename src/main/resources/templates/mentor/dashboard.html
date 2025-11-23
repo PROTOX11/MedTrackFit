@@ -115,7 +115,7 @@
                         </p>
                         <!-- Modal toggle -->
                         <div class="flex justify-center">
-                            <button id="addFoodButton" disabled
+                            <button id="addFoodButton"
                                 class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 mt-1 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
                                 Add food
                             </button>
@@ -128,10 +128,10 @@
                         </div>
                         <!-- Main modal -->
                         <div id="timeline-modal" tabindex="-1" aria-hidden="true"
-                            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                            <div class="relative p-4 w-full max-w-4xl max-h-[80vh]">
+                            class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+                            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
                                 <!-- Modal content -->
-                                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                                <div class="relative overflow-y-auto p-6">
                                     <!-- Modal header -->
                                     <div
                                         class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
@@ -192,7 +192,344 @@
                                             const totalCaloriesSpan = document.getElementById("total-calories");
                                             const confirmButton = document.getElementById("confirm-food-selection");
                                             const resetButton = document.getElementById("resetFoodButton");
-                                            let selectedFoods = [];
+                                            const addFoodButton = document.getElementById("addFoodButton");
+                                            window.selectedFoods = [];
+
+                                            // Add food button click handler to open modal
+                                            if (addFoodButton) {
+                                                addFoodButton.addEventListener("click", function() {
+                                                    const modal = document.getElementById("timeline-modal");
+                                                    if (modal) {
+                                                        modal.classList.remove("hidden");
+                                                        // Focus on search input when modal opens
+                                                        setTimeout(() => {
+                                                            const searchInput = document.getElementById("food-search-input");
+                                                            if (searchInput) {
+                                                                searchInput.focus();
+                                                            }
+                                                        }, 100);
+                                                    }
+                                                });
+                                            }
+
+                                            // Nutri-Score calculation function
+                                            function calculateNutriScore(food, quantity = 100) {
+                                                // Convert to per 100g/ml equivalent
+                                                const unit = getFoodUnit(food);
+                                                let multiplier = 1;
+
+                                                if (unit === "pieces") {
+                                                    // Assume average piece weight (this could be more sophisticated)
+                                                    multiplier = 100 / (food.quantity || 100);
+                                                } else if (unit === "ml") {
+                                                    multiplier = 1; // Already per 100ml
+                                                } else {
+                                                    multiplier = 1; // Already per 100g
+                                                }
+
+                                                const energyKJ = (food.calories || 0) * 4.184 * multiplier; // Convert kcal to kJ
+                                                const sugars = (food.sugar || 0) * multiplier;
+                                                const satFat = (food.saturatedFat || 0) * multiplier;
+                                                const sodium = (food.sodium || 0) * multiplier;
+                                                const fiber = (food.fiber || 0) * multiplier;
+                                                const protein = (food.protein || 0) * multiplier;
+
+                                                // Negative points (bad nutrients) - Energy
+                                                let energyPoints = 0;
+                                                if (energyKJ <= 335) energyPoints = 0;
+                                                else if (energyKJ <= 670) energyPoints = 1;
+                                                else if (energyKJ <= 1005) energyPoints = 2;
+                                                else if (energyKJ <= 1340) energyPoints = 3;
+                                                else if (energyKJ <= 1675) energyPoints = 4;
+                                                else if (energyKJ <= 2010) energyPoints = 5;
+                                                else if (energyKJ <= 2345) energyPoints = 6;
+                                                else if (energyKJ <= 2680) energyPoints = 7;
+                                                else if (energyKJ <= 3015) energyPoints = 8;
+                                                else if (energyKJ <= 3350) energyPoints = 9;
+                                                else energyPoints = 10;
+
+                                                // Negative points - Sugars
+                                                let sugarPoints = 0;
+                                                if (sugars <= 4.5) sugarPoints = 0;
+                                                else if (sugars <= 9) sugarPoints = 1;
+                                                else if (sugars <= 13.5) sugarPoints = 2;
+                                                else if (sugars <= 18) sugarPoints = 3;
+                                                else if (sugars <= 22.5) sugarPoints = 4;
+                                                else if (sugars <= 27) sugarPoints = 5;
+                                                else if (sugars <= 31) sugarPoints = 6;
+                                                else if (sugars <= 36) sugarPoints = 7;
+                                                else if (sugars <= 40) sugarPoints = 8;
+                                                else if (sugars <= 45) sugarPoints = 9;
+                                                else sugarPoints = 10;
+
+                                                // Negative points - Saturated Fat
+                                                let satFatPoints = 0;
+                                                if (satFat <= 1) satFatPoints = 0;
+                                                else if (satFat <= 2) satFatPoints = 1;
+                                                else if (satFat <= 3) satFatPoints = 2;
+                                                else if (satFat <= 4) satFatPoints = 3;
+                                                else if (satFat <= 5) satFatPoints = 4;
+                                                else if (satFat <= 6) satFatPoints = 5;
+                                                else if (satFat <= 7) satFatPoints = 6;
+                                                else if (satFat <= 8) satFatPoints = 7;
+                                                else if (satFat <= 9) satFatPoints = 8;
+                                                else if (satFat <= 10) satFatPoints = 9;
+                                                else satFatPoints = 10;
+
+                                                // Negative points - Sodium
+                                                let sodiumPoints = 0;
+                                                if (sodium <= 90) sodiumPoints = 0;
+                                                else if (sodium <= 180) sodiumPoints = 1;
+                                                else if (sodium <= 270) sodiumPoints = 2;
+                                                else if (sodium <= 360) sodiumPoints = 3;
+                                                else if (sodium <= 450) sodiumPoints = 4;
+                                                else if (sodium <= 540) sodiumPoints = 5;
+                                                else if (sodium <= 630) sodiumPoints = 6;
+                                                else if (sodium <= 720) sodiumPoints = 7;
+                                                else if (sodium <= 810) sodiumPoints = 8;
+                                                else if (sodium <= 900) sodiumPoints = 9;
+                                                else sodiumPoints = 10;
+
+                                                const negativePoints = energyPoints + sugarPoints + satFatPoints + sodiumPoints;
+
+                                                // Positive points (good nutrients) - Fruits/Veg/Nuts
+                                                let fruitVegPoints = 0;
+                                                const desc = (food.description || "").toLowerCase();
+                                                if (desc.includes("fruit") || desc.includes("vegetable") || desc.includes("veg") ||
+                                                    desc.includes("nuts") || desc.includes("apple") || desc.includes("banana") ||
+                                                    desc.includes("orange") || desc.includes("berry") || desc.includes("spinach") ||
+                                                    desc.includes("broccoli") || desc.includes("carrot") || desc.includes("tomato") ||
+                                                    desc.includes("lettuce") || desc.includes("cucumber") || desc.includes("mango")) {
+                                                    fruitVegPoints = 10; // Assuming high fruit/veg content
+                                                }
+
+                                                // Positive points - Fiber
+                                                let fiberPoints = 0;
+                                                if (fiber <= 0.9) fiberPoints = 0;
+                                                else if (fiber <= 1.9) fiberPoints = 1;
+                                                else if (fiber <= 2.8) fiberPoints = 2;
+                                                else if (fiber <= 3.7) fiberPoints = 3;
+                                                else if (fiber <= 4.7) fiberPoints = 4;
+                                                else fiberPoints = 5;
+
+                                                // Positive points - Protein
+                                                let proteinPoints = 0;
+                                                if (protein <= 1.6) proteinPoints = 0;
+                                                else if (protein <= 3.2) proteinPoints = 1;
+                                                else if (protein <= 4.8) proteinPoints = 2;
+                                                else if (protein <= 6.4) proteinPoints = 3;
+                                                else if (protein <= 8.0) proteinPoints = 4;
+                                                else proteinPoints = 5;
+
+                                                const positivePoints = fruitVegPoints + fiberPoints + proteinPoints;
+
+                                                // Calculate final score
+                                                const finalScore = negativePoints - positivePoints;
+
+                                                // Determine grade
+                                                let grade = "A";
+                                                let gradeColor = "dark-green";
+                                                if (finalScore <= -1) grade = "A";
+                                                else if (finalScore <= 2) grade = "B";
+                                                else if (finalScore <= 10) grade = "C";
+                                                else if (finalScore <= 18) grade = "D";
+                                                else grade = "E";
+
+                                                if (grade === "A") gradeColor = "text-green-600";
+                                                else if (grade === "B") gradeColor = "text-lime-600";
+                                                else if (grade === "C") gradeColor = "text-yellow-600";
+                                                else if (grade === "D") gradeColor = "text-orange-600";
+                                                else gradeColor = "text-red-600";
+
+                                                return {
+                                                    negativePoints,
+                                                    positivePoints,
+                                                    finalScore,
+                                                    grade,
+                                                    gradeColor,
+                                                    breakdown: {
+                                                        energy: { value: energyKJ.toFixed(0), points: energyPoints },
+                                                        sugars: { value: sugars.toFixed(1), points: sugarPoints },
+                                                        satFat: { value: satFat.toFixed(1), points: satFatPoints },
+                                                        sodium: { value: sodium.toFixed(0), points: sodiumPoints },
+                                                        fiber: { value: fiber.toFixed(1), points: fiberPoints },
+                                                        protein: { value: protein.toFixed(1), points: proteinPoints },
+                                                        fruitVeg: { value: fruitVegPoints === 10 ? "High" : "Low", points: fruitVegPoints }
+                                                    }
+                                                };
+                                            }
+
+                                            // Show detailed nutrition information
+                                            function showNutritionDetails(food) {
+                                                const nutriScore = calculateNutriScore(food);
+
+                                                // Create detailed nutrition modal content
+                                                const nutritionModal = document.createElement("div");
+                                                nutritionModal.className = "fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50";
+                                                nutritionModal.innerHTML = `
+                                                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                                                        <div class="flex justify-between items-center mb-4">
+                                                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">${food.description}</h3>
+                                                            <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl" onclick="this.closest('.fixed').remove()">&times;</button>
+                                                        </div>
+
+                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                            <!-- Nutritional Information -->
+                                                            <div>
+                                                                <h4 class="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Nutritional Information (per 100${getFoodUnit(food)})</h4>
+                                                                <div class="space-y-2 text-sm">
+                                                                    <div class="flex justify-between">
+                                                                        <span>Energy:</span>
+                                                                        <span>${(food.calories || 0) * 4.184} kJ (${food.calories || 0} kcal)</span>
+                                                                    </div>
+                                                                    <div class="flex justify-between">
+                                                                        <span>Sugars:</span>
+                                                                        <span>${food.sugar || 0} g</span>
+                                                                    </div>
+                                                                    <div class="flex justify-between">
+                                                                        <span>Saturated Fat:</span>
+                                                                        <span>${food.saturatedFat || 0} g</span>
+                                                                    </div>
+                                                                    <div class="flex justify-between">
+                                                                        <span>Sodium:</span>
+                                                                        <span>${food.sodium || 0} mg</span>
+                                                                    </div>
+                                                                    <div class="flex justify-between">
+                                                                        <span>Fiber:</span>
+                                                                        <span>${food.fiber || 0} g</span>
+                                                                    </div>
+                                                                    <div class="flex justify-between">
+                                                                        <span>Protein:</span>
+                                                                        <span>${food.protein || 0} g</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Nutri-Score Calculation -->
+                                                            <div>
+                                                                <h4 class="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Nutri-Score Analysis</h4>
+
+                                                                <!-- Negative Points -->
+                                                                <div class="mb-4">
+                                                                    <h5 class="font-medium text-red-600 dark:text-red-400 mb-2">Negative points (bad nutrients)</h5>
+                                                                    <div class="space-y-1 text-sm">
+                                                                        <div class="flex justify-between">
+                                                                            <span>Energy (${nutriScore.breakdown.energy.value} kJ):</span>
+                                                                            <span>${nutriScore.breakdown.energy.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between">
+                                                                            <span>Sugars (${nutriScore.breakdown.sugars.value} g):</span>
+                                                                            <span>${nutriScore.breakdown.sugars.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between">
+                                                                            <span>Saturated fat (${nutriScore.breakdown.satFat.value} g):</span>
+                                                                            <span>${nutriScore.breakdown.satFat.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between">
+                                                                            <span>Sodium (${nutriScore.breakdown.sodium.value} mg):</span>
+                                                                            <span>${nutriScore.breakdown.sodium.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between font-semibold border-t pt-1">
+                                                                            <span>Total negative points:</span>
+                                                                            <span>${nutriScore.negativePoints}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Positive Points -->
+                                                                <div class="mb-4">
+                                                                    <h5 class="font-medium text-green-600 dark:text-green-400 mb-2">Positive points (good nutrients)</h5>
+                                                                    <div class="space-y-1 text-sm">
+                                                                        <div class="flex justify-between">
+                                                                            <span>Fruits/veg/nuts (${nutriScore.breakdown.fruitVeg.value}):</span>
+                                                                            <span>${nutriScore.breakdown.fruitVeg.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between">
+                                                                            <span>Fiber (${nutriScore.breakdown.fiber.value} g):</span>
+                                                                            <span>${nutriScore.breakdown.fiber.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between">
+                                                                            <span>Protein (${nutriScore.breakdown.protein.value} g):</span>
+                                                                            <span>${nutriScore.breakdown.protein.points}</span>
+                                                                        </div>
+                                                                        <div class="flex justify-between font-semibold border-t pt-1">
+                                                                            <span>Total positive points:</span>
+                                                                            <span>${nutriScore.positivePoints}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Final Score -->
+                                                                <div class="border-t pt-4">
+                                                                    <div class="text-center">
+                                                                        <div class="text-2xl font-bold ${nutriScore.gradeColor} mb-2">
+                                                                            ${nutriScore.grade}
+                                                                        </div>
+                                                                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                                                                            Final Nutri-Score points = ${nutriScore.negativePoints} – ${nutriScore.positivePoints} = ${nutriScore.finalScore > 0 ? '+' : ''}${nutriScore.finalScore}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Add to meal button -->
+                                                        <div class="flex justify-end mt-6 space-x-3">
+                                                            <button class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500"
+                                                                    onclick="this.closest('.fixed').remove()">Cancel</button>
+                                                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                                                    onclick="addFoodToMeal(${JSON.stringify(food).replace(/"/g, '&quot;')}); setTimeout(() => this.closest('.fixed').remove(), 500)">Add to Meal</button>
+                                                        </div>
+                                                    </div>
+                                                `;
+
+                                                document.body.appendChild(nutritionModal);
+                                            }
+
+                                            // Function to update nutrition score UI on main dashboard
+                                            function updateNutritionScoreUI(score) {
+                                                console.log("=== updateNutritionScoreUI called with score:", score);
+
+                                                // Find elements in the main document
+                                                const nutritionScoreElement = document.getElementById('nutrition-score-value');
+                                                const nutritionProgress = document.getElementById('nutrition-score-progress');
+
+                                                console.log("nutritionScoreElement:", nutritionScoreElement);
+                                                console.log("nutritionProgress:", nutritionProgress);
+                                                console.log("nutritionScoreElement found:", !!nutritionScoreElement);
+                                                console.log("nutritionProgress found:", !!nutritionProgress);
+
+                                                // Debug: Check all elements with similar IDs
+                                                const allElements = document.querySelectorAll('[id*="nutrition"]');
+                                                console.log("All elements with 'nutrition' in ID:", allElements);
+
+                                                if (nutritionScoreElement) {
+                                                    nutritionScoreElement.textContent = score;
+                                                    console.log("Updated nutrition score text to:", score);
+                                                } else {
+                                                    console.error("nutrition-score-value element not found!");
+                                                }
+
+                                                if (nutritionProgress) {
+                                                    const circumference = 283;
+                                                    const offset = circumference - (score / 10) * circumference;
+                                                    nutritionProgress.style.strokeDashoffset = offset;
+                                                    console.log("Updated progress circle strokeDashoffset to:", offset);
+                                                } else {
+                                                    console.error("nutrition-score-progress element not found!");
+                                                }
+                                            }
+
+                                            // Function to add food to meal (called from modal)
+                                            window.addFoodToMeal = function(food) {
+                                                console.log("Adding food to meal:", food.description);
+                                                addFoodItem(food);
+                                                clearSearchResults();
+                                                console.log("Food added successfully. Selected foods:", window.selectedFoods.length);
+
+                                                // No alert notification as requested
+                                            }
+
                                             // Helper to get unit (g, ml, pieces) based on food object
                                             function getFoodUnit(food) {
                                                 if (food.unit) return food.unit;
@@ -237,17 +574,21 @@
                                                 filtered.slice(0, 6).forEach((food) => {
                                                     const item = document.createElement("div");
                                                     item.className =
-                                                        "p-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 flex justify-between items-center";
-                                                    item.textContent =
-                                                        food.description +
-                                                        " (" +
-                                                        (food.calories ? food.calories.toFixed(2) : "0") +
-                                                        " cal, " +
-                                                        getFoodUnit(food) +
-                                                        ")";
+                                                        "p-3 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg mb-2";
+                                                    item.innerHTML = `
+                                                        <div class="font-medium text-gray-900 dark:text-white mb-1">${food.description}</div>
+                                                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                                                            Energy: ${food.calories ? (food.calories * 4.184).toFixed(0) : 0} kJ |
+                                                            Sugars: ${food.sugar || 0}g |
+                                                            Sat. Fat: ${food.saturatedFat || 0}g |
+                                                            Sodium: ${food.sodium || 0}mg |
+                                                            Fiber: ${food.fiber || 0}g |
+                                                            Protein: ${food.protein || 0}g
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 mt-1">per 100${getFoodUnit(food)}</div>
+                                                    `;
                                                     item.addEventListener("click", () => {
-                                                        addFoodItem(food);
-                                                        clearSearchResults();
+                                                        showNutritionDetails(food);
                                                     });
                                                     searchResultsContainer.appendChild(item);
                                                 });
@@ -256,9 +597,16 @@
                                                 searchResultsContainer.innerHTML = "";
                                                 searchInput.value = "";
                                             }
-                                            function renderSelectedFoods() {
+                                            window.renderSelectedFoods = function() {
+                                                console.log("=== renderSelectedFoods called ===");
+                                                console.log("selectedFoods array:", window.selectedFoods);
+                                                console.log("selectedFoodList element:", selectedFoodList);
+
                                                 selectedFoodList.innerHTML = "";
-                                                selectedFoods.forEach((food, index) => {
+                                                console.log("Cleared selectedFoodList innerHTML");
+
+                                                window.selectedFoods.forEach((food, index) => {
+                                                    console.log("Rendering food:", index, food.description);
                                                     const li = document.createElement("li");
                                                     li.className = "flex justify-between items-center py-2 px-4 dark:text-white";
                                                     const descriptionSpan = document.createElement("span");
@@ -273,8 +621,8 @@
                                                     minusBtn.className =
                                                         "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-l hover:bg-gray-300 dark:hover:bg-gray-500";
                                                     minusBtn.addEventListener("click", () => {
-                                                        if ((selectedFoods[index].quantity || 1) > (getFoodUnit(food) === "pieces" ? 1 : 0)) {
-                                                            selectedFoods[index].quantity -= getFoodUnit(food) === "pieces" ? 1 : 10;
+                                                        if ((window.selectedFoods[index].quantity || 1) > (getFoodUnit(food) === "pieces" ? 1 : 0)) {
+                                                            window.selectedFoods[index].quantity -= getFoodUnit(food) === "pieces" ? 1 : 10;
                                                             renderSelectedFoods();
                                                             updateTotalNutritionScore();
                                                         }
@@ -290,10 +638,10 @@
                                                     quantityInput.addEventListener("change", (e) => {
                                                         const newQuantity = parseFloat(e.target.value);
                                                         if (!isNaN(newQuantity) && newQuantity >= (getFoodUnit(food) === "pieces" ? 1 : 0)) {
-                                                            selectedFoods[index].quantity = newQuantity;
+                                                            window.selectedFoods[index].quantity = newQuantity;
                                                             updateTotalNutritionScore();
                                                         } else {
-                                                            e.target.value = selectedFoods[index].quantity || (getFoodUnit(food) === "pieces" ? 1 : 100);
+                                                            e.target.value = window.selectedFoods[index].quantity || (getFoodUnit(food) === "pieces" ? 1 : 100);
                                                         }
                                                     });
                                                     // Plus button
@@ -302,7 +650,7 @@
                                                     plusBtn.className =
                                                         "px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-r hover:bg-gray-300 dark:hover:bg-gray-500";
                                                     plusBtn.addEventListener("click", () => {
-                                                        selectedFoods[index].quantity += getFoodUnit(food) === "pieces" ? 1 : 10;
+                                                        window.selectedFoods[index].quantity += getFoodUnit(food) === "pieces" ? 1 : 10;
                                                         renderSelectedFoods();
                                                         updateTotalNutritionScore();
                                                     });
@@ -326,25 +674,64 @@
                                                     li.appendChild(unitSpan);
                                                     li.appendChild(removeBtn);
                                                     selectedFoodList.appendChild(li);
+                                                    console.log("Added food item to list:", food.description);
                                                 });
+                                                console.log("Finished rendering selected foods. List children count:", selectedFoodList.children.length);
                                                 updateTotalNutritionScore();
                                             }
                                             // When adding a food, set quantity based on unit
-                                            function addFoodItem(food) {
-                                                if (!selectedFoods.some((f) => f.fdcId === food.fdcId)) {
+                                            window.addFoodItem = function(food) {
+                                                console.log("=== addFoodItem called ===");
+                                                console.log("Food object:", food);
+                                                console.log("Attempting to add food:", food.description, "Current selected foods:", window.selectedFoods.length);
+                                                if (!window.selectedFoods.some((f) => f.fdcId === food.fdcId)) {
                                                     const unit = getFoodUnit(food);
                                                     let quantity = unit === "pieces" ? 1 : 100; // Default to 1 piece or 100g/ml
                                                     food.quantity = quantity;
-                                                    selectedFoods.push(food);
+                                                    window.selectedFoods.push(food);
+                                                    console.log("Food added to selectedFoods array. New length:", window.selectedFoods.length);
                                                     renderSelectedFoods();
+
+                                                    // Show brief visual feedback
+                                                    const selectedFoodList = document.getElementById("selected-food-list");
+                                                    if (selectedFoodList) {
+                                                        selectedFoodList.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                        console.log("Scrolled to selected food list");
+                                                    }
+
+                                                    // Add visual highlight to show food was added
+                                                    setTimeout(() => {
+                                                        const listItems = selectedFoodList.querySelectorAll('li');
+                                                        if (listItems.length > 0) {
+                                                            const lastItem = listItems[listItems.length - 1];
+                                                            lastItem.style.backgroundColor = '#e0f2fe';
+                                                            lastItem.style.transition = 'background-color 0.5s';
+                                                            setTimeout(() => {
+                                                                lastItem.style.backgroundColor = '';
+                                                            }, 1000);
+                                                        }
+                                                    }, 100);
+
+                                                } else {
+                                                    console.log("Food already exists in selected items:", food.description);
+                                                    alert("This food is already in your selected items!");
                                                 }
+
+                                                // Close the nutrition details modal after a delay
+                                                setTimeout(() => {
+                                                    const modal = document.querySelector('.fixed');
+                                                    if (modal) {
+                                                        console.log("Closing nutrition details modal");
+                                                        modal.remove();
+                                                    }
+                                                }, 1000);
                                             }
-                                            function removeFoodItem(index) {
-                                                selectedFoods.splice(index, 1);
+                                            window.removeFoodItem = function(index) {
+                                                window.selectedFoods.splice(index, 1);
                                                 renderSelectedFoods();
                                             }
                                             async function updateTotalNutritionScore() {
-                                                if (selectedFoods.length === 0) {
+                                                if (window.selectedFoods.length === 0) {
                                                     document.getElementById('total-calories').textContent = "0";
                                                     document.getElementById('nutrition-score-value').textContent = "0";
                                                     const circle = document.getElementById('nutrition-score-progress');
@@ -357,7 +744,7 @@
                                                 // Show loading spinner while fetching
                                                 document.getElementById('total-calories').innerHTML = '<span class="loader inline-block w-4 h-4 border-2 border-t-2 border-gray-200 rounded-full animate-spin"></span>';
                                                 // Prepare payload for backend
-                                                const payload = selectedFoods.map(food => ({
+                                                const payload = window.selectedFoods.map(food => ({
                                                     fdcId: food.fdcId,
                                                     description: food.description,
                                                     quantity: Number(food.quantity) || 0,
@@ -429,7 +816,7 @@
                                             }
                                             // Reset functionality
                                             resetButton.addEventListener("click", () => {
-                                                selectedFoods = [];
+                                                window.selectedFoods = [];
                                                 renderSelectedFoods();
                                             });
                                             let debounceTimeout = null;
@@ -444,53 +831,82 @@
                                                 searchFoods(searchInput.value);
                                             });
                                             confirmButton.addEventListener("click", async () => {
-                                                if (selectedFoods.length === 0) {
+                                                console.log("Confirm button clicked. Selected foods:", window.selectedFoods.length);
+                                                if (window.selectedFoods.length === 0) {
                                                     alert("Please select at least one food item.");
                                                     return;
                                                 }
+
                                                 try {
-                                                    // Call backend to save food entries and get updated nutrition score
-                                                    const payload = selectedFoods.map(food => ({
-                                                        fdcId: food.fdcId,
-                                                        description: food.description,
-                                                        quantity: food.quantity,
-                                                        calories: food.calories,
-                                                        protein: food.protein || 0,
-                                                        fiber: food.fiber || 0,
-                                                        vitamins: food.vitamins || 0,
-                                                        sugar: food.sugar || 0,
-                                                        saturatedFat: food.saturatedFat || 0,
-                                                        sodium: food.sodium || 0,
-                                                        minerals: food.minerals || 0,
-                                                        transFat: food.transFat || false
-                                                    }));
-                                                    const response = await fetch('/mentor/food/save', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]') ? document.querySelector('meta[name="_csrf"]').getAttribute('content') : ''
-                                                        },
-                                                        credentials: 'include',
-                                                        body: JSON.stringify(payload)
-                                                    });
-                                                    if (!response.ok) {
-                                                        throw new Error('Failed to save food entries');
+                                                    console.log("About to save selected foods. Current selectedFoods:", window.selectedFoods);
+
+                                                    // Calculate and save each food using the new nutrition service
+                                                    for (const food of selectedFoods) {
+                                                        const nutriScore = calculateNutriScore(food);
+                                                        const foodScore = nutriScore.grade === "A" ? 10 :
+                                                                         nutriScore.grade === "B" ? 8 :
+                                                                         nutriScore.grade === "C" ? 6 :
+                                                                         nutriScore.grade === "D" ? 4 : 2;
+
+                                                        console.log("Saving food:", food.description, "with score:", foodScore);
+
+                                                        const csrfToken = document.querySelector('meta[name="_csrf"]') ? document.querySelector('meta[name="_csrf"]').getAttribute('content') : '';
+
+                                                        const response = await fetch('/mentor/eat', {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'Content-Type': 'application/json',
+                                                                'X-CSRF-TOKEN': csrfToken
+                                                            },
+                                                            credentials: 'include',
+                                                            body: JSON.stringify({
+                                                                foodName: food.description,
+                                                                foodScore: foodScore
+                                                            })
+                                                        });
+
+                                                        if (!response.ok) {
+                                                            const errorText = await response.text();
+                                                            console.error("Failed to save food:", food.description, errorText);
+                                                            throw new Error(`Failed to save ${food.description}`);
+                                                        }
+
+                                                        const data = await response.json();
+                                                        console.log("Saved food:", food.description, "New daily score:", data.newDailyScore);
                                                     }
-                                                    const data = await response.json();
-                                                    const updatedScore = data.nutritionScore || 0;
-                                                    // Update main dashboard nutrition score UI
-                                                    updateNutritionScoreUI(updatedScore);
+
+                                                    // Show success message
+
                                                     // Close modal
                                                     const modal = document.getElementById("timeline-modal");
                                                     if (modal) {
                                                         modal.classList.add("hidden");
                                                     }
+
                                                     // Reset selected foods and UI
-                                                    selectedFoods = [];
+                                                    window.selectedFoods = [];
                                                     renderSelectedFoods();
+
+                                                    // Refresh the nutrition score from server
+                                                    setTimeout(async () => {
+                                                        try {
+                                                            const response = await fetch('/mentor/score', {
+                                                                credentials: 'include'
+                                                            });
+                                                            if (response.ok) {
+                                                                const data = await response.json();
+                                                                if (data.currentScore) {
+                                                                    updateNutritionScoreUI(data.currentScore);
+                                                                }
+                                                            }
+                                                        } catch (error) {
+                                                            console.log("Could not refresh score:", error);
+                                                        }
+                                                    }, 500);
+
                                                 } catch (error) {
-                                                    console.error("Error saving food entries:", error);
-                                                    alert("Failed to save food entries. Please try again.");
+                                                    console.error("Error saving foods:", error);
+                                                    alert("Failed to save foods. Please try again. Error: " + error.message);
                                                 }
                                             });
                                             // Hide search results when clicking outside
@@ -502,8 +918,27 @@
                                                     searchResultsContainer.innerHTML = "";
                                                 }
                                             });
+
+                                            // Modal close functionality
+                                            const modal = document.getElementById("timeline-modal");
+                                            const closeButton = modal ? modal.querySelector('[data-modal-toggle="timeline-modal"]') : null;
+
+                                            if (closeButton) {
+                                                closeButton.addEventListener("click", function() {
+                                                    modal.classList.add("hidden");
+                                                });
+                                            }
+
+                                            // Close modal when clicking outside
+                                            if (modal) {
+                                                modal.addEventListener("click", function(event) {
+                                                    if (event.target === modal) {
+                                                        modal.classList.add("hidden");
+                                                    }
+                                                });
+                                            }
                                         });
-                                        // Add CSS for loader spinner
+                                        // Add CSS for loader spinner and modal enhancements
                                         const style = document.createElement('style');
                                         style.innerHTML = `
                                             .loader {
@@ -518,6 +953,12 @@
                                             @keyframes spin {
                                                 0% { transform: rotate(0deg); }
                                                 100% { transform: rotate(360deg); }
+                                            }
+
+                                            /* Enhanced modal backdrop blur for better browser support */
+                                            .modal-backdrop {
+                                                backdrop-filter: blur(4px);
+                                                -webkit-backdrop-filter: blur(4px);
                                             }
                                         `;
                                         document.head.appendChild(style);
