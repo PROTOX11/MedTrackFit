@@ -36,4 +36,16 @@ public class MentorPerformance {
 
     @Column(name = "recovery_stories_shared")
     private int recoveryStoriesShared;
+
+    @Column(name = "meditation_score", nullable = true)
+    private Integer meditationScore;
+
+    @Column(name = "breathe_score", nullable = true)
+    private Integer breatheScore;
+
+    @Column(name = "hydration_score", nullable = true)
+    private Integer hydrationScore;
+
+    @Column(name = "nutrition_score", nullable = true)
+    private Integer nutritionScore;
 }

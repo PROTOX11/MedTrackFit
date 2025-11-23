@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/mentor")
@@ -41,8 +42,6 @@ public class MentorController {
     @Autowired
     private AllBlogPostService allBlogPostService;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
     @Autowired
     private SufferingPatientService sufferingPatientService;
@@ -787,5 +786,261 @@ public class MentorController {
     @RequestMapping("/add")
     public String addMentor() {
         return "user/find_mentor";
+    }
+
+    // Health Metrics Endpoints
+
+    @GetMapping("/performance/{mentorId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getMentorPerformance(@PathVariable String mentorId) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Object performance = healthMentorService.getMentorPerformance(mentorId);
+
+            // Convert performance object to map for JSON response
+            ObjectMapper mapper = new ObjectMapper();
+            String performanceJson = mapper.writeValueAsString(performance);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> performanceMap = (Map<String, Object>) mapper.readValue(performanceJson, Map.class);
+
+            response.put("success", true);
+            response.putAll(performanceMap);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error getting mentor performance", e);
+            response.put("success", false);
+            response.put("message", "Error getting performance data: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/{mentorId}/meditation")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateMeditationScore(@PathVariable String mentorId,
+                                                                   @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Integer meditationTime = (Integer) request.get("meditationTime");
+            if (meditationTime == null) {
+                response.put("success", false);
+                response.put("message", "meditationTime is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            healthMentorService.updateMeditationScore(mentorId, meditationTime);
+
+            response.put("success", true);
+            response.put("message", "Meditation time updated successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error updating meditation score", e);
+            response.put("success", false);
+            response.put("message", "Error updating meditation score: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/{mentorId}/breatheScore")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateBreatheScore(@PathVariable String mentorId,
+                                                                @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Integer breatheScore = (Integer) request.get("breatheScore");
+
+            healthMentorService.updateBreatheScore(mentorId, breatheScore);
+
+            response.put("success", true);
+            response.put("message", "Breathe score updated successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error updating breathe score", e);
+            response.put("success", false);
+            response.put("message", "Error updating breathe score: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/{mentorId}/hydration")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateHydrationScore(@PathVariable String mentorId,
+                                                                   @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Integer hydrationAmount = (Integer) request.get("hydrationAmount");
+            if (hydrationAmount == null) {
+                response.put("success", false);
+                response.put("message", "hydrationAmount is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            healthMentorService.updateHydrationScore(mentorId, hydrationAmount);
+
+            response.put("success", true);
+            response.put("message", "Hydration score updated successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error updating hydration score", e);
+            response.put("success", false);
+            response.put("message", "Error updating hydration score: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/food/save")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveFoodEntries(@RequestBody List<Object> foodItems) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int nutritionScore = healthMentorService.calculateNutritionScore(foodItems);
+
+            response.put("success", true);
+            response.put("nutritionScore", nutritionScore);
+            response.put("message", "Food entries saved successfully");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error saving food entries", e);
+            response.put("success", false);
+            response.put("message", "Error saving food entries: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/food/search")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> searchFoods(@RequestParam String query) {
+        List<Map<String, Object>> foodResults = new java.util.ArrayList<>();
+
+        try {
+            // Mock food search results - in a real implementation, you'd connect to a food database API
+            // For now, return some sample foods based on the query
+            if (query != null && !query.trim().isEmpty()) {
+                String lowerQuery = query.toLowerCase();
+
+                // Sample food data
+                if (lowerQuery.contains("apple")) {
+                    Map<String, Object> apple = new HashMap<>();
+                    apple.put("description", "Apple, raw, with skin");
+                    apple.put("calories", 52.0);
+                    apple.put("protein", 0.2);
+                    apple.put("fiber", 2.4);
+                    apple.put("vitamins", 0.5);
+                    apple.put("sugar", 10.4);
+                    apple.put("saturatedFat", 0.0);
+                    apple.put("sodium", 1.0);
+                    apple.put("minerals", 0.2);
+                    apple.put("transFat", false);
+                    apple.put("unit", "pieces");
+                    apple.put("fdcId", "apple_1");
+                    foodResults.add(apple);
+                }
+
+                if (lowerQuery.contains("banana")) {
+                    Map<String, Object> banana = new HashMap<>();
+                    banana.put("description", "Banana, raw");
+                    banana.put("calories", 89.0);
+                    banana.put("protein", 1.1);
+                    banana.put("fiber", 2.6);
+                    banana.put("vitamins", 0.7);
+                    banana.put("sugar", 12.2);
+                    banana.put("saturatedFat", 0.1);
+                    banana.put("sodium", 1.0);
+                    banana.put("minerals", 0.3);
+                    banana.put("transFat", false);
+                    banana.put("unit", "pieces");
+                    banana.put("fdcId", "banana_1");
+                    foodResults.add(banana);
+                }
+
+                if (lowerQuery.contains("chicken")) {
+                    Map<String, Object> chicken = new HashMap<>();
+                    chicken.put("description", "Chicken breast, skinless, boneless");
+                    chicken.put("calories", 165.0);
+                    chicken.put("protein", 31.0);
+                    chicken.put("fiber", 0.0);
+                    chicken.put("vitamins", 0.8);
+                    chicken.put("sugar", 0.0);
+                    chicken.put("saturatedFat", 0.9);
+                    chicken.put("sodium", 74.0);
+                    chicken.put("minerals", 1.2);
+                    chicken.put("transFat", false);
+                    chicken.put("unit", "g");
+                    chicken.put("fdcId", "chicken_1");
+                    foodResults.add(chicken);
+                }
+
+                if (lowerQuery.contains("rice")) {
+                    Map<String, Object> rice = new HashMap<>();
+                    rice.put("description", "Rice, white, long-grain, cooked");
+                    rice.put("calories", 130.0);
+                    rice.put("protein", 2.7);
+                    rice.put("fiber", 0.4);
+                    rice.put("vitamins", 0.1);
+                    rice.put("sugar", 0.0);
+                    rice.put("saturatedFat", 0.1);
+                    rice.put("sodium", 1.0);
+                    rice.put("minerals", 0.5);
+                    rice.put("transFat", false);
+                    rice.put("unit", "g");
+                    rice.put("fdcId", "rice_1");
+                    foodResults.add(rice);
+                }
+
+                if (lowerQuery.contains("milk")) {
+                    Map<String, Object> milk = new HashMap<>();
+                    milk.put("description", "Milk, whole");
+                    milk.put("calories", 61.0);
+                    milk.put("protein", 3.2);
+                    milk.put("fiber", 0.0);
+                    milk.put("vitamins", 0.4);
+                    milk.put("sugar", 4.8);
+                    milk.put("saturatedFat", 1.9);
+                    milk.put("sodium", 43.0);
+                    milk.put("minerals", 0.8);
+                    milk.put("transFat", false);
+                    milk.put("unit", "ml");
+                    milk.put("fdcId", "milk_1");
+                    foodResults.add(milk);
+                }
+
+                if (lowerQuery.contains("bread")) {
+                    Map<String, Object> bread = new HashMap<>();
+                    bread.put("description", "Bread, whole wheat");
+                    bread.put("calories", 247.0);
+                    bread.put("protein", 9.0);
+                    bread.put("fiber", 3.2);
+                    bread.put("vitamins", 0.3);
+                    bread.put("sugar", 5.0);
+                    bread.put("saturatedFat", 0.4);
+                    bread.put("sodium", 422.0);
+                    bread.put("minerals", 1.8);
+                    bread.put("transFat", false);
+                    bread.put("unit", "pieces");
+                    bread.put("fdcId", "bread_1");
+                    foodResults.add(bread);
+                }
+            }
+
+            return ResponseEntity.ok(foodResults);
+
+        } catch (Exception e) {
+            logger.error("Error searching foods", e);
+            return ResponseEntity.internalServerError().body(foodResults);
+        }
     }
 }

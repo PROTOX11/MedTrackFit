@@ -3,7 +3,6 @@ package com.example.medtrackfit.services;
 import com.example.medtrackfit.entities.HealthMentor;
 import com.example.medtrackfit.entities.Connections;
 import com.example.medtrackfit.entities.SufferingPatient;
-import com.example.medtrackfit.entities.Doctor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
@@ -27,4 +26,11 @@ public interface HealthMentorService extends UserDetailsService {
     long getConnectedDoctorsCount(String mentorId);
     long getMessagesTodayCount(String mentorId);
     List<SufferingPatient> getTopPatients(String mentorId, int limit);
+
+    // Health metrics methods
+    Object getMentorPerformance(String mentorId);
+    void updateMeditationScore(String mentorId, int sessionSeconds);
+    void updateBreatheScore(String mentorId, Integer breatheScore);
+    void updateHydrationScore(String mentorId, int hydrationAmount);
+    int calculateNutritionScore(List<Object> foodItems);
 }
