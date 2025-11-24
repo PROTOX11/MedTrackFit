@@ -131,9 +131,9 @@
             <div th:case="'SufferingPatient'" th:replace="~{suff-pat/suff-pat_sidebar :: suff-pat-sidebar}"></div>
             <div th:case="*" th:replace="~{user/sidebar :: sidebar}"></div>
         </div>
-        <!-- MOBILE SIDEBAR TOGGLE BUTTON FOR MENTORS -->
-        <div th:if="${userRole == 'HealthMentor'}">
-            <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100">
+        <!-- MOBILE SIDEBAR TOGGLE BUTTON FOR LOGGED-IN USERS -->
+        <div th:if="${loggedInUser}">
+            <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100" aria-label="Open sidebar">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -162,8 +162,8 @@
     <script th:replace="${script}"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <script th:src="@{'/js/script.js'}"></script>
-    <!-- Sidebar toggle script for mentors -->
-    <script th:if="${userRole == 'HealthMentor'}">
+    <!-- Sidebar toggle script for logged-in users (will no-op if no sidebar present) -->
+    <script th:if="${loggedInUser}">
         // Sidebar toggle logic
         const sidebar = document.getElementById('logo-sidebar');
         const sidebarOpenBtn = document.getElementById('sidebar-open-toggle');
@@ -171,28 +171,55 @@
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 
         function openSidebar() {
+            if (!sidebar) return;
             sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.remove('closed');
             if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
             if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
         }
         function closeSidebar() {
+            if (!sidebar) return;
             sidebar.classList.add('-translate-x-full');
+            sidebar.classList.add('closed');
             if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
             if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
         }
         if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
         if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
         if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+        // Debug helper: log and ensure mobile toggle is visible when viewport is narrow
+        try {
+            console.log('Sidebar debug:', { sidebar, sidebarOpenBtn, sidebarCloseBtn, sidebarBackdrop });
+            function ensureMobileToggleVisible() {
+                if (!sidebarOpenBtn) return;
+                if (window.innerWidth < 640) {
+                    // Force visible on mobile for debugging (overrides CSS if necessary)
+                    sidebarOpenBtn.style.display = 'block';
+                    sidebarOpenBtn.classList.remove('hidden');
+                    sidebarOpenBtn.style.zIndex = '9999';
+                } else {
+                    sidebarOpenBtn.style.display = 'none';
+                }
+            }
+            ensureMobileToggleVisible();
+            window.addEventListener('resize', ensureMobileToggleVisible);
+        } catch (e) {
+            console.error('Sidebar debug helper failed', e);
+        }
         // Hide sidebar initially on mobile
         if (window.innerWidth < 640 && sidebar) {
             sidebar.classList.add('-translate-x-full');
+            sidebar.classList.add('closed');
         }
         window.addEventListener('resize', function() {
+            if (!sidebar) return;
             if (window.innerWidth >= 640) {
                 sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.remove('closed');
                 if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
             } else {
                 sidebar.classList.add('-translate-x-full');
+                sidebar.classList.add('closed');
             }
         });
     </script>
