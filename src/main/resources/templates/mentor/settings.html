@@ -19,7 +19,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden sm:hidden transition-opacity duration-300" style="z-index:9998;"></div>
         <!-- END MOBILE TOGGLE -->
         <!-- COMMON MENTOR SIDEBAR -->
         <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>

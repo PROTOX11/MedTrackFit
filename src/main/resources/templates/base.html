@@ -16,7 +16,7 @@
             top: 0;
             left: 0;
             height: 100vh;
-            z-index: 40;
+            z-index: 9999; /* increased so sidebar sits above page content */
             background-color: rgb(249 250 251);
             width: 16rem;
         }
@@ -46,7 +46,7 @@
             height: 100vh;
             background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
-            z-index: 30;
+            z-index: 9998; /* sits below sidebar (9999) but above content */
             display: none;
             transition: opacity 0.3s ease;
         }
@@ -59,10 +59,13 @@
         body:not([data-logged-in="true"]) #sidebar-backdrop {
             display: none !important;
         }
-        /* Ensure sidebar doesn't capture clicks when closed */
+        /* Ensure sidebar doesn't capture clicks when closed (keep stacking order)
+           Keep z-index high to avoid sidebars being hidden behind fixed content
+        */
         #logo-sidebar[style*="translateX(-100%)"] {
             pointer-events: none !important;
-            z-index: -1 !important;
+            /* keep z-index high so opening/stacking is consistent across pages */
+            z-index: 9999 !important;
         }
         @media (min-width: 640px) {
             #logo-sidebar {
@@ -133,12 +136,12 @@
         </div>
         <!-- MOBILE SIDEBAR TOGGLE BUTTON FOR LOGGED-IN USERS -->
         <div th:if="${loggedInUser}">
-            <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100" aria-label="Open sidebar">
+            <button id="sidebar-open-toggle" class="sm:hidden p-2 fixed top-4 left-4 z-50 border rounded-lg shadow text-gray-700 hover:bg-gray-100" aria-label="Open sidebar">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
-            <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden sm:hidden transition-opacity duration-300"></div>
+            <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden sm:hidden transition-opacity duration-300" style="z-index:9998;"></div>
         </div>
         <main class="flex-grow p-4 max-w-screen-xl mx-auto w-full" id="main-content">
             <section th:replace="${content}"></section>
@@ -172,17 +175,46 @@
 
         function openSidebar() {
             if (!sidebar) return;
-            sidebar.classList.remove('-translate-x-full');
-            sidebar.classList.remove('closed');
-            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
-            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
+            try {
+                // Prefer Tailwind class removal (keeps utility-first styling intact)
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.remove('closed');
+                // Inline style fallback: force transform so templates that use inline transform also open
+                sidebar.style.transform = 'translateX(0)';
+                // Ensure sidebar stacks above other fixed elements
+                sidebar.style.zIndex = '9999';
+                sidebar.style.pointerEvents = 'auto';
+                sidebar.style.transition = sidebar.style.transition || 'transform 0.3s ease';
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.remove('hidden');
+                    sidebarBackdrop.classList.add('visible');
+                }
+                if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'none';
+                // make sure sidebar is focusable for accessibility
+                sidebar.setAttribute('aria-hidden', 'false');
+            } catch (e) {
+                console.error('openSidebar error', e);
+            }
         }
         function closeSidebar() {
             if (!sidebar) return;
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.add('closed');
-            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
-            if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
+            try {
+                // Prefer Tailwind class addition
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.add('closed');
+                // Inline style fallback: hide via transform
+                sidebar.style.transform = 'translateX(-100%)';
+                // keep z-index so stacking remains predictable, but disable pointer events
+                sidebar.style.pointerEvents = 'none';
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.add('hidden');
+                    sidebarBackdrop.classList.remove('visible');
+                }
+                if (sidebarOpenBtn) sidebarOpenBtn.style.display = 'block';
+                sidebar.setAttribute('aria-hidden', 'true');
+            } catch (e) {
+                console.error('closeSidebar error', e);
+            }
         }
         if (sidebarOpenBtn) sidebarOpenBtn.addEventListener('click', openSidebar);
         if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', closeSidebar);
