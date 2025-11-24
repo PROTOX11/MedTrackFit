@@ -4,6 +4,8 @@ import com.example.medtrackfit.entities.HealthMentor;
 import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.entities.Connections;
 import com.example.medtrackfit.entities.SufferingPatient;
+import com.example.medtrackfit.entities.MentorConnectedSufferingPatient;
+import com.example.medtrackfit.repositories.MentorConnectedSufferingPatientRepository;
 import com.example.medtrackfit.services.HealthMentorService;
 import com.example.medtrackfit.services.NutritionService;
 import com.example.medtrackfit.services.UniversalUserService;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -49,6 +52,9 @@ public class MentorController {
 
     @Autowired
     private NutritionService nutritionService;
+
+    @Autowired
+    private MentorConnectedSufferingPatientRepository mentorConnectedRepo;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -119,43 +125,35 @@ public class MentorController {
         }
 
         HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+        String mentorId = mentor.getMentorId();
         model.addAttribute("mentor", mentor);
         model.addAttribute("userRole", userRole);
 
-        // Add sample data for patients and other mentors
-        model.addAttribute("patients", createSamplePatients());
-        model.addAttribute("mentors", createSampleMentors());
+        // Get connected suffering patients from mentor_connected_suffering_patient table
+        List<MentorConnectedSufferingPatient> mentorConnections = mentorConnectedRepo.findByOwnerId(mentorId);
+        List<Map<String, Object>> patients = new ArrayList<>();
+
+        for (MentorConnectedSufferingPatient connection : mentorConnections) {
+            // Get patient details from SufferingPatientService
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(connection.getConnectedPatientId());
+            if (patient != null) {
+                Map<String, Object> patientData = new HashMap<>();
+                patientData.put("id", patient.getPatientId());
+                patientData.put("name", patient.getName());
+                patientData.put("email", patient.getEmail());
+                patientData.put("mentorName", mentor.getName());
+                patientData.put("status", patient.getMedicalCondition() != null ?
+                    "Suffering from " + patient.getMedicalCondition() : "Connected Patient");
+                patients.add(patientData);
+            }
+        }
+
+        model.addAttribute("patients", patients);
+        model.addAttribute("mentors", createSampleMentors()); // Keep sample mentors for now
 
         return "mentor/chat";
     }
 
-    // Sample data methods - in real application, this would come from database
-    private java.util.List<java.util.Map<String, Object>> createSamplePatients() {
-        java.util.List<java.util.Map<String, Object>> patients = new java.util.ArrayList<>();
-
-        java.util.Map<String, Object> patient1 = new java.util.HashMap<>();
-        patient1.put("id", "patient1");
-        patient1.put("name", "Sarah Johnson");
-        patient1.put("mentorName", "Dr. Lisa Thompson");
-        patient1.put("status", "Suffering from Diabetes");
-        patients.add(patient1);
-
-        java.util.Map<String, Object> patient2 = new java.util.HashMap<>();
-        patient2.put("id", "patient2");
-        patient2.put("name", "Michael Chen");
-        patient2.put("mentorName", "Dr. James Wilson");
-        patient2.put("status", "Recovering from Hypertension");
-        patients.add(patient2);
-
-        java.util.Map<String, Object> patient3 = new java.util.HashMap<>();
-        patient3.put("id", "patient3");
-        patient3.put("name", "Emily Rodriguez");
-        patient3.put("mentorName", "Dr. Maria Garcia");
-        patient3.put("status", "Post-surgery Recovery");
-        patients.add(patient3);
-
-        return patients;
-    }
 
     private java.util.List<java.util.Map<String, Object>> createSampleMentors() {
         java.util.List<java.util.Map<String, Object>> mentors = new java.util.ArrayList<>();
@@ -239,13 +237,25 @@ public class MentorController {
             }
 
             HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            String mentorId = mentor.getMentorId();
             model.addAttribute("mentor", mentor);
             model.addAttribute("userRole", userRole);
 
-            // Fetch all suffering patients from the database
-            List<SufferingPatient> patients = sufferingPatientService.getAllSufferingPatients();
-            model.addAttribute("patients", patients);
-            logger.info("Fetched {} suffering patients for mentor: {}", patients.size(), mentor.getName());
+            // Fetch all suffering patients that are NOT already connected to this mentor
+            List<SufferingPatient> allPatients = sufferingPatientService.getAllSufferingPatients();
+            List<SufferingPatient> availablePatients = new ArrayList<>();
+
+            for (SufferingPatient patient : allPatients) {
+                // Check if this mentor is already connected to this patient
+                boolean alreadyConnected = healthMentorService.isMentorConnectedToPatient(mentorId, patient.getPatientId());
+                if (!alreadyConnected) {
+                    availablePatients.add(patient);
+                }
+            }
+
+            model.addAttribute("patients", availablePatients);
+            logger.info("Fetched {} available suffering patients for mentor: {} (filtered from {} total)",
+                availablePatients.size(), mentor.getName(), allPatients.size());
         }
 
         return "mentor/patients";
@@ -1199,6 +1209,74 @@ public class MentorController {
             logger.error("Error getting nutrition score", e);
             response.put("success", false);
             response.put("message", "Error getting score: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    // Connect mentor to suffering patient
+    @PostMapping("/connect-patient")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> connectToPatient(@RequestBody Map<String, Object> body, Authentication authentication) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (authentication == null) {
+                response.put("success", false);
+                response.put("message", "User not authenticated");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String username = Helper.getEmailOfLoggedInUser(authentication);
+            String userRole = universalUserService.getUserRole(username);
+
+            if (!"HealthMentor".equals(userRole)) {
+                response.put("success", false);
+                response.put("message", "Only mentors can connect to patients");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(username);
+            String mentorId = mentor.getMentorId();
+
+            String patientId = (String) body.get("patientId");
+            if (patientId == null || patientId.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Patient ID is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Check if patient exists as a suffering patient
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(patientId);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found or is not a suffering patient");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Check if already connected
+            if (healthMentorService.isMentorConnectedToPatient(mentorId, patientId)) {
+                response.put("success", false);
+                response.put("message", "Already connected to this patient");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Create connection
+            boolean connected = healthMentorService.connectMentorToPatient(mentorId, patientId);
+            if (connected) {
+                response.put("success", true);
+                response.put("message", "Successfully connected to patient");
+                logger.info("Mentor {} connected to patient {}", mentorId, patientId);
+            } else {
+                response.put("success", false);
+                response.put("message", "Failed to connect to patient");
+            }
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error connecting mentor to patient", e);
+            response.put("success", false);
+            response.put("message", "Error connecting to patient: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

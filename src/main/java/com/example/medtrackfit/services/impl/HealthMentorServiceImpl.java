@@ -4,8 +4,10 @@ import com.example.medtrackfit.entities.MentorPerformance;
 import com.example.medtrackfit.entities.Connections;
 import com.example.medtrackfit.entities.SufferingPatient;
 import com.example.medtrackfit.entities.ConnectionId;
+import com.example.medtrackfit.entities.MentorConnectedSufferingPatient;
 import com.medtrackfit.helper.AppConstants;
 import com.example.medtrackfit.repositories.HealthMentorRepository;
+import com.example.medtrackfit.repositories.MentorConnectedSufferingPatientRepository;
 import com.example.medtrackfit.repo.ConnectionsRepo;
 import com.example.medtrackfit.services.HealthMentorService;
 import org.slf4j.Logger;
@@ -31,6 +33,9 @@ public class HealthMentorServiceImpl implements HealthMentorService {
 
     @Autowired
     private ConnectionsRepo connectionsRepo;
+
+    @Autowired
+    private MentorConnectedSufferingPatientRepository mentorConnectedRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -351,5 +356,36 @@ public class HealthMentorServiceImpl implements HealthMentorService {
 
         // Cap at 10
         return Math.min(totalScore, 10);
+    }
+
+    @Override
+    @Transactional
+    public boolean connectMentorToPatient(String mentorId, String patientId) {
+        try {
+            // Check if connection already exists
+            if (mentorConnectedRepo.existsByOwnerIdAndConnectedPatientId(mentorId, patientId)) {
+                logger.info("Connection already exists between mentor {} and patient {}", mentorId, patientId);
+                return false;
+            }
+
+            // Create new connection
+            MentorConnectedSufferingPatient connection = MentorConnectedSufferingPatient.builder()
+                .ownerId(mentorId)
+                .connectedPatientId(patientId)
+                .status("ACTIVE")
+                .build();
+
+            mentorConnectedRepo.save(connection);
+            logger.info("Created connection between mentor {} and patient {}", mentorId, patientId);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error creating connection between mentor {} and patient {}: {}", mentorId, patientId, e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isMentorConnectedToPatient(String mentorId, String patientId) {
+        return mentorConnectedRepo.existsByOwnerIdAndConnectedPatientId(mentorId, patientId);
     }
 }

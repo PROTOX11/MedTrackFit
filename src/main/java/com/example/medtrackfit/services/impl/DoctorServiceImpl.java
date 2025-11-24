@@ -2,8 +2,10 @@ package com.example.medtrackfit.services.impl;
 
 import com.example.medtrackfit.entities.Doctor;
 import com.example.medtrackfit.entities.DoctorPerformance;
+import com.example.medtrackfit.entities.DoctorConnectedPatient;
 import com.medtrackfit.helper.AppConstants;
 import com.example.medtrackfit.repositories.DoctorRepository;
+import com.example.medtrackfit.repositories.DoctorConnectedPatientRepository;
 import com.example.medtrackfit.services.CloudinaryService;
 import com.example.medtrackfit.services.DoctorService;
 import org.slf4j.Logger;
@@ -30,6 +32,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private DoctorConnectedPatientRepository doctorConnectedPatientRepository;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -94,5 +99,36 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public List<Doctor> getAllDoctors() {
         return doctorRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public boolean connectDoctorToPatient(String doctorId, String patientId) {
+        try {
+            // Check if connection already exists
+            if (doctorConnectedPatientRepository.existsByDoctorIdAndConnectedPatientId(doctorId, patientId)) {
+                logger.info("Connection already exists between doctor {} and patient {}", doctorId, patientId);
+                return false;
+            }
+
+            // Create new connection
+            DoctorConnectedPatient connection = DoctorConnectedPatient.builder()
+                .doctorId(doctorId)
+                .connectedPatientId(patientId)
+                .status("ACTIVE")
+                .build();
+
+            doctorConnectedPatientRepository.save(connection);
+            logger.info("Created connection between doctor {} and patient {}", doctorId, patientId);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error creating connection between doctor {} and patient {}: {}", doctorId, patientId, e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isDoctorConnectedToPatient(String doctorId, String patientId) {
+        return doctorConnectedPatientRepository.existsByDoctorIdAndConnectedPatientId(doctorId, patientId);
     }
 }

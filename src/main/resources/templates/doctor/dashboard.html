@@ -602,6 +602,160 @@
             </div>
         </div>
 
+        <!-- Health Metrics Section -->
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4 shadow-sm">
+            <h3 class="text-lg font-medium mb-2">Health Metrics</h3>
+            <p class="text-sm mb-4">Monitor your wellness journey</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Nutrition tracking -->
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
+                            <circle id="nutrition-score-progress" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8"
+                                stroke="#1976d2" stroke-dasharray="283" stroke-dashoffset="283"
+                                style="transition: stroke-dashoffset 0.3s">
+                            </circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="nutrition-score-value" class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
+                            <span class="text-xs text-gray-500 mt-1">Nutrition Score</span>
+                        </div>
+                    </div>
+                    <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                        Nutrition Score (0-10)
+                    </p>
+                    <div class="flex justify-center">
+                        <button id="addFoodButton"
+                            class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 mt-1 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                            Add food
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Meditation tracking -->
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
+                            <circle id="progressCircle" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#7be5ff"
+                                stroke-dasharray="283" stroke-dashoffset="283" style="transition: stroke-dashoffset 1s linear">
+                            </circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="timerMinutes" class="text-2xl font-bold text-gray-800 dark:text-white">00:00</span>
+                            <span class="text-xs text-gray-500">minutes</span>
+                        </div>
+                    </div>
+                    <div id="pl_pause" class="flex justify-center gap-2">
+                        <button id="playButton" class="flex items-center justify-center">
+                            <svg id="play-but" class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
+                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.9"
+                                    d="M8 18V6l8 6-8 6Z" />
+                            </svg>
+                        </button>
+                        <button id="pauseButton" class="flex items-center justify-center">
+                            <svg id="pause-but" class="w-[39px] h-[39px] text-gray-800 dark:text-white transition-all duration-300 ease-in-out"
+                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.9"
+                                    d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                        Meditation<br />Target: 30 min
+                    </p>
+                </div>
+
+                <!-- Breathwork tracking -->
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
+                            <circle id="total-progress" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#6366f1"
+                                stroke-dasharray="283" stroke-dashoffset="283" style="transition: stroke-dashoffset 1s linear">
+                            </circle>
+                            <circle cx="50%" cy="50%" r="35%" fill="none" stroke-width="6" stroke="#e0e0e0"></circle>
+                            <circle id="breath-progress" cx="50%" cy="50%" r="35%" fill="none" stroke-width="6" stroke="#a855f7"
+                                stroke-dasharray="220" stroke-dashoffset="220" style="transition: stroke-dashoffset 1s linear">
+                            </circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <div class="flex flex-col items-center">
+                                <span id="breath-phase" class="text-lg font-bold text-gray-800 dark:text-white">Ready</span>
+                                <span id="countdown" class="text-2xl font-bold text-gray-800 dark:text-white"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="breath-instruction" class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                        Press Start to begin
+                    </p>
+                    <p id="breath-timer" class="text-xs mt-1 text-gray-500 dark:text-gray-400">
+                        5:00
+                    </p>
+                    <div class="mt-4 flex flex-col items-center gap-2">
+                        <div class="flex justify-center gap-2">
+                            <button id="start-btn"
+                                class="flex items-center justify-center border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                <span id="start-text">Start</span>
+                                <svg id="play-icon" class="hidden w-5 h-5 ml-1 text-gray-700 dark:text-gray-300" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M8 18V6l8 6-8 6Z" />
+                                </svg>
+                            </button>
+                            <button id="stop-btn" disabled
+                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                Pause
+                            </button>
+                        </div>
+                        <div class="flex justify-center">
+                            <button id="reset-btn" disabled
+                                class="border border-gray-400 dark:border-gray-300 rounded-lg px-5 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hydration tracking -->
+                <div class="text-center">
+                    <div class="relative w-24 h-24 mx-auto">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#e0e0e0"></circle>
+                            <circle id="hydrationProgressCircle" cx="50%" cy="50%" r="45%" fill="none" stroke-width="8" stroke="#6df573" stroke-dasharray="283" stroke-dashoffset="283" style="transition: stroke-dashoffset 0.3s"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="hydrationMlDisplay" class="text-2xl font-bold text-gray-800 dark:text-white">0</span>
+                            <span class="text-xs text-gray-500 mt-1">ml</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-2">
+                        <svg class="w-[34px] h-[34px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M6.31531 7c1.41852 0 1.41852 1.5 2.83703 1.5C10.5709 8.5 10.5709 7 11.9894 7s1.4185 1.5 2.837 1.5S17.6635 7 17.6635 7M6 3l1.07554 16.133C7.14558 20.1836 8.01818 21 9.07111 21h5.85779c1.0529 0 1.9255-.8164 1.9956-1.867L18 3H6Z" />
+                        </svg>
+                    </div>
+                    <div class="flex justify-center gap-2 mt-2">
+                        <button id="add50mlButton" class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                            <span>+50ml</span>
+                        </button>
+                        <button id="add100mlButton" class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                            <span>+100ml</span>
+                        </button>
+                        <button id="add200mlButton" class="border border-gray-400 dark:border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100">
+                            <span>+200ml</span>
+                        </button>
+                    </div>
+                    <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">
+                        Water Target: 4,000 ml
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Enhanced Performance Overview with Charts -->
         <div class="container mx-auto px-4 py-8">
             <!-- Statistics Cards -->
@@ -883,6 +1037,317 @@
 
             // Call initWeather on DOM load
             document.addEventListener('DOMContentLoaded', initWeather);
+
+            // Health Metrics JavaScript for Doctors
+            document.addEventListener("DOMContentLoaded", function () {
+                // Nutrition tracking
+                const addFoodButton = document.getElementById("addFoodButton");
+                const nutritionScoreValue = document.getElementById("nutrition-score-value");
+                const nutritionProgress = document.getElementById("nutrition-score-progress");
+
+                if (addFoodButton) {
+                    addFoodButton.addEventListener("click", function() {
+                        alert("Nutrition tracking feature coming soon for doctors!");
+                    });
+                }
+
+                // Initialize nutrition score display
+                function updateNutritionScoreUI(score) {
+                    if (nutritionScoreValue) {
+                        nutritionScoreValue.textContent = score;
+                        const circumference = 283;
+                        const offset = circumference - (score / 10) * circumference;
+                        if (nutritionProgress) {
+                            nutritionProgress.style.strokeDashoffset = offset;
+                        }
+                    }
+                }
+
+                // Meditation timer
+                const timerDisplay = document.getElementById("timerMinutes");
+                const playButton = document.getElementById("playButton");
+                const pauseButton = document.getElementById("pauseButton");
+                const playSvg = document.getElementById("play-but");
+                const pauseSvg = document.getElementById("pause-but");
+                const progressCircle = document.getElementById("progressCircle");
+
+                if (timerDisplay && playButton && pauseButton && playSvg && pauseSvg && progressCircle) {
+                    let seconds = 0;
+                    let timerInterval = null;
+                    const targetMinutes = 30;
+                    const totalSeconds = targetMinutes * 60;
+                    const circumference = 283;
+
+                    function updateTimerDisplay() {
+                        const displayMinutes = Math.floor(seconds / 60);
+                        const displaySeconds = seconds % 60;
+                        timerDisplay.textContent = displayMinutes.toString().padStart(2, "0") + ":" + displaySeconds.toString().padStart(2, "0");
+
+                        const progress = (seconds / totalSeconds) * 100;
+                        const dashOffset = circumference - (circumference * progress) / 100;
+                        progressCircle.setAttribute("stroke-dashoffset", dashOffset);
+                    }
+
+                    function startTimer() {
+                        if (!timerInterval && seconds < totalSeconds) {
+                            playSvg.classList.remove("text-gray-800");
+                            playSvg.classList.add("text-gray-500");
+                            playSvg.classList.remove("w-[39px]", "h-[39px]");
+                            playSvg.classList.add("w-[31px]", "h-[31px]");
+                            pauseSvg.classList.remove("w-[39px]", "h-[39px]");
+                            pauseSvg.classList.add("w-[51px]", "h-[51px]");
+
+                            timerInterval = setInterval(() => {
+                                seconds++;
+                                updateTimerDisplay();
+                                if (seconds >= totalSeconds) {
+                                    clearInterval(timerInterval);
+                                    timerInterval = null;
+                                    playSvg.classList.remove("text-gray-500");
+                                    playSvg.classList.add("text-gray-800");
+                                    playSvg.classList.remove("w-[31px]", "h-[31px]");
+                                    playSvg.classList.add("w-[39px]", "h-[39px]");
+                                    pauseSvg.classList.remove("w-[51px]", "h-[51px]");
+                                    pauseSvg.classList.add("w-[39px]", "h-[39px]");
+                                }
+                            }, 1000);
+                        }
+                    }
+
+                    function pauseTimer() {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        playSvg.classList.remove("text-gray-500");
+                        playSvg.classList.add("text-gray-800");
+                        playSvg.classList.remove("w-[31px]", "h-[31px]");
+                        playSvg.classList.add("w-[39px]", "h-[39px]");
+                        pauseSvg.classList.remove("w-[51px]", "h-[51px]");
+                        pauseSvg.classList.add("w-[47px]", "h-[47px]");
+                    }
+
+                    playButton.addEventListener("click", startTimer);
+                    pauseButton.addEventListener("click", pauseTimer);
+                }
+
+                // Breathwork
+                const startBtn = document.getElementById("start-btn");
+                const stopBtn = document.getElementById("stop-btn");
+                const resetBtn = document.getElementById("reset-btn");
+                const startText = document.getElementById("start-text");
+                const playIcon = document.getElementById("play-icon");
+                const phaseText = document.getElementById("breath-phase");
+                const timerText = document.getElementById("breath-timer");
+                const instructionText = document.getElementById("breath-instruction");
+                const totalProgressCircle = document.getElementById("total-progress");
+                const progressCircle = document.getElementById("breath-progress");
+
+                if (startBtn && stopBtn && resetBtn && startText && playIcon && phaseText && timerText && instructionText && totalProgressCircle && progressCircle) {
+                    const phases = [
+                        { name: "Stress Relief", inhale: 4, exhale: 6, duration: 10 },
+                        { name: "Energy Boost", inhale: 3, exhale: 2, duration: 5 },
+                        { name: "Stop Breathe", inhale: 0, exhale: 0, hold: 10 }
+                    ];
+
+                    let currentPhase = 0;
+                    let isInhaling = true;
+                    let isHolding = false;
+                    let timeLeft = 0;
+                    let totalElapsed = 0;
+                    let timerInterval = null;
+                    let isFirstStart = true;
+                    const totalDuration = 300;
+                    const totalCircumference = 283;
+                    const innerCircumference = 220;
+
+                    function startSession() {
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        resetBtn.disabled = false;
+                        startText.textContent = "Start";
+                        playIcon.classList.add("hidden");
+
+                        if (isFirstStart) {
+                            currentPhase = 0;
+                            isInhaling = true;
+                            isHolding = false;
+                            timeLeft = phases[currentPhase].inhale;
+                            totalElapsed = 0;
+                            totalProgressCircle.style.strokeDashoffset = totalCircumference;
+                            progressCircle.style.strokeDashoffset = innerCircumference;
+                            isFirstStart = false;
+                        }
+
+                        timerInterval = setInterval(updateTimer, 1000);
+                        updateUI();
+                    }
+
+                    function stopSession() {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        resetBtn.disabled = false;
+                        phaseText.textContent = "Paused";
+                        startText.textContent = "Play";
+                        playIcon.classList.remove("hidden");
+                    }
+
+                    function resetSession() {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        resetBtn.disabled = true;
+                        phaseText.textContent = "Ready";
+                        timerText.textContent = "5:00";
+                        instructionText.textContent = "Press Start to begin";
+                        totalProgressCircle.style.strokeDashoffset = totalCircumference;
+                        progressCircle.style.strokeDashoffset = innerCircumference;
+                        startText.textContent = "Start";
+                        playIcon.classList.add("hidden");
+                        currentPhase = 0;
+                        isInhaling = true;
+                        isHolding = false;
+                        timeLeft = 0;
+                        totalElapsed = 0;
+                        isFirstStart = true;
+                    }
+
+                    function updateTimer() {
+                        if (timeLeft > 0) {
+                            timeLeft--;
+                            totalElapsed++;
+                        }
+
+                        if (totalElapsed >= totalDuration) {
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            phaseText.textContent = "Completed!";
+                            instructionText.textContent = "Great job!";
+                            startBtn.disabled = true;
+                            stopBtn.disabled = true;
+                            resetBtn.disabled = false;
+                            updateUI();
+                            return;
+                        }
+
+                        if (timeLeft <= 0) {
+                            const currentExercise = phases[currentPhase];
+                            if (currentPhase === 2) {
+                                if (!isHolding) {
+                                    isHolding = true;
+                                    timeLeft = currentExercise.hold;
+                                } else {
+                                    currentPhase = 0;
+                                    isHolding = false;
+                                    isInhaling = true;
+                                    timeLeft = phases[0].inhale;
+                                }
+                            } else {
+                                if (isInhaling && currentExercise.exhale > 0) {
+                                    isInhaling = false;
+                                    timeLeft = currentExercise.exhale;
+                                } else {
+                                    currentPhase++;
+                                    if (currentPhase >= phases.length) {
+                                        currentPhase = 0;
+                                    }
+                                    const nextExercise = phases[currentPhase];
+                                    if (currentPhase === 2) {
+                                        isHolding = true;
+                                        isInhaling = false;
+                                        timeLeft = nextExercise.hold;
+                                    } else {
+                                        isInhaling = true;
+                                        timeLeft = nextExercise.inhale;
+                                    }
+                                }
+                            }
+                        }
+                        updateUI();
+                    }
+
+                    function updateUI() {
+                        const remainingTime = totalDuration - totalElapsed;
+                        const phase = phases[currentPhase];
+
+                        if (timerInterval) {
+                            if (currentPhase === 2) {
+                                phaseText.textContent = "Hold";
+                                instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left`;
+                            } else {
+                                phaseText.textContent = isInhaling ? "Inhale" : "Exhale";
+                                instructionText.textContent = `${phase.name} • ${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")} left`;
+                            }
+                        }
+
+                        if (timerText) {
+                            timerText.textContent = `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")}`;
+                        }
+
+                        const totalProgressPercent = (totalElapsed / totalDuration) * 100;
+                        const totalDashOffset = totalCircumference - (totalCircumference * totalProgressPercent) / 100;
+                        totalProgressCircle.style.strokeDashoffset = totalDashOffset;
+
+                        if (currentPhase === 2) {
+                            const holdProgress = (1 - timeLeft / phase.hold) * 100;
+                            const dashOffset = innerCircumference - (innerCircumference * holdProgress) / 100;
+                            progressCircle.style.strokeDashoffset = dashOffset;
+                        } else {
+                            if (isInhaling) {
+                                const progress = (1 - timeLeft / phase.inhale) * 50;
+                                const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
+                                progressCircle.style.strokeDashoffset = dashOffset;
+                            } else {
+                                const progress = 50 + (1 - timeLeft / phase.exhale) * 50;
+                                const dashOffset = innerCircumference - (innerCircumference * progress) / 100;
+                                progressCircle.style.strokeDashoffset = dashOffset;
+                            }
+                        }
+                    }
+
+                    startBtn.addEventListener("click", startSession);
+                    stopBtn.addEventListener("click", stopSession);
+                    resetBtn.addEventListener("click", resetSession);
+                }
+
+                // Hydration tracker
+                const hydrationMlDisplay = document.getElementById("hydrationMlDisplay");
+                const add50mlButton = document.getElementById("add50mlButton");
+                const add100mlButton = document.getElementById("add100mlButton");
+                const add200mlButton = document.getElementById("add200mlButton");
+                const hydrationProgressCircle = document.getElementById("hydrationProgressCircle");
+
+                if (hydrationMlDisplay && add50mlButton && add100mlButton && add200mlButton && hydrationProgressCircle) {
+                    let ml = 0;
+                    const targetMl = 4000;
+                    const circumference = 283;
+
+                    function updateHydrationDisplay() {
+                        hydrationMlDisplay.textContent = ml;
+                        const progress = (ml / targetMl) * 100;
+                        const dashOffset = circumference - (circumference * progress) / 100;
+                        hydrationProgressCircle.setAttribute("stroke-dashoffset", dashOffset);
+                    }
+
+                    function addWater(amount) {
+                        ml += amount;
+                        if (ml > targetMl) {
+                            ml = targetMl;
+                        }
+                        updateHydrationDisplay();
+                    }
+
+                    add50mlButton.addEventListener("click", () => addWater(50));
+                    add100mlButton.addEventListener("click", () => addWater(100));
+                    add200mlButton.addEventListener("click", () => addWater(200));
+
+                    updateHydrationDisplay();
+                }
+
+                // Initialize with default values
+                updateNutritionScoreUI(5); // Default nutrition score
+            });
         </script>
 </body>
 

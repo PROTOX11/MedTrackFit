@@ -34,4 +34,8 @@ public interface HealthMentorService extends UserDetailsService {
     void updateHydrationScore(String mentorId, int hydrationAmount);
     void updateNutritionScore(String mentorId, int nutritionScore);
     int calculateNutritionScore(List<Object> foodItems);
+
+    // Connection management
+    boolean connectMentorToPatient(String mentorId, String patientId);
+    boolean isMentorConnectedToPatient(String mentorId, String patientId);
 }

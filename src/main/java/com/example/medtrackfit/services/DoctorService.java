@@ -14,4 +14,8 @@ public interface DoctorService extends UserDetailsService {
     Doctor updateProfilePicture(String doctorId, MultipartFile file) throws IOException;
 
     List<com.example.medtrackfit.entities.Doctor> getAllDoctors();
+
+    // Connection management
+    boolean connectDoctorToPatient(String doctorId, String patientId);
+    boolean isDoctorConnectedToPatient(String doctorId, String patientId);
 }

@@ -91,8 +91,8 @@
                         <button th:data-patient-id="${patient.patientId}" onclick="viewPatientDetails(this.getAttribute('data-patient-id'))" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
                             <i class="fas fa-eye mr-1"></i>View Details
                         </button>
-                        <button th:data-patient-id="${patient.patientId}" onclick="startChat(this.getAttribute('data-patient-id'))" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                            <i class="fas fa-comments mr-1"></i>Chat
+                        <button th:data-patient-id="${patient.patientId}" onclick="connectToPatient(this)" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
+                            <i class="fas fa-link mr-1"></i>Connect
                         </button>
                     </div>
                 </div>
@@ -219,10 +219,68 @@
             document.getElementById('patientModal').classList.remove('hidden');
         }
 
-        function startChat(patientId) {
-            // Redirect to chat page with patient
-            window.location.href = '/mentor/chat?patient=' + patientId;
-        }
+        // Connect to patient function
+        window.connectToPatient = async function(button) {
+            const patientId = button.getAttribute('data-patient-id');
+            const patientName = button.closest('.bg-white').querySelector('h3').textContent.trim();
+
+            if (!patientId) {
+                alert('Patient ID not found');
+                return;
+            }
+
+            // Show loading state
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Connecting...';
+            button.disabled = true;
+
+            try {
+                const csrfToken = document.querySelector('meta[name="_csrf"]') ? document.querySelector('meta[name="_csrf"]').getAttribute('content') : '';
+
+                const response = await fetch('/mentor/connect-patient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        patientId: patientId
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to connect');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Success - change button to connected state
+                    button.innerHTML = '<i class="fas fa-check mr-1"></i>Connected';
+                    button.className = button.className.replace('bg-green-600 hover:bg-green-700', 'bg-gray-600 hover:bg-gray-700');
+                    button.disabled = true;
+
+                    alert(`Successfully connected to ${patientName}! You can now chat with them.`);
+
+                    // Optional: Redirect to chat page after a delay
+                    setTimeout(() => {
+                        window.location.href = '/mentor/chat';
+                    }, 1500);
+                } else {
+                    throw new Error(data.message || 'Connection failed');
+                }
+
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('Failed to connect: ' + error.message);
+
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        };
 
         function closePatientModal() {
             document.getElementById('patientModal').classList.add('hidden');

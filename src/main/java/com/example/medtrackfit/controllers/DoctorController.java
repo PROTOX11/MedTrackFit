@@ -3,6 +3,7 @@ package com.example.medtrackfit.controllers;
 import com.example.medtrackfit.entities.Doctor;
 import com.example.medtrackfit.entities.AllBlogPost;
 import com.example.medtrackfit.entities.SufferingPatient;
+import com.example.medtrackfit.entities.DoctorConnectedPatient;
 import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,9 @@ public class DoctorController {
 
     @Autowired
     private com.example.medtrackfit.repositories.DoctorPatientConnectionRepository doctorPatientConnectionRepository;
+
+    @Autowired
+    private com.example.medtrackfit.repositories.DoctorConnectedPatientRepository doctorConnectedPatientRepository;
 
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
@@ -98,13 +103,31 @@ public class DoctorController {
         }
         
         Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
+        String doctorId = doctor.getDoctorId();
         model.addAttribute("doctor", doctor);
         model.addAttribute("userRole", userRole);
-        
-        // Add sample data for patients and mentors
-        // In a real application, this would come from database
-        model.addAttribute("patients", createSamplePatients());
-        model.addAttribute("mentors", createSampleMentors());
+
+        // Get connected suffering patients from doctor_connected_patient table
+        List<DoctorConnectedPatient> doctorConnections = doctorConnectedPatientRepository.findByDoctorId(doctorId);
+        List<Map<String, Object>> patients = new ArrayList<>();
+
+        for (DoctorConnectedPatient connection : doctorConnections) {
+            // Get patient details from SufferingPatientService
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(connection.getConnectedPatientId());
+            if (patient != null) {
+                Map<String, Object> patientData = new HashMap<>();
+                patientData.put("id", patient.getPatientId());
+                patientData.put("name", patient.getName());
+                patientData.put("email", patient.getEmail());
+                patientData.put("mentorName", doctor.getName());
+                patientData.put("status", patient.getMedicalCondition() != null ?
+                    "Suffering from " + patient.getMedicalCondition() : "Connected Patient");
+                patients.add(patientData);
+            }
+        }
+
+        model.addAttribute("patients", patients);
+        model.addAttribute("mentors", createSampleMentors()); // Keep sample mentors for now
         
         return "doctor/chat";
     }
@@ -822,82 +845,70 @@ public class DoctorController {
         }
     }
 
+    // Connect doctor to suffering patient
     @PostMapping("/connect-patient")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> connectPatient(@RequestBody Map<String, Object> requestData,
-                                                             Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> connectToPatient(@RequestBody Map<String, Object> body, Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            logger.info("=== CONNECT PATIENT REQUEST RECEIVED ===");
-            logger.info("Request data: {}", requestData);
-
             if (authentication == null) {
-                logger.warn("No authentication found");
                 response.put("success", false);
                 response.put("message", "User not authenticated");
                 return ResponseEntity.badRequest().body(response);
             }
 
             String username = Helper.getEmailOfLoggedInUser(authentication);
-            logger.info("Authenticated user: {}", username);
             String userRole = universalUserService.getUserRole(username);
-            logger.info("User role: {}", userRole);
 
             if (!"Doctor".equals(userRole)) {
-                logger.warn("Non-doctor user attempted to connect patient");
                 response.put("success", false);
-                response.put("message", "Only doctors can connect patients");
+                response.put("message", "Only doctors can connect to patients");
                 return ResponseEntity.badRequest().body(response);
             }
 
             Doctor doctor = (Doctor) universalUserService.getUserByEmail(username);
-            if (doctor == null) {
-                logger.warn("Doctor not found for username: {}", username);
-                response.put("success", false);
-                response.put("message", "Doctor not found");
-                return ResponseEntity.badRequest().body(response);
-            }
+            String doctorId = doctor.getDoctorId();
 
-            logger.info("Doctor found: {} (ID: {})", doctor.getName(), doctor.getDoctorId());
-
-            String patientId = (String) requestData.get("patientId");
+            String patientId = (String) body.get("patientId");
             if (patientId == null || patientId.trim().isEmpty()) {
-                logger.warn("Patient ID is missing or empty");
                 response.put("success", false);
                 response.put("message", "Patient ID is required");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            logger.info("Patient ID to connect: {}", patientId);
-
-            // Check if patient is already connected
-            boolean alreadyConnected = sufferingPatientService.isPatientConnectedToDoctor(patientId, doctor.getDoctorId());
-            logger.info("Patient already connected check: {}", alreadyConnected);
-
-            if (alreadyConnected) {
-                logger.warn("Patient {} is already connected to doctor {}", patientId, doctor.getDoctorId());
+            // Check if patient exists as a suffering patient
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(patientId);
+            if (patient == null) {
                 response.put("success", false);
-                response.put("message", "Patient is already connected to this doctor");
+                response.put("message", "Patient not found or is not a suffering patient");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Connect the patient to this doctor
-            logger.info("Calling sufferingPatientService.connectPatientToDoctor({}, {})", patientId, doctor.getDoctorId());
-            sufferingPatientService.connectPatientToDoctor(patientId, doctor.getDoctorId());
+            // Check if already connected
+            if (doctorService.isDoctorConnectedToPatient(doctorId, patientId)) {
+                response.put("success", false);
+                response.put("message", "Already connected to this patient");
+                return ResponseEntity.badRequest().body(response);
+            }
 
-            logger.info("=== PATIENT CONNECTED SUCCESSFULLY: {} to doctor {} ===", patientId, doctor.getDoctorId());
-
-            response.put("success", true);
-            response.put("message", "Patient connected successfully");
+            // Create connection
+            boolean connected = doctorService.connectDoctorToPatient(doctorId, patientId);
+            if (connected) {
+                response.put("success", true);
+                response.put("message", "Successfully connected to patient");
+                logger.info("Doctor {} connected to patient {}", doctorId, patientId);
+            } else {
+                response.put("success", false);
+                response.put("message", "Failed to connect to patient");
+            }
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("=== ERROR CONNECTING PATIENT ===", e);
-            logger.error("Exception details: ", e);
+            logger.error("Error connecting doctor to patient", e);
             response.put("success", false);
-            response.put("message", "Error connecting patient: " + e.getMessage());
+            response.put("message", "Error connecting to patient: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }
