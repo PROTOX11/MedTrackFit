@@ -36,4 +36,17 @@ public class PatientPerformance {
 
     @Column(name = "overall_improvement")
     private double overallImprovement;
+
+    // Added fields to track per-user health metrics (meditation, breathwork, hydration, nutrition)
+    @Column(name = "meditation_score")
+    private Integer meditationScore = 0;
+
+    @Column(name = "breathe_score")
+    private Integer breatheScore = 0;
+
+    @Column(name = "hydration_score")
+    private Integer hydrationScore = 0;
+
+    @Column(name = "nutrition_score")
+    private Integer nutritionScore = 0;
 }

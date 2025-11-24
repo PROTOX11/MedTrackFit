@@ -60,6 +60,10 @@ public class SufferingPatientServiceImpl implements SufferingPatientService {
                     .sessionsAttended(0)
                     .medicationAdherence(0.0)
                     .overallImprovement(0.0)
+                    .meditationScore(0)
+                    .breatheScore(0)
+                    .hydrationScore(0)
+                    .nutritionScore(0)
                     .build();
             sufferingPatient.setPatientPerformance(performance);
         }
