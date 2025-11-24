@@ -912,4 +912,60 @@ public class DoctorController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
+
+    // Test endpoint to verify database connectivity
+    @GetMapping("/test-db-connection")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testDbConnection() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Test if we can query the doctor_connected_patient table
+            List<DoctorConnectedPatient> connections = doctorConnectedPatientRepository.findAll();
+            response.put("success", true);
+            response.put("message", "Database connection successful. Found " + connections.size() + " connections.");
+            response.put("connections", connections.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Database connection failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    // Test endpoint to simulate connect-patient without authentication
+    @PostMapping("/test-connect-patient")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testConnectPatient(@RequestBody Map<String, Object> body) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String patientId = (String) body.get("patientId");
+            String doctorId = "test-doctor-id"; // Use a test doctor ID
+
+            if (patientId == null || patientId.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Patient ID is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Create connection using test doctor ID
+            boolean connected = doctorService.connectDoctorToPatient(doctorId, patientId);
+            if (connected) {
+                response.put("success", true);
+                response.put("message", "Successfully connected to patient");
+                logger.info("Test Doctor {} connected to patient {}", doctorId, patientId);
+            } else {
+                response.put("success", false);
+                response.put("message", "Failed to connect to patient");
+            }
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error in test connect", e);
+            response.put("success", false);
+            response.put("message", "Error connecting to patient: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
 }

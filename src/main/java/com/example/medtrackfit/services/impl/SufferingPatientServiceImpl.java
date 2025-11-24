@@ -1,9 +1,11 @@
 package com.example.medtrackfit.services.impl;
 
+import com.example.medtrackfit.entities.DoctorConnectedPatient;
 import com.example.medtrackfit.entities.DoctorPatientConnection;
 import com.example.medtrackfit.entities.PatientPerformance;
 import com.example.medtrackfit.entities.SufferingPatient;
 import com.medtrackfit.helper.AppConstants;
+import com.example.medtrackfit.repositories.DoctorConnectedPatientRepository;
 import com.example.medtrackfit.repositories.DoctorPatientConnectionRepository;
 import com.example.medtrackfit.repositories.SufferingPatientRepository;
 import com.example.medtrackfit.services.SufferingPatientService;
@@ -28,6 +30,9 @@ public class SufferingPatientServiceImpl implements SufferingPatientService {
 
     @Autowired
     private SufferingPatientRepository sufferingPatientRepository;
+
+    @Autowired
+    private DoctorConnectedPatientRepository doctorConnectedPatientRepository;
 
     @Autowired
     private DoctorPatientConnectionRepository doctorPatientConnectionRepository;
@@ -114,14 +119,13 @@ public class SufferingPatientServiceImpl implements SufferingPatientService {
 
     @Override
     public List<SufferingPatient> getConnectedPatients(String doctorId) {
-        Optional<DoctorPatientConnection> connectionOpt = doctorPatientConnectionRepository.findByDoctorId(doctorId);
-        if (connectionOpt.isPresent()) {
-            DoctorPatientConnection connection = connectionOpt.get();
-            return connection.getPatientIds().stream()
-                    .map(this::getSufferingPatientById)
-                    .collect(Collectors.toList());
-        }
-        return new java.util.ArrayList<>();
+        // Use the DoctorConnectedPatient entity instead of DoctorPatientConnection
+        List<DoctorConnectedPatient> connections = doctorConnectedPatientRepository.findByDoctorId(doctorId);
+        return connections.stream()
+                .filter(connection -> "ACTIVE".equals(connection.getStatus())) // Only active connections
+                .map(connection -> getSufferingPatientById(connection.getConnectedPatientId()))
+                .filter(java.util.Objects::nonNull) // Filter out null patients
+                .collect(Collectors.toList());
     }
 
     @Override

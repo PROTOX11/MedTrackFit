@@ -113,10 +113,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="mt-3 flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-900 text-sm font-medium">View</button>
-                            <button class="text-green-600 hover:text-green-900 text-sm font-medium">Chat</button>
-                        </div>
                     </div>
                 </div>
                 <div th:if="${connectedPatients == null or connectedPatients.isEmpty()}" class="text-center py-8">
@@ -211,9 +207,6 @@
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Connect</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
@@ -243,26 +236,19 @@
                                     <!-- UPDATED CONNECT BUTTON -->
                                     <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
                                         <button
-                                            class="px-3 py-1 text-white text-xs rounded-lg transition duration-300 connect-btn"
-                                            th:classappend="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'"
+                                            class="px-3 py-1 text-white text-xs rounded-lg transition duration-300"
+                                            th:classappend="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 connect-btn'"
                                             th:disabled="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)}"
                                             th:text="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'Connected' : 'Connect'"
-                                            th:data-patient-id="${patient.patientId}"
-                                            th:onclick="${connectedPatientIds == null or !connectedPatientIds.contains(patient.patientId)} ? 'handleConnect(this, &quot;${patient.patientId}&quot;)' : ''">
+                                            th:data-patient-id="${patient.patientId}">
                                         </button>
                                     </td>
                                     <!-- END UPDATED BUTTON -->
-                                    <td
-                                        class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium">
-                                        <button class="text-blue-600 hover:text-blue-900 mr-2 md:mr-3">View</button>
-                                        <button class="text-green-600 hover:text-green-900 mr-2 md:mr-3">Chat</button>
-                                        <button class="text-gray-600 hover:text-gray-900">Edit</button>
-                                    </td>
                                 </tr>
                             </tbody>
                             <tbody th:if="${sufferingPatients == null or sufferingPatients.isEmpty()}">
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                         No suffering patients found.
                                     </td>
                                 </tr>
@@ -357,76 +343,113 @@
                 });
         };
 
-        // Function to dynamically add patient to "My Patients" section
-        function addPatientToMyPatients(patientId, name, email, condition, initials) {
-            const myPatientsContainer = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
+            // Function to dynamically add patient to "My Patients" section
+            window.addPatientToMyPatients = function(patientId, name, email, condition, initials) {
+                const myPatientsContainer = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
 
-            // Remove "No connected patients" message if it exists
-            const noPatientsMsg = document.querySelector('.text-center.py-8');
-            if (noPatientsMsg) {
-                noPatientsMsg.remove();
-            }
+                // Remove "No connected patients" message if it exists
+                const noPatientsMsg = document.querySelector('.text-center.py-8');
+                if (noPatientsMsg) {
+                    noPatientsMsg.remove();
+                }
 
-            // Create patient card if container doesn't exist
-            if (!myPatientsContainer) {
-                const patientsSection = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6');
-                const gridContainer = document.createElement('div');
-                gridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
-                patientsSection.appendChild(gridContainer);
-            }
+                // Create patient card if container doesn't exist
+                if (!myPatientsContainer) {
+                    const patientsSection = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6');
+                    const gridContainer = document.createElement('div');
+                    gridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+                    patientsSection.appendChild(gridContainer);
+                }
 
-            const container = myPatientsContainer || document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
+                const container = myPatientsContainer || document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
 
-            // Create patient card
-            const patientCard = document.createElement('div');
-            patientCard.className = 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
-            patientCard.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <div class="flex-shrink-0 h-10 w-10">
-                        <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm">${initials || 'P'}</div>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">${name || 'Patient Name'}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">${email || 'patient@example.com'}</p>
-                        <div class="flex items-center mt-1">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
-                                <i class="fas fa-heartbeat text-red-500 mr-1"></i>
-                                <span>${condition || 'Connected'}</span>
-                            </span>
+                // Create patient card
+                const patientCard = document.createElement('div');
+                patientCard.className = 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+                patientCard.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm">${initials || 'P'}</div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">${name || 'Patient Name'}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">${email || 'patient@example.com'}</p>
+                            <div class="flex items-center mt-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                                    <i class="fas fa-heartbeat text-red-500 mr-1"></i>
+                                    <span>${condition || 'Connected'}</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="mt-3 flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-900 text-sm font-medium">View</button>
-                    <button class="text-green-600 hover:text-green-900 text-sm font-medium">Chat</button>
-                </div>
-            `;
+                `;
 
-            container.appendChild(patientCard);
-        }
+                container.appendChild(patientCard);
+            };
 
-        function showNotification(msg, type) {
-            const el = document.createElement('div');
-            el.textContent = msg;
-            el.className = `fixed top-4 right-4 px-4 py-2 rounded text-white text-sm font-medium z-50 shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                }`;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 3000);
-        }
+            window.showNotification = function(msg, type) {
+                const el = document.createElement('div');
+                el.textContent = msg;
+                el.className = `fixed top-4 right-4 px-4 py-2 rounded text-white text-sm font-medium z-50 shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                    }`;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 3000);
+            };
 
         // -------------------------------------------------
-        //  DOM Ready – search input persistence
+        //  Connect Button Event Handler - Document Level
+        // -------------------------------------------------
+        document.addEventListener('click', function(e) {
+            console.log('🖱️ Click detected on:', e.target.tagName);
+
+            // Find the button that has data-patient-id and is not disabled
+            const button = e.target.closest('button[data-patient-id]');
+
+            if (button && !button.disabled) {
+                console.log('✅ Connect button found and clickable!');
+                e.preventDefault();
+                e.stopPropagation();
+
+                const patientId = button.getAttribute('data-patient-id');
+                console.log('📋 Patient ID:', patientId);
+
+                handleConnect(button, patientId);
+            } else {
+                console.log('ℹ️ Click was not on a clickable connect button');
+            }
+        });
+
+        // -------------------------------------------------
+        //  DOM Ready – search input and button counting
         // -------------------------------------------------
         document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('patientSearchInput');
+            console.log('📄 DOM fully loaded');
 
-            // Optional: Auto-submit on enter
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    document.querySelector('form').submit();
-                }
-            });
+            const searchInput = document.getElementById('patientSearchInput');
+            if (searchInput) {
+                console.log('🔍 Search input found');
+
+                // Optional: Auto-submit on enter
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.querySelector('form').submit();
+                    }
+                });
+            } else {
+                console.warn('⚠️ Search input not found');
+            }
+
+            // Count and log connect buttons found
+            setTimeout(() => {
+                const buttons = document.querySelectorAll('.connect-btn');
+                console.log(`📊 Found ${buttons.length} connect buttons on page`);
+                buttons.forEach((btn, i) => {
+                    const patientId = btn.getAttribute('data-patient-id');
+                    const isDisabled = btn.disabled;
+                    console.log(`   Button ${i + 1}: patientId=${patientId}, disabled=${isDisabled}, classes=${btn.className}`);
+                });
+            }, 500);
         });
     </script>
 </body>
