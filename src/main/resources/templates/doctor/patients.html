@@ -37,6 +37,26 @@
             background-color: #fee2e2;
             color: #991b1b;
         }
+
+        /* Connect button animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .animate-fade-out {
+            animation: fadeOut 0.3s ease-in;
+        }
+
     </style>
 </head>
 
@@ -233,17 +253,21 @@
                                     <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 dark:text-gray-100"
                                         th:text="${patient.medicalCondition != null ? patient.medicalCondition : 'Not specified'}">
                                     </td>
-                                    <!-- UPDATED CONNECT BUTTON -->
+                                    <!-- CONNECT BUTTON -->
                                     <td class="px-4 md:px-6 py-3 md:py-4 whitespace-nowrap">
                                         <button
-                                            class="px-3 py-1 text-white text-xs rounded-lg transition duration-300"
-                                            th:classappend="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 connect-btn'"
+                                            class="connect-btn px-4 py-2 text-white text-sm rounded-lg transition duration-300"
+                                            th:classappend="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'bg-green-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'"
                                             th:disabled="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)}"
                                             th:text="${connectedPatientIds != null and connectedPatientIds.contains(patient.patientId)} ? 'Connected' : 'Connect'"
-                                            th:data-patient-id="${patient.patientId}">
+                                            th:data-patient-id="${patient.patientId}"
+                                            th:data-patient-name="${patient.name}"
+                                            th:data-patient-email="${patient.email}"
+                                            th:data-patient-condition="${patient.medicalCondition != null ? patient.medicalCondition : ''}"
+                                            onclick="console.log('DIRECT ONCLICK: Button clicked for patient:', this.getAttribute('data-patient-id')); this.style.backgroundColor='#10b981'; this.textContent='Connected'; this.disabled=true; return false;">
                                         </button>
                                     </td>
-                                    <!-- END UPDATED BUTTON -->
+                                    <!-- END CONNECT BUTTON -->
                                 </tr>
                             </tbody>
                             <tbody th:if="${sufferingPatients == null or sufferingPatients.isEmpty()}">
@@ -291,166 +315,343 @@
     </div>
 
     <script>
-        // -------------------------------------------------
-        //  GLOBAL: handleConnect – available immediately
-        // -------------------------------------------------
-        window.handleConnect = function (btn, patientId) {
-            // Prevent double-click
-            if (btn.disabled) return;
+        // ==================================================
+        // CONNECT BUTTON FUNCTIONALITY - FRESH IMPLEMENTATION
+        // ==================================================
 
-            // Get patient details from the table row
-            const row = btn.closest('tr');
-            const patientName = row.querySelector('td:nth-child(1) .text-xs.md\\:text-sm.font-medium')?.textContent?.trim();
-            const patientEmail = row.querySelector('td:nth-child(1) .text-xs.md\\:text-sm.text-gray-500')?.textContent?.trim();
-            const patientCondition = row.querySelector('td:nth-child(3)')?.textContent?.trim();
-            const patientInitials = row.querySelector('.rounded-full')?.textContent?.trim();
+        // Test if script is loading
+        console.log('=== DOCTOR PATIENTS SCRIPT LOADED ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Script execution time:', new Date().toISOString());
 
-            // 1. Instant UI update for connect button
-            btn.textContent = 'Connected';
-            btn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            btn.classList.add('bg-gray-500', 'cursor-not-allowed');
-            btn.disabled = true;
-            btn.onclick = null;
+        /**
+         * Connect Patient Button Handler
+         * Handles the connect button click and manages UI state
+         */
+        function handleConnectButton(button) {
+            console.log('=== handleConnectButton STARTED ===');
+            console.log('Button parameter:', button);
+            console.log('Button type:', typeof button);
+            console.log('Button element details:', button ? {
+                tagName: button.tagName,
+                className: button.className,
+                disabled: button.disabled,
+                textContent: button.textContent,
+                patientId: button.getAttribute('data-patient-id')
+            } : 'NULL BUTTON');
 
-            // 2. Call server
-            fetch('/doctor/connect-patient', {
+            if (!button || button.disabled) {
+                console.log('Button is null or disabled, returning');
+                return;
+            }
+
+            console.log('Button is valid, proceeding with connection logic');
+
+            const patientId = button.getAttribute('data-patient-id');
+            const patientName = button.getAttribute('data-patient-name');
+            const patientEmail = button.getAttribute('data-patient-email');
+            const patientCondition = button.getAttribute('data-patient-condition');
+
+            console.log('Patient data:', { patientId, patientName, patientEmail, patientCondition });
+
+            if (!patientId) {
+                console.error('No patient ID found');
+                showNotification('Error: Patient ID not found', 'error');
+                return;
+            }
+
+            console.log(`Connecting to patient: ${patientName} (${patientId})`);
+
+            // Step 1: Immediately update UI to show connected state (green button)
+            console.log('Setting button text to Connected immediately');
+            button.textContent = 'Connected';
+            button.style.backgroundColor = '#10b981'; // Force green background
+            button.disabled = true;
+            button.style.cursor = 'not-allowed';
+
+            try {
+                console.log('About to call updateButtonState with connected');
+                updateButtonState(button, 'connected');
+                console.log('updateButtonState completed successfully');
+            } catch (error) {
+                console.error('Error in updateButtonState:', error);
+            }
+
+            // Step 2: Make API call to connect patient
+            connectPatientAPI(patientId)
+                .then(result => {
+                    console.log('API response:', result);
+                    if (result.success) {
+                        showNotification('Patient connected successfully!', 'success');
+
+                        // Add patient to "My Patients" section
+                        addPatientToMyPatientsSection(patientId, patientName, patientEmail, patientCondition);
+                    } else {
+                        throw new Error(result.message || 'Connection failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Connection failed:', error);
+                    // Revert to original state
+                    updateButtonState(button, 'connect');
+                    showNotification('Failed to connect patient. Please try again.', 'error');
+                });
+        }
+
+        /**
+         * Update button visual state
+         */
+        function updateButtonState(button, state) {
+            console.log('=== updateButtonState called ===');
+            console.log('Button:', button);
+            console.log('State requested:', state);
+            console.log('Current button classes before:', button.className);
+            console.log('Current button disabled before:', button.disabled);
+
+            // Remove all existing state classes
+            button.classList.remove(
+                'bg-green-500', 'hover:bg-green-600', 'cursor-not-allowed',
+                'bg-gray-500',
+                'bg-blue-500', 'hover:bg-blue-600', 'animate-pulse'
+            );
+
+            // Reset button properties
+            button.disabled = false;
+            button.style.cursor = 'pointer';
+
+            console.log('After reset - classes:', button.className, 'disabled:', button.disabled);
+
+            switch (state) {
+                case 'connect':
+                    button.textContent = 'Connect';
+                    button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    console.log('Applied CONNECT state');
+                    break;
+
+                case 'connecting':
+                    button.textContent = 'Connecting...';
+                    button.classList.add('bg-blue-500', 'animate-pulse');
+                    button.disabled = true;
+                    button.style.cursor = 'not-allowed';
+                    console.log('Applied CONNECTING state');
+                    break;
+
+                case 'connected':
+                    button.textContent = 'Connected';
+                    button.classList.add('bg-green-500', 'cursor-not-allowed');
+                    button.disabled = true;
+                    button.style.cursor = 'not-allowed';
+                    console.log('Applied CONNECTED state');
+                    break;
+            }
+
+            console.log('Final button classes:', button.className);
+            console.log('Final button disabled:', button.disabled);
+            console.log('Final button text:', button.textContent);
+            console.log('=== updateButtonState completed ===');
+
+            // Force visual update
+            button.style.backgroundColor = state === 'connected' ? '#10b981' : state === 'connect' ? '#3b82f6' : '#60a5fa';
+        }
+
+        /**
+         * API call to connect patient
+         */
+        function connectPatientAPI(patientId) {
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || '';
+            console.log('CSRF token:', csrfToken);
+            console.log('Making API call to /doctor/connect-patient with patientId:', patientId);
+
+            return fetch('/doctor/connect-patient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || ''
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({ patientId: patientId })
             })
-                .then(r => r.ok ? r.json() : Promise.reject('Network error'))
-                .then(data => {
-                    if (data.success) {
-                        showNotification('Connected!', 'success');
-                        // Add patient to "My Patients" section dynamically
-                        addPatientToMyPatients(patientId, patientName, patientEmail, patientCondition, patientInitials);
-                    } else {
-                        throw new Error(data.message || 'Failed');
-                    }
-                })
-                .catch(err => {
-                    console.error('Connect failed:', err);
-                    // Revert UI
-                    btn.textContent = 'Connect';
-                    btn.classList.remove('bg-gray-500', 'cursor-not-allowed');
-                    btn.classList.add('bg-green-500', 'hover:bg-green-600');
-                    btn.disabled = false;
-                    btn.onclick = () => handleConnect(btn, patientId);
-                    showNotification('Failed. Try again.', 'error');
-                });
-        };
-
-            // Function to dynamically add patient to "My Patients" section
-            window.addPatientToMyPatients = function(patientId, name, email, condition, initials) {
-                const myPatientsContainer = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
-
-                // Remove "No connected patients" message if it exists
-                const noPatientsMsg = document.querySelector('.text-center.py-8');
-                if (noPatientsMsg) {
-                    noPatientsMsg.remove();
+            .then(response => {
+                console.log('API response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                return response.json();
+            });
+        }
 
-                // Create patient card if container doesn't exist
-                if (!myPatientsContainer) {
-                    const patientsSection = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6');
-                    const gridContainer = document.createElement('div');
-                    gridContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
-                    patientsSection.appendChild(gridContainer);
+        /**
+         * Add patient to "My Patients" section
+         */
+        function addPatientToMyPatientsSection(patientId, name, email, condition) {
+            const myPatientsContainer = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
+
+            // Remove "No patients" message if it exists
+            const noPatientsMsg = document.querySelector('.text-center.py-8');
+            if (noPatientsMsg) {
+                noPatientsMsg.remove();
+            }
+
+            // Create container if it doesn't exist
+            let container = myPatientsContainer;
+            if (!container) {
+                const patientsSection = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6');
+                if (patientsSection) {
+                    container = document.createElement('div');
+                    container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+                    patientsSection.appendChild(container);
                 }
+            }
 
-                const container = myPatientsContainer || document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-lg.overflow-hidden.mb-8 .p-6 .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-4');
-
+            if (container) {
                 // Create patient card
-                const patientCard = document.createElement('div');
-                patientCard.className = 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
-                patientCard.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="flex-shrink-0 h-10 w-10">
-                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm">${initials || 'P'}</div>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">${name || 'Patient Name'}</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">${email || 'patient@example.com'}</p>
-                            <div class="flex items-center mt-1">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
-                                    <i class="fas fa-heartbeat text-red-500 mr-1"></i>
-                                    <span>${condition || 'Connected'}</span>
-                                </span>
-                            </div>
+                const patientCard = createPatientCard(patientId, name, email, condition);
+                container.appendChild(patientCard);
+            }
+        }
+
+        /**
+         * Create patient card element
+         */
+        function createPatientCard(patientId, name, email, condition) {
+            // Generate initials from name
+            const initials = name.split(' ')
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+
+            const card = document.createElement('div');
+            card.className = 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-600';
+            card.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0 h-10 w-10">
+                        <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-sm">
+                            ${initials || 'P'}
                         </div>
                     </div>
-                `;
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">${name || 'Patient Name'}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">${email || 'patient@example.com'}</p>
+                        <div class="flex items-center mt-1">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                                <i class="fas fa-heartbeat text-red-500 mr-1"></i>
+                                <span>${condition || 'Connected'}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
 
-                container.appendChild(patientCard);
-            };
+        /**
+         * Show notification message
+         */
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.className = `fixed top-4 right-4 px-4 py-2 rounded text-white text-sm font-medium z-50 shadow-lg animate-fade-in ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                'bg-blue-500'
+            }`;
+            document.body.appendChild(notification);
 
-            window.showNotification = function(msg, type) {
-                const el = document.createElement('div');
-                el.textContent = msg;
-                el.className = `fixed top-4 right-4 px-4 py-2 rounded text-white text-sm font-medium z-50 shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                    }`;
-                document.body.appendChild(el);
-                setTimeout(() => el.remove(), 3000);
-            };
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('animate-fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
 
-        // -------------------------------------------------
-        //  Connect Button Event Handler - Document Level
-        // -------------------------------------------------
-        document.addEventListener('click', function(e) {
-            console.log('🖱️ Click detected on:', e.target.tagName);
+        // ==================================================
+        // EVENT LISTENERS
+        // ==================================================
 
-            // Find the button that has data-patient-id and is not disabled
-            const button = e.target.closest('button[data-patient-id]');
-
-            if (button && !button.disabled) {
-                console.log('✅ Connect button found and clickable!');
-                e.preventDefault();
-                e.stopPropagation();
-
-                const patientId = button.getAttribute('data-patient-id');
-                console.log('📋 Patient ID:', patientId);
-
-                handleConnect(button, patientId);
-            } else {
-                console.log('ℹ️ Click was not on a clickable connect button');
+        // Test button clicks specifically
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+                console.log('=== BUTTON CLICK DETECTED ===');
+                console.log('Button element:', event.target.tagName === 'BUTTON' ? event.target : event.target.closest('button'));
+                console.log('Button classes:', event.target.tagName === 'BUTTON' ? event.target.className : event.target.closest('button').className);
             }
         });
 
-        // -------------------------------------------------
-        //  DOM Ready – search input and button counting
-        // -------------------------------------------------
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('📄 DOM fully loaded');
+        // Connect button click handler
+        document.addEventListener('click', function(event) {
+            console.log('Global click detected, target element:', event.target);
+            console.log('Target classes:', event.target.className);
+            console.log('Target tag:', event.target.tagName);
 
+            const connectButton = event.target.closest('.connect-btn[data-patient-id]');
+            console.log('Closest connect button found:', connectButton);
+
+            if (connectButton) {
+                console.log('Connect button element details:', {
+                    classes: connectButton.className,
+                    disabled: connectButton.disabled,
+                    text: connectButton.textContent,
+                    patientId: connectButton.getAttribute('data-patient-id')
+                });
+            }
+
+            if (connectButton && !connectButton.disabled) {
+                console.log('connect button clicked - proceeding to handle');
+                console.log('Connect button clicked, patient ID:', connectButton.getAttribute('data-patient-id'));
+                event.preventDefault();
+                event.stopPropagation();
+                console.log('Calling handleConnectButton with button:', connectButton);
+                handleConnectButton(connectButton);
+            } else if (connectButton && connectButton.disabled) {
+                console.log('Connect button is disabled - not proceeding');
+            } else {
+                console.log('No connect button found or other click event');
+            }
+        });
+
+        // ==================================================
+        // EVENT LISTENERS
+        // ==================================================
+
+        // DOM ready handler
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Doctor Patients page loaded');
+
+            // Setup search functionality
             const searchInput = document.getElementById('patientSearchInput');
             if (searchInput) {
-                console.log('🔍 Search input found');
-
-                // Optional: Auto-submit on enter
-                searchInput.addEventListener('keypress', (e) => {
+                searchInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        document.querySelector('form').submit();
+                        const form = searchInput.closest('form');
+                        if (form) form.submit();
                     }
                 });
-            } else {
-                console.warn('⚠️ Search input not found');
             }
 
-            // Count and log connect buttons found
+            // Log connect buttons for debugging
             setTimeout(() => {
                 const buttons = document.querySelectorAll('.connect-btn');
-                console.log(`📊 Found ${buttons.length} connect buttons on page`);
-                buttons.forEach((btn, i) => {
-                    const patientId = btn.getAttribute('data-patient-id');
-                    const isDisabled = btn.disabled;
-                    console.log(`   Button ${i + 1}: patientId=${patientId}, disabled=${isDisabled}, classes=${btn.className}`);
+                console.log(`Found ${buttons.length} connect buttons on page load`);
+                buttons.forEach((btn, index) => {
+                    console.log(`Button ${index}:`, {
+                        patientId: btn.getAttribute('data-patient-id'),
+                        disabled: btn.disabled,
+                        text: btn.textContent,
+                        classes: btn.className
+                    });
                 });
+
+                // Test if buttons are clickable
+                if (buttons.length > 0) {
+                    console.log('✅ Connect buttons found - script should work');
+                } else {
+                    console.log('❌ No connect buttons found - check HTML generation');
+                }
             }, 500);
+
         });
+
     </script>
 </body>
 
