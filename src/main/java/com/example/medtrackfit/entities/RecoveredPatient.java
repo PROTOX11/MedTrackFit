@@ -122,11 +122,11 @@ public class RecoveredPatient implements UserDetails {
         return this.password;
     }
 
-    public void setPassword(String encode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setRoleList(List<String> asList) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setRoleList(List<String> roleList) {
+        this.roleList = roleList;
     }
 }

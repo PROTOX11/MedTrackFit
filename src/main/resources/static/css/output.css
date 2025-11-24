@@ -1272,10 +1272,6 @@ input:checked + .toggle-bg {
   z-index: 50;
 }
 
-.z-\[10000\] {
-  z-index: 10000;
-}
-
 .col-span-12 {
   grid-column: span 12 / span 12;
 }
@@ -4331,14 +4327,6 @@ input:checked + .toggle-bg {
     margin-top: 0.5rem;
   }
 
-  .sm\:mb-3 {
-    margin-bottom: 0.75rem;
-  }
-
-  .sm\:block {
-    display: block;
-  }
-
   .sm\:inline {
     display: inline;
   }
@@ -4353,10 +4341,6 @@ input:checked + .toggle-bg {
 
   .sm\:h-16 {
     height: 4rem;
-  }
-
-  .sm\:h-24 {
-    height: 6rem;
   }
 
   .sm\:h-32 {
@@ -4383,10 +4367,6 @@ input:checked + .toggle-bg {
     width: 5rem;
   }
 
-  .sm\:w-24 {
-    width: 6rem;
-  }
-
   .sm\:w-3\/5 {
     width: 60%;
   }
@@ -4409,14 +4389,6 @@ input:checked + .toggle-bg {
 
   .sm\:w-80 {
     width: 20rem;
-  }
-
-  .sm\:w-auto {
-    width: auto;
-  }
-
-  .sm\:max-w-4xl {
-    max-width: 56rem;
   }
 
   .sm\:max-w-sm {
@@ -4508,10 +4480,6 @@ input:checked + .toggle-bg {
     padding: 2rem;
   }
 
-  .sm\:p-5 {
-    padding: 1.25rem;
-  }
-
   .sm\:px-3 {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -4522,11 +4490,6 @@ input:checked + .toggle-bg {
     padding-right: 1rem;
   }
 
-  .sm\:px-5 {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-
   .sm\:py-1 {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
@@ -4535,11 +4498,6 @@ input:checked + .toggle-bg {
   .sm\:py-3 {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
-  }
-
-  .sm\:py-16 {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
   }
 
   .sm\:pl-0 {
@@ -4560,10 +4518,6 @@ input:checked + .toggle-bg {
 
   .sm\:text-center {
     text-align: center;
-  }
-
-  .sm\:text-right {
-    text-align: right;
   }
 
   .sm\:text-2xl {
@@ -4594,11 +4548,6 @@ input:checked + .toggle-bg {
   .sm\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .sm\:text-5xl {
-    font-size: 3rem;
-    line-height: 1;
   }
 }
 

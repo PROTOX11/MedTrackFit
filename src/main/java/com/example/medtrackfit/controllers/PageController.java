@@ -151,12 +151,22 @@ public class PageController {
                 // Store authentication in session to persist across redirects
                 session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-                // Forward to role-specific dashboard instead of redirect to maintain authentication context
-                String rolePath = userForm.getRole().toLowerCase();
+                // Redirect to role-specific dashboard (Post/Redirect/Get) so dashboard receives a GET
+                String rolePath = userForm.getRole() == null ? "user" : userForm.getRole().toLowerCase().replaceAll("\\s+", "");
+                // Normalize known role names to controller path prefixes
                 if ("healthmentor".equals(rolePath)) {
                     rolePath = "mentor";
+                } else if ("sufferingpatient".equals(rolePath) || "suffering_patient".equals(rolePath)) {
+                    rolePath = "suff-pat"; // controller mapping uses /suff-pat
+                } else if ("recoveredpatient".equals(rolePath) || "recovered_patient".equals(rolePath)) {
+                    rolePath = "recoveredpatient";
+                } else if ("doctor".equals(rolePath)) {
+                    rolePath = "doctor";
+                } else {
+                    rolePath = "user";
                 }
-                return "forward:/" + rolePath + "/dashboard";
+
+                return "redirect:/" + rolePath + "/dashboard";
             } catch (Exception authException) {
                 System.out.println("Auto-login failed: " + authException.getMessage());
                 authException.printStackTrace(); // Add stack trace for debugging

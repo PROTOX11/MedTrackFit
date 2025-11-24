@@ -128,6 +128,14 @@ public class SufferingPatient implements UserDetails {
         return this.password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoleList(List<String> roleList) {
+        this.roleList = roleList;
+    }
+
     // Additional getters and setters for missing methods
     public void setName(String name) {
         this.name = name;
