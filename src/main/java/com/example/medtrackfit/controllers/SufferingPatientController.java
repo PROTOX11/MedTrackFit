@@ -299,39 +299,195 @@ public class SufferingPatientController {
     }
 
     @GetMapping("/connect_recovered")
-    public String connectRecovered(Model model) {
-        // Temporarily commented out due to RecoveredPatientService import issue
-        // List<RecoveredPatient> recoveredPatients = recoveredPatientService.getAllRecoveredPatients();
-        // model.addAttribute("recoveredPatients", recoveredPatients);
+    public String connectRecovered(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient != null) {
+                model.addAttribute("loggedInUser", patient);
+            }
+        }
         return "suff-pat/connect_recovered";
     }
 
     @GetMapping("/connect_recovered_patient/request/{patientId}")
-    public String requestConnectRecoveredPatient(@PathVariable String patientId, Model model, Authentication authentication) {
-        // Minimal implementation: in a full app we would create a connection request record and notify the recovered patient.
-        // For now, redirect back to the connect page with a success flag.
-        return "redirect:/suff-pat/connect_recovered?requested=" + patientId;
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> requestConnectRecoveredPatient(@PathVariable String patientId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            if (!patient.getConnectedFriends().contains(patientId)) {
+                patient.getConnectedFriends().add(patientId);
+                sufferingPatientRepository.save(patient);
+            }
+            response.put("success", true);
+            response.put("message", "Connected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/disconnect_recovered/{patientId}")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> disconnectRecovered(@PathVariable String patientId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            patient.getConnectedFriends().remove(patientId);
+            sufferingPatientRepository.save(patient);
+            response.put("success", true);
+            response.put("message", "Disconnected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
     }
 
     @GetMapping("/connect_doctor")
-    public String connectDoctor(Model model) {
+    public String connectDoctor(Model model, Authentication authentication) {
         List<Doctor> doctors = doctorService.getAllDoctors();
         model.addAttribute("doctors", doctors);
+        
+        if (authentication != null) {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient != null) {
+                model.addAttribute("loggedInUser", patient);
+            }
+        }
         return "suff-pat/connect_doctor";
     }
 
     @GetMapping("/connect_mentor")
-    public String connectMentor(Model model) {
+    public String connectMentor(Model model, Authentication authentication) {
         List<HealthMentor> mentors = healthMentorService.getAllHealthMentors();
         model.addAttribute("mentors", mentors);
+        
+        if (authentication != null) {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient != null) {
+                model.addAttribute("loggedInUser", patient);
+            }
+        }
         return "suff-pat/connect_mentor";
     }
 
+    @GetMapping("/connect_mentor/request/{mentorId}")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> requestConnectMentor(@PathVariable String mentorId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            if (!patient.getConnectedFriends().contains(mentorId)) {
+                patient.getConnectedFriends().add(mentorId);
+                sufferingPatientRepository.save(patient);
+            }
+            response.put("success", true);
+            response.put("message", "Connected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/disconnect_mentor/{mentorId}")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> disconnectMentor(@PathVariable String mentorId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            patient.getConnectedFriends().remove(mentorId);
+            sufferingPatientRepository.save(patient);
+            response.put("success", true);
+            response.put("message", "Disconnected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
+    }
+
     @GetMapping("/connect_doctor/request/{doctorId}")
-    public String requestConnectDoctor(@PathVariable String doctorId, Model model, Authentication authentication) {
-        // Minimal implementation: in a full app we would create a connection request record and notify the doctor.
-        // For now, redirect back to the connect page with a success flag.
-        return "redirect:/suff-pat/connect_doctor?requested=" + doctorId;
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> requestConnectDoctor(@PathVariable String doctorId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            if (!patient.getConnectedFriends().contains(doctorId)) {
+                patient.getConnectedFriends().add(doctorId);
+                sufferingPatientRepository.save(patient);
+            }
+            response.put("success", true);
+            response.put("message", "Connected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @GetMapping("/disconnect_doctor/{doctorId}")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> disconnectDoctor(@PathVariable String doctorId, Authentication authentication) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        try {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+            if (patient == null) {
+                response.put("success", false);
+                response.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(response);
+            }
+            patient.getConnectedFriends().remove(doctorId);
+            sufferingPatientRepository.save(patient);
+            response.put("success", true);
+            response.put("message", "Disconnected successfully");
+            return org.springframework.http.ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
     }
 
     @GetMapping("/edit-profile")

@@ -164,7 +164,7 @@
                             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                                 <div>
                                     <h1 class="text-2xl font-bold text-gray-800" th:text="${loggedInUser?.name}"></h1>
-                                    <p class="text-gray-600 dark:text-gray-100" th:text="${loggedInUser?.medicalCondition != null and loggedInUser?.medicalCondition != ''} ? ${loggedInUser.medicalCondition} : 'Update your Medical Condition'"></p>
+                                    <p class="text-gray-600 dark:text-gray-100" th:text="${loggedInUser?.medicalCondition != null and loggedInUser?.medicalCondition != ''} ? ${loggedInUser.medicalCondition} : ''"></p>
                                 </div>
                                 <div class="profile-menu">
                                     <form method="post" th:action="@{/suff-pat/update-profile-picture}" enctype="multipart/form-data" id="profilePictureForm">

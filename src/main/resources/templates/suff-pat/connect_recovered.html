@@ -70,7 +70,11 @@
 
             <!-- Actions -->
             <div class="flex gap-2">
-                <a th:href="@{'/suff-pat/connect_recovered_patient/request/' + ${recoveredPatient.patientId}}" class="flex-1 text-center px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors">Connect</a>
+                <button th:data-patient-id="${recoveredPatient.patientId}" 
+                        th:class="${#lists.contains(loggedInUser?.connectedFriends, recoveredPatient.patientId) ? 'connected-btn' : 'connect-btn'}"
+                        th:text="${#lists.contains(loggedInUser?.connectedFriends, recoveredPatient.patientId) ? 'Connected' : 'Connect'}"
+                        class="flex-1 text-center px-4 py-2 text-sm rounded-md text-white">
+                </button>
                 <a th:href="@{'/recovered_patient/profile?recoveredPatientId=' + ${recoveredPatient.patientId}}" class="flex-1 text-center px-4 py-2 bg-gray-200 text-gray-800 text-sm rounded-md hover:bg-gray-300 transition-colors">View Profile</a>
             </div>
         </div>
@@ -78,15 +82,6 @@
 
     <div th:if="${#lists.isEmpty(recoveredPatients)}" class="p-6 bg-yellow-50 rounded-lg">
         <p class="text-gray-700">No recovered patients available at the moment. Please check back later.</p>
-    </div>
-
-    <!-- success toast when requested param present -->
-    <div th:if="${param.requested}" id="connect-toast" class="fixed bottom-6 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg flex items-center space-x-3">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <div>
-            <div class="font-semibold">Request sent</div>
-            <div class="text-sm">Your connection request was sent to the recovered patient.</div>
-        </div>
     </div>
 
     <script>
@@ -127,9 +122,51 @@
             if(searchInput) searchInput.addEventListener('input', debouncedFilterCards);
             if(areaFilter) areaFilter.addEventListener('change', filterCards);
 
-            // auto-hide toast after 4s
-            const toast = document.getElementById('connect-toast');
-            if(toast){ setTimeout(()=>{ toast.style.display='none'; }, 4000); }
+            // Handle connect/disconnect button clicks
+            document.querySelectorAll('.connect-btn, .connected-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const patientId = this.getAttribute('data-patient-id');
+                    const isConnected = this.classList.contains('connected-btn');
+                    const endpoint = isConnected ? `/suff-pat/disconnect_recovered/${patientId}` : `/suff-pat/connect_recovered_patient/request/${patientId}`;
+                    
+                    fetch(endpoint)
+                        .then(response => {
+                            if (response.ok) {
+                                if (isConnected) {
+                                    // Disconnect
+                                    this.classList.remove('connected-btn');
+                                    this.classList.add('connect-btn');
+                                    this.textContent = 'Connect';
+                                } else {
+                                    // Connect
+                                    this.classList.remove('connect-btn');
+                                    this.classList.add('connected-btn');
+                                    this.textContent = 'Connected';
+                                }
+                            }
+                        });
+                });
+            });
+        })();
+    </script>
+
+    <style>
+        .connect-btn {
+            background-color: #3b82f6;
+            cursor: pointer;
+        }
+        .connect-btn:hover {
+            background-color: #2563eb;
+        }
+        .connected-btn {
+            background-color: #16a34a;
+            cursor: pointer;
+        }
+        .connected-btn:hover {
+            background-color: #16a34a;
+        }
+    </style>
         })();
     </script>
 </section>

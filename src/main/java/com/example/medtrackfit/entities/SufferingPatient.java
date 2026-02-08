@@ -28,6 +28,10 @@ public class SufferingPatient implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> connectedFriends = new ArrayList<>();
+
     @Getter(AccessLevel.NONE)
     private String password;
 
@@ -171,5 +175,9 @@ public class SufferingPatient implements UserDetails {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public int getConnectedFriendsCount() {
+        return connectedFriends != null ? connectedFriends.size() : 0;
     }
 }
