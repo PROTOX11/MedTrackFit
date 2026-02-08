@@ -9,51 +9,65 @@
   </head>
 
   <body>
-    <section class="container mx-auto px-4 py-6">
+    <section
+      class="container mx-auto px-4 py-8 bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen"
+    >
       <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6"
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8"
       >
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">
-            Find and connect with Mentors
-          </h1>
-          <p class="text-sm text-gray-600 mt-1">
-            Search, filter and request a connection with a health mentor.
-          </p>
-        </div>
-
-        <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-          <input
-            id="mentor-search"
-            type="search"
-            placeholder="Search by name or expertise"
-            class="px-3 py-2 border rounded-lg w-60 sm:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          <select
-            id="expertise-filter"
-            class="px-3 py-2 border rounded-lg bg-white"
-          >
-            <option value="">All Expertise Areas</option>
-            <option
-              th:each="m : ${mentors}"
-              th:value="${m.areaOfExpertise}"
-              th:text="${m.areaOfExpertise}"
-            ></option>
-          </select>
+        <div
+          class="w-full flex flex-col sm:flex-row items-center gap-4 bg-white dark:bg-gray-900 rounded-2xl shadow p-4"
+        >
+          <div class="relative w-full sm:w-auto flex-1">
+            <svg
+              class="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 text-blue-400 drop-shadow-md"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <input
+              id="mentor-search"
+              type="search"
+              placeholder="      Search by name or expertise"
+              class="pl-12 pr-4 py-3 w-full border-2 border-blue-100 dark:border-blue-700 rounded-xl bg-white dark:bg-gray-800 focus:outline-none focus:border-blue-500 transition text-gray-700 dark:text-gray-300 text-base shadow-sm"
+            />
+          </div>
+          <div class="w-full sm:w-auto flex-1">
+            <select
+              id="expertise-filter"
+              class="pl-4 pr-8 py-3 w-full border-2 border-blue-100 dark:border-blue-700 rounded-xl bg-white dark:bg-gray-800 focus:outline-none focus:border-blue-500 transition text-gray-700 dark:text-gray-300 text-base shadow-sm cursor-pointer"
+            >
+              <option value="">All Expertise Areas</option>
+              <option
+                th:each="m : ${mentors}"
+                th:value="${m.areaOfExpertise}"
+                th:text="${m.areaOfExpertise}"
+              ></option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div th:if="${not #lists.isEmpty(mentors)}" class="space-y-4">
+      <div
+        th:if="${not #lists.isEmpty(mentors)}"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-center"
+      >
         <div
           th:each="mentor : ${mentors}"
-          class="mentor-card w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition"
+          class="mentor-card w-full max-w-[320px] min-w-[220px] h-[340px] p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[2.5rem] shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-200 mx-auto flex flex-col"
         >
-          <div class="flex flex-col sm:flex-row sm:items-center w-full gap-4">
+          <div class="flex flex-col items-center gap-3 flex-1">
             <!-- Profile / avatar -->
-            <div class="flex items-center sm:items-start w-full sm:w-1/6">
+            <div class="flex items-center justify-center w-full">
               <div
-                class="w-24 h-24 rounded-md overflow-hidden flex items-center justify-center text-3xl text-gray-700 dark:text-gray-200 border-2 border-blue-100 dark:border-blue-900"
+                class="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-3xl text-gray-700 dark:text-gray-200 border-2 border-blue-100 dark:border-blue-900 bg-gradient-to-br from-blue-200 to-blue-50 dark:from-blue-900 dark:to-blue-800 shadow"
               >
                 <img
                   th:if="${mentor.profilePicture != null}"
@@ -69,130 +83,99 @@
             </div>
 
             <!-- Main details -->
-            <div class="flex-1 w-full sm:w-3/5">
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3
-                    class="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3"
+            <div class="flex-1 w-full text-center">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                <span th:text="${mentor.name}">Mentor Name</span>
+              </h3>
+              <span
+                class="text-xs text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded-full inline-block mt-1"
+                th:if="${mentor.areaOfExpertise}"
+                th:text="${mentor.areaOfExpertise}"
+              ></span>
+
+              <!-- rating -->
+              <div class="mt-2 flex items-center justify-center gap-2">
+                <div class="flex items-center text-yellow-400">
+                  <span
+                    th:each="i : ${#numbers.sequence(1,5)}"
+                    class="mr-0.5"
+                    th:classappend="${(mentor.mentorPerformance != null and mentor.mentorPerformance.mentorshipRating >= i) ? 'text-yellow-400' : 'text-gray-300'}"
+                    >&#9733;</span
                   >
-                    <span th:text="${mentor.name}">Mentor Name</span>
-                    <span
-                      class="text-xs text-gray-500 font-medium"
-                      th:if="${mentor.areaOfExpertise}"
-                      th:text="${mentor.areaOfExpertise}"
-                    ></span>
-                  </h3>
-
-                  <!-- rating -->
-                  <div class="mt-2 flex items-center gap-2">
-                    <div class="flex items-center text-yellow-400">
-                      <span
-                        th:each="i : ${#numbers.sequence(1,5)}"
-                        class="mr-0.5"
-                        th:classappend="${(mentor.mentorPerformance != null and mentor.mentorPerformance.mentorshipRating >= i) ? 'text-yellow-400' : 'text-gray-300'}"
-                        >&#9733;</span
-                      >
-                    </div>
-                    <div
-                      class="text-sm text-gray-600"
-                      th:text="${mentor.mentorPerformance != null ? mentor.mentorPerformance.mentorshipRating : 0}"
-                    >
-                      0.0
-                    </div>
-                    <div
-                      class="text-xs text-gray-400 ml-2"
-                      th:if="${mentor.mentorPerformance != null}"
-                    >
-                      (<span th:text="${mentor.mentorPerformance.menteesHelped}"
-                        >0</span
-                      >
-                      mentees)
-                    </div>
-                  </div>
-
-                  <p
-                    class="mt-3 text-sm text-gray-700 dark:text-gray-300"
-                    th:if="${mentor.about != null}"
-                    th:text="${#strings.abbreviate(mentor.about, 350)}"
-                  ></p>
-
-                  <div class="mt-3 flex flex-wrap gap-2">
-                    <span
-                      class="inline-block text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded"
-                      th:if="${mentor.certifications}"
-                      th:text="${mentor.certifications}"
-                    ></span>
-                    <span
-                      class="inline-block text-xs px-2 py-1 bg-green-100 text-green-800 rounded"
-                      th:if="${mentor.mentorshipExperience != null}"
-                      >Exp:
-                      <span th:text="${mentor.mentorshipExperience}">0</span>
-                      yrs</span
-                    >
-                  </div>
+                </div>
+                <div
+                  class="text-sm text-gray-600"
+                  th:text="${mentor.mentorPerformance != null ? mentor.mentorPerformance.mentorshipRating : 0}"
+                >
+                  0.0
                 </div>
               </div>
+
+              <p
+                class="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2"
+                th:if="${mentor.about != null}"
+                th:text="${#strings.abbreviate(mentor.about, 100)}"
+              ></p>
             </div>
 
             <!-- Actions / contact -->
-            <div
-              class="w-full sm:w-1/6 flex flex-col sm:items-end justify-between"
-            >
-              <div class="flex flex-col sm:items-end gap-2">
-                <div class="flex gap-2">
-                  <button
-                    th:data-mentor-id="${mentor.mentorId}"
-                    th:class="${#lists.contains(loggedInUser?.connectedFriends, mentor.mentorId) ? 'connected-btn' : 'connect-btn'}"
-                    th:text="${#lists.contains(loggedInUser?.connectedFriends, mentor.mentorId) ? 'Connected' : 'Connect'}"
-                    class="inline-block px-4 py-2 rounded-md text-white"
-                  ></button>
+            <div class="w-full mt-auto flex flex-col items-center gap-2">
+              <!-- Contact info -->
+              <div
+                class="text-sm text-gray-600 dark:text-gray-300 flex flex-col gap-1 items-center"
+              >
+                <div
+                  th:if="${mentor.phoneNumber != null}"
+                  class="flex items-center gap-2"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 0 1 2-2h3.28a2 2 0 0 1 1.91 1.37l.7 2.1a2 2 0 0 1-.45 2.09L8.7 11.7a11.05 11.05 0 0 0 5.6 5.6l2.1-1.74a2 2 0 0 1 2.09-.45l2.1.7A2 2 0 0 1 21 17.72V21a2 2 0 0 1-2 2H19c-9.39 0-17-7.61-17-17V5z"
+                    ></path>
+                  </svg>
+                  <span th:text="${mentor.phoneNumber}"></span>
                 </div>
-
-                <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                  <div
-                    th:if="${mentor.phoneNumber != null}"
-                    class="flex items-center gap-2"
+                <div
+                  th:if="${mentor.email != null}"
+                  class="flex items-center gap-2"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 5a2 2 0 0 1 2-2h3.28a2 2 0 0 1 1.91 1.37l.7 2.1a2 2 0 0 1-.45 2.09L8.7 11.7a11.05 11.05 0 0 0 5.6 5.6l2.1-1.74a2 2 0 0 1 2.09-.45l2.1.7A2 2 0 0 1 21 17.72V21a2 2 0 0 1-2 2H19c-9.39 0-17-7.61-17-17V5z"
-                      ></path></svg
-                    ><span th:text="${mentor.phoneNumber}"></span>
-                  </div>
-                  <div
-                    th:if="${mentor.email != null}"
-                    class="flex items-center gap-2 mt-1"
-                  >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8"
-                      ></path>
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"
-                      ></path></svg
-                    ><span th:text="${mentor.email}"></span>
-                  </div>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"
+                    ></path>
+                  </svg>
+                  <span th:text="${mentor.email}"></span>
                 </div>
               </div>
+
+              <!-- Connect Button -->
+              <button
+                th:data-mentor-id="${mentor.mentorId}"
+                th:class="${#lists.contains(loggedInUser?.connectedFriends, mentor.mentorId) ? 'connected-btn ultra-btn' : 'connect-btn ultra-btn'}"
+                th:text="${#lists.contains(loggedInUser?.connectedFriends, mentor.mentorId) ? 'Connected' : 'Connect'}"
+              ></button>
             </div>
           </div>
         </div>
@@ -226,6 +209,12 @@
             d="M5 13l4 4L19 7"
           />
         </svg>
+        <div>
+          <div class="font-semibold">Request sent</div>
+          <div class="text-sm">
+            Your connection request was sent to the mentor.
+          </div>
+        </div>
       </div>
 
       <script>
@@ -243,7 +232,7 @@
             document.querySelectorAll(".mentor-card").forEach((card) => {
               const h3 = card.querySelector("h3");
               const nameSpan = h3?.querySelector("span:first-child");
-              const expSpan = h3?.querySelector("span.text-xs.text-gray-500");
+              const expSpan = h3?.querySelector("span.text-xs.text-blue-600");
               const aboutP = card.querySelector("p");
               const name = normalize(nameSpan?.textContent || "");
               const expertise = normalize(expSpan?.textContent || "");
@@ -290,65 +279,60 @@
                 });
               });
             });
+
+          // auto-hide toast after 4s (if it exists)
+          const toast = document.getElementById("connect-toast");
+          if (toast) {
+            setTimeout(() => {
+              toast.style.display = "none";
+            }, 4000);
+          }
         })();
       </script>
 
       <style>
-        /* Shared pill button */
-        .pill-btn {
+        .ultra-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-
-          min-width: 140px; /* ⬅ smaller width */
-          height: 42px; /* ⬅ slim height */
-          padding: 0 20px;
-
-          border-radius: 9999px; /* ⬅ ultra smooth */
-          border: none;
-
+          min-width: 150px;
+          height: 46px;
+          padding: 0 22px;
+          border-radius: 9999px;
+          border: 2px solid rgba(255, 255, 255, 0.6);
+          cursor: pointer;
+          outline: none;
+          font-weight: 700;
           font-size: 14px;
-          font-weight: 600;
-          letter-spacing: 0.3px;
-          color: #fff;
-
-          cursor: pointer;
+          letter-spacing: 0.4px;
+          text-transform: uppercase;
+          color: white;
           transition: all 0.25s ease;
-        }
-
-        /* Connect */
-        .connect-btn {
-          background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-
-        .connect-btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
-        }
-
-        /* Connected */
-        .connected-btn {
-          background: linear-gradient(135deg, #16a34a, #15803d);
-        }
-
-        .connected-btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(22, 163, 74, 0.4);
+          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
         }
 
         .connect-btn {
-          background-color: #3b82f6;
-          cursor: pointer;
-        }
-        .connect-btn:hover {
           background-color: #2563eb;
         }
+        .connect-btn:hover {
+          background-color: #1d4ed8;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+        }
         .connected-btn {
           background-color: #16a34a;
-          cursor: pointer;
         }
         .connected-btn:hover {
-          background-color: #16a34a;
+          background-color: #15803d;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 24px rgba(22, 163, 74, 0.3);
+        }
+
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       </style>
     </section>

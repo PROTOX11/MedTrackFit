@@ -59,6 +59,10 @@ public class SufferingPatientController {
     @Autowired
     private com.example.medtrackfit.repositories.SufferingPatientRepository sufferingPatientRepository;
 
+    @Autowired
+    private com.example.medtrackfit.services.RecoveredPatientService recoveredPatientService;
+
+
     @ModelAttribute
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -300,6 +304,10 @@ public class SufferingPatientController {
 
     @GetMapping("/connect_recovered")
     public String connectRecovered(Model model, Authentication authentication) {
+        // Fetch all recovered patients
+        List<RecoveredPatient> recoveredPatients = recoveredPatientService.getAllRecoveredPatients();
+        model.addAttribute("recoveredPatients", recoveredPatients);
+        
         if (authentication != null) {
             String email = Helper.getEmailOfLoggedInUser(authentication);
             SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
@@ -309,6 +317,8 @@ public class SufferingPatientController {
         }
         return "suff-pat/connect_recovered";
     }
+
+
 
     @GetMapping("/connect_recovered_patient/request/{patientId}")
     @ResponseBody
