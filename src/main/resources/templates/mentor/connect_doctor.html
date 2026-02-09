@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connect Doctor - Mentor - MedTrackFit</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav th:replace="user/user_navbar.html :: user-navbar"></nav>
+    <div th:replace="user/user_navbar.html :: theme-script"></div>
+
+    <div class="flex min-h-screen">
+      <!-- MOBILE SIDEBAR TOGGLE BUTTON -->
+      <button
+        id="sidebar-open-toggle"
+        class="sm:hidden p-2 fixed top-4 left-4 z-50 bg-white border rounded-lg shadow text-gray-700 hover:bg-gray-100"
+      >
+        <svg
+          class="w-7 h-7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
+      </button>
+      <div
+        id="sidebar-backdrop"
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden sm:hidden transition-opacity duration-300"
+        style="z-index: 9998"
+      ></div>
+      <!-- END MOBILE TOGGLE -->
+
+      <!-- COMMON MENTOR SIDEBAR -->
+      <div th:replace="mentor/mentor_sidebar :: mentor-sidebar"></div>
+
+      <!-- Main Content -->
+      <div class="flex-1 p-4 sm:p-8 sm:ml-64">
+        <!-- Header -->
+        <div class="mt-16 mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Connect with Doctors
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400">
+            Connect with qualified healthcare professionals
+          </p>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1 relative">
+              <svg
+                class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+              <input
+                type="text"
+                id="doctor-search"
+                placeholder="Search by name or specialization..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <select
+              id="specialization-filter"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100 sm:w-48"
+            >
+              <option value="">All Specializations</option>
+              <option
+                th:each="doctor : ${doctors}"
+                th:value="${doctor.specialization}"
+                th:text="${doctor.specialization}"
+                th:if="${doctor.specialization != null}"
+              ></option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Doctor Cards Grid -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          th:if="${doctors != null and !#lists.isEmpty(doctors)}"
+        >
+          <div
+            th:each="doctor : ${doctors}"
+            class="doctor-card bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col"
+          >
+            <!-- Card Header with Avatar -->
+            <div class="relative p-6 pb-0">
+              <div class="flex flex-col items-center">
+                <div
+                  class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100 dark:border-blue-900 shadow-lg mb-4 bg-gradient-to-br from-blue-200 to-blue-50 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center"
+                >
+                  <img
+                    th:if="${doctor.profilePicture != null}"
+                    th:src="${doctor.profilePicture}"
+                    alt="Doctor Profile"
+                    class="w-full h-full object-cover"
+                  />
+                  <span
+                    th:if="${doctor.profilePicture == null}"
+                    th:text="${doctor.name != null ? doctor.name.substring(0,1) : 'D'}"
+                    class="text-3xl font-bold text-gray-700 dark:text-gray-200"
+                  ></span>
+                </div>
+                <h3
+                  class="text-lg font-bold text-gray-900 dark:text-gray-100 text-center"
+                  th:text="${doctor.name}"
+                >
+                  Doctor Name
+                </h3>
+                <span
+                  th:if="${doctor.specialization}"
+                  th:text="${doctor.specialization}"
+                  class="mt-1 text-xs text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded-full"
+                ></span>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-6 flex-1 flex flex-col">
+              <!-- Rating -->
+              <div class="flex items-center justify-center gap-2 mb-3">
+                <div class="flex text-yellow-400 text-sm">
+                  <span
+                    th:each="i : ${#numbers.sequence(1,5)}"
+                    th:class="${doctor.doctorPerformance != null and doctor.doctorPerformance.rating >= i} ? 'text-yellow-400' : 'text-gray-300'"
+                    >★</span
+                  >
+                </div>
+                <span
+                  class="text-sm text-gray-600 dark:text-gray-400"
+                  th:text="${doctor.doctorPerformance != null ? doctor.doctorPerformance.rating : '0.0'}"
+                  >0.0</span
+                >
+                <span
+                  class="text-xs text-gray-400"
+                  th:if="${doctor.doctorPerformance != null}"
+                >
+                  (<span th:text="${doctor.doctorPerformance.patientsHelped}"
+                    >0</span
+                  >
+                  patients)
+                </span>
+              </div>
+
+              <!-- About -->
+              <p
+                class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4 line-clamp-3"
+                th:text="${doctor.about != null ? #strings.abbreviate(doctor.about, 150) : 'Qualified healthcare professional.'}"
+              ></p>
+
+              <!-- Qualifications -->
+              <div class="flex flex-wrap justify-center gap-2 mb-4">
+                <span
+                  th:if="${doctor.qualification}"
+                  th:text="${doctor.qualification}"
+                  class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded"
+                ></span>
+                <span
+                  th:if="${doctor.yearsOfExperience != null}"
+                  class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded"
+                >
+                  Exp: <span th:text="${doctor.yearsOfExperience}">0</span> yrs
+                </span>
+              </div>
+
+              <!-- Contact Info -->
+              <div class="space-y-2 mb-4 text-sm">
+                <div
+                  class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                  th:if="${doctor.phoneNumber != null}"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a2 2 0 011.91 1.37l.7 2.1a2 2 0 01-.45 2.09L8.7 11.7a11.05 11.05 0 005.6 5.6l2.1-1.74a2 2 0 012.09-.45l2.1.7A2 2 0 0121 17.72V21a2 2 0 01-2 2H19c-9.39 0-17-7.61-17-17V5z"
+                    ></path>
+                  </svg>
+                  <span th:text="${doctor.phoneNumber}">Phone</span>
+                </div>
+                <div
+                  class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                  th:if="${doctor.email != null}"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  <span th:text="${doctor.email}">Email</span>
+                </div>
+              </div>
+
+              <!-- Connect Button -->
+              <div class="mt-auto flex justify-center">
+                <form
+                  th:if="${!#lists.contains(connectedDoctorIds, doctor.doctorId)}"
+                  th:action="@{/mentor/connect_doctor/{doctorId}(doctorId=${doctor.doctorId})}"
+                  method="post"
+                  class="w-full"
+                >
+                  <button
+                    type="submit"
+                    class="ultra-btn connect-btn w-full py-3 px-6 rounded-full text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      ></path>
+                    </svg>
+                    Connect
+                  </button>
+                </form>
+                <form
+                  th:if="${#lists.contains(connectedDoctorIds, doctor.doctorId)}"
+                  th:action="@{/mentor/disconnect_doctor/{doctorId}(doctorId=${doctor.doctorId})}"
+                  method="post"
+                  class="w-full"
+                >
+                  <button
+                    type="submit"
+                    class="ultra-btn connected-btn w-full py-3 px-6 rounded-full text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Connected
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- No doctors message -->
+        <div
+          th:if="${doctors == null or #lists.isEmpty(doctors)}"
+          class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+        >
+          <svg
+            class="w-16 h-16 text-gray-300 mx-auto mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+          <p class="text-gray-600 dark:text-gray-400 text-lg">
+            No doctors available at the moment.
+          </p>
+          <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">
+            Please check back later.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .ultra-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      .ultra-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+      .ultra-btn:hover::before {
+        left: 100%;
+      }
+      .connect-btn {
+        background: linear-gradient(
+          135deg,
+          #3b82f6 0%,
+          #2563eb 50%,
+          #1d4ed8 100%
+        );
+      }
+      .connect-btn:hover {
+        background: linear-gradient(
+          135deg,
+          #2563eb 0%,
+          #1d4ed8 50%,
+          #1e40af 100%
+        );
+        transform: translateY(-2px);
+      }
+      .connected-btn {
+        background: linear-gradient(
+          135deg,
+          #10b981 0%,
+          #059669 50%,
+          #047857 100%
+        );
+      }
+      .connected-btn:hover {
+        background: linear-gradient(
+          135deg,
+          #059669 0%,
+          #047857 50%,
+          #065f46 100%
+        );
+        transform: translateY(-2px);
+      }
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    </style>
+
+    <script>
+      // Sidebar toggle logic
+      const sidebar = document.getElementById("logo-sidebar");
+      const sidebarOpenBtn = document.getElementById("sidebar-open-toggle");
+      const sidebarCloseBtn = document.getElementById("sidebar-close-toggle");
+      const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+
+      function openSidebar() {
+        sidebar.classList.remove("-translate-x-full");
+        if (sidebarBackdrop) sidebarBackdrop.classList.remove("hidden");
+        if (sidebarOpenBtn) sidebarOpenBtn.style.display = "none";
+      }
+      function closeSidebar() {
+        sidebar.classList.add("-translate-x-full");
+        if (sidebarBackdrop) sidebarBackdrop.classList.add("hidden");
+        if (sidebarOpenBtn) sidebarOpenBtn.style.display = "block";
+      }
+      if (sidebarOpenBtn) sidebarOpenBtn.addEventListener("click", openSidebar);
+      if (sidebarCloseBtn)
+        sidebarCloseBtn.addEventListener("click", closeSidebar);
+      if (sidebarBackdrop)
+        sidebarBackdrop.addEventListener("click", closeSidebar);
+
+      // Hide sidebar initially on mobile
+      if (window.innerWidth < 640 && sidebar) {
+        sidebar.classList.add("-translate-x-full");
+      }
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 640) {
+          sidebar.classList.remove("-translate-x-full");
+          if (sidebarBackdrop) sidebarBackdrop.classList.add("hidden");
+        } else {
+          sidebar.classList.add("-translate-x-full");
+        }
+      });
+
+      // Search and filter functionality
+      (function () {
+        const searchInput = document.getElementById("doctor-search");
+        const specFilter = document.getElementById("specialization-filter");
+
+        function normalize(s) {
+          return (s || "").toString().toLowerCase();
+        }
+
+        function filterCards() {
+          const q = normalize(searchInput.value);
+          const spec = normalize(specFilter.value);
+
+          document.querySelectorAll(".doctor-card").forEach((card) => {
+            const name = normalize(card.querySelector("h3")?.textContent || "");
+            const about = normalize(
+              card.querySelector(".line-clamp-3")?.textContent || "",
+            );
+            const specialization = normalize(
+              card.querySelector(".text-blue-600")?.textContent || "",
+            );
+
+            const matchesQuery =
+              !q ||
+              name.includes(q) ||
+              about.includes(q) ||
+              specialization.includes(q);
+            const matchesSpec = !spec || specialization.includes(spec);
+
+            card.style.display = matchesQuery && matchesSpec ? "" : "none";
+          });
+        }
+
+        if (searchInput) searchInput.addEventListener("input", filterCards);
+        if (specFilter) specFilter.addEventListener("change", filterCards);
+      })();
+    </script>
+  </body>
+</html>

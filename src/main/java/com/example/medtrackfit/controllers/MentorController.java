@@ -6,7 +6,14 @@ import com.example.medtrackfit.entities.Connections;
 import com.example.medtrackfit.entities.SufferingPatient;
 import com.example.medtrackfit.entities.MentorConnectedSufferingPatient;
 import com.example.medtrackfit.repositories.MentorConnectedSufferingPatientRepository;
+import com.example.medtrackfit.repositories.MentorDoctorConnectionRepository;
+import com.example.medtrackfit.entities.MentorDoctorConnection;
+import com.example.medtrackfit.entities.Doctor;
+import com.example.medtrackfit.services.DoctorService;
 import com.example.medtrackfit.services.HealthMentorService;
+import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+
 import com.example.medtrackfit.services.NutritionService;
 import com.example.medtrackfit.services.UniversalUserService;
 import com.example.medtrackfit.services.AllBlogPostService;
@@ -56,7 +63,15 @@ public class MentorController {
     @Autowired
     private MentorConnectedSufferingPatientRepository mentorConnectedRepo;
 
+    @Autowired
+    private MentorDoctorConnectionRepository mentorDoctorConnectionRepo;
+
+    @Autowired
+    private DoctorService doctorService;
+
     @ModelAttribute
+
+
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
             String username = Helper.getEmailOfLoggedInUser(authentication);
@@ -432,6 +447,60 @@ public class MentorController {
 
         return "mentor/settings";
     }
+
+    @GetMapping("/connect_doctor")
+    public String connectDoctor(Model model, Authentication authentication) {
+        List<Doctor> doctors = doctorService.getAllDoctors();
+        
+        // Get current mentor ID
+        String mentorId = null;
+        if (authentication != null) {
+            String email = Helper.getEmailOfLoggedInUser(authentication);
+            HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(email);
+            if (mentor != null) {
+                mentorId = mentor.getMentorId();
+            }
+        }
+        
+        // Get connected doctor IDs
+        List<String> connectedDoctorIds = mentorDoctorConnectionRepo.findByMentorId(mentorId)
+                .stream()
+                .map(MentorDoctorConnection::getDoctorId)
+                .collect(Collectors.toList());
+        
+        model.addAttribute("doctors", doctors);
+        model.addAttribute("connectedDoctorIds", connectedDoctorIds);
+        return "mentor/connect_doctor";
+    }
+
+    @PostMapping("/connect_doctor/{doctorId}")
+    public String connectDoctor(@PathVariable String doctorId, Authentication authentication) {
+        String email = Helper.getEmailOfLoggedInUser(authentication);
+        HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(email);
+        
+        if (!mentorDoctorConnectionRepo.existsByMentorIdAndDoctorId(mentor.getMentorId(), doctorId)) {
+            MentorDoctorConnection connection = MentorDoctorConnection.builder()
+                    .mentorId(mentor.getMentorId())
+                    .doctorId(doctorId)
+                    .connectedAt(LocalDateTime.now())
+                    .status("ACTIVE")
+                    .build();
+            mentorDoctorConnectionRepo.save(connection);
+        }
+        
+        return "redirect:/mentor/connect_doctor";
+    }
+
+    @PostMapping("/disconnect_doctor/{doctorId}")
+    public String disconnectDoctor(@PathVariable String doctorId, Authentication authentication) {
+        String email = Helper.getEmailOfLoggedInUser(authentication);
+        HealthMentor mentor = (HealthMentor) universalUserService.getUserByEmail(email);
+        
+        mentorDoctorConnectionRepo.deleteByMentorIdAndDoctorId(mentor.getMentorId(), doctorId);
+        
+        return "redirect:/mentor/connect_doctor";
+    }
+
 
     // Blog creation endpoints
     @PostMapping(value = "/blog/create", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)

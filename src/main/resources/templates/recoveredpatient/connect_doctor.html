@@ -1,84 +1,404 @@
-<!DOCTYPE html>
-<html lang="en" th:replace="~{recoveredpatient_base :: parent(~{::#content},~{::title},~{})}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html
+  lang="en"
+  th:replace="~{recoveredpatient_base :: parent(~{::#content},~{::title},~{})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Connect Doctor - MedTrackFit</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="content">
-        <!-- Header -->
-        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between px-6 py-4">
-                <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Connect Doctor</h1>
+      <!-- Header -->
+      <header
+        class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
+      >
+        <div class="flex items-center justify-between px-6 py-4">
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            Connect Doctor
+          </h1>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 overflow-y-auto p-6">
+        <div class="max-w-6xl mx-auto">
+          <div class="mb-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2"
+            >
+              Find Your Doctor
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+              Browse and connect with qualified healthcare professionals.
+            </p>
+          </div>
+
+          <!-- Search and Filter Section -->
+          <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <div class="flex-1 relative">
+                <svg
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+                <input
+                  type="text"
+                  id="doctor-search"
+                  placeholder="Search by name or specialization..."
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+                />
+              </div>
+              <select
+                id="specialization-filter"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100 sm:w-48"
+              >
+                <option value="">All Specializations</option>
+                <option
+                  th:each="doctor : ${doctors}"
+                  th:value="${doctor.specialization}"
+                  th:text="${doctor.specialization}"
+                  th:if="${doctor.specialization != null}"
+                ></option>
+              </select>
             </div>
-        </header>
+          </div>
 
-        <!-- Content -->
-        <main class="flex-1 overflow-y-auto p-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Find and Connect with Doctors</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">
-                        Connect with experienced doctors to get professional medical advice and follow-up care.
-                    </p>
-
-                    <!-- Search and Filter Section -->
-                    <div class="mb-6">
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <input type="text" placeholder="Search by name, specialty, or location..."
-                                   class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                            <select class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                                <option value="">All Specialties</option>
-                                <option value="cardiology">Cardiology</option>
-                                <option value="endocrinology">Endocrinology</option>
-                                <option value="neurology">Neurology</option>
-                                <option value="oncology">Oncology</option>
-                                <option value="psychiatry">Psychiatry</option>
-                            </select>
-                            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Search
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Doctor Cards -->
-                    <div class="space-y-4" th:if="${doctors != null}">
-                        <div th:each="doctor : ${doctors}" class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-start space-x-4">
-                                    <img th:src="${doctor.profilePicture != null ? doctor.profilePicture : '/images/profiles/default-avatar.png'}" alt="Doctor Avatar" class="w-12 h-12 rounded-full">
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900 dark:text-gray-100" th:text="${'Dr. ' + doctor.name}">Dr. John Smith</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${'Specialty: ' + (doctor.specialization != null ? doctor.specialization : 'General Medicine')}">Specialty: General Medicine</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400" th:text="${'Phone: ' + doctor.phoneNumber}">Phone: N/A</p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-2" th:text="${doctor.about}">Specialized in medical care.</p>
-                                    </div>
-                                </div>
-                                <a th:href="@{'/recoveredpatient/connect_doctor/request/' + ${doctor.doctorId}}" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                    Request Connection
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- No doctors message -->
-                    <div th:if="${doctors == null or #lists.isEmpty(doctors)}" class="text-center py-8">
-                        <p class="text-gray-600 dark:text-gray-400">No doctors available at the moment.</p>
-                    </div>
-
-                    <!-- Load More Button -->
-                    <div class="text-center mt-6">
-                        <button class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                            Load More Doctors
-                        </button>
-                    </div>
+          <!-- Doctor Cards Grid -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            th:if="${doctors != null and !#lists.isEmpty(doctors)}"
+          >
+            <div
+              th:each="doctor : ${doctors}"
+              class="doctor-card bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col"
+            >
+              <!-- Card Header with Avatar -->
+              <div class="relative p-6 pb-0">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100 dark:border-blue-900 shadow-lg mb-4 bg-gradient-to-br from-blue-200 to-blue-50 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center"
+                  >
+                    <img
+                      th:if="${doctor.profilePicture != null}"
+                      th:src="${doctor.profilePicture}"
+                      alt="Doctor Profile"
+                      class="w-full h-full object-cover"
+                    />
+                    <span
+                      th:if="${doctor.profilePicture == null}"
+                      th:text="${doctor.name != null ? doctor.name.substring(0,1) : 'D'}"
+                      class="text-3xl font-bold text-gray-700 dark:text-gray-200"
+                    ></span>
+                  </div>
+                  <h3
+                    class="text-lg font-bold text-gray-900 dark:text-gray-100 text-center"
+                    th:text="${doctor.name}"
+                  >
+                    Doctor Name
+                  </h3>
+                  <span
+                    th:if="${doctor.specialization}"
+                    th:text="${doctor.specialization}"
+                    class="mt-1 text-xs text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded-full"
+                  ></span>
                 </div>
-            </div>
-        </main>
-    </div>
-</body>
+              </div>
 
+              <!-- Card Body -->
+              <div class="p-6 flex-1 flex flex-col">
+                <!-- Rating -->
+                <div class="flex items-center justify-center gap-2 mb-3">
+                  <div class="flex text-yellow-400 text-sm">
+                    <span
+                      th:each="i : ${#numbers.sequence(1,5)}"
+                      th:class="${doctor.doctorPerformance != null and doctor.doctorPerformance.rating >= i} ? 'text-yellow-400' : 'text-gray-300'"
+                      >★</span
+                    >
+                  </div>
+                  <span
+                    class="text-sm text-gray-600 dark:text-gray-400"
+                    th:text="${doctor.doctorPerformance != null ? doctor.doctorPerformance.rating : '0.0'}"
+                    >0.0</span
+                  >
+                  <span
+                    class="text-xs text-gray-400"
+                    th:if="${doctor.doctorPerformance != null}"
+                  >
+                    (<span th:text="${doctor.doctorPerformance.patientsHelped}"
+                      >0</span
+                    >
+                    patients)
+                  </span>
+                </div>
+
+                <!-- About -->
+                <p
+                  class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4 line-clamp-3"
+                  th:text="${doctor.about != null ? #strings.abbreviate(doctor.about, 150) : 'Qualified healthcare professional.'}"
+                ></p>
+
+                <!-- Qualifications -->
+                <div class="flex flex-wrap justify-center gap-2 mb-4">
+                  <span
+                    th:if="${doctor.qualification}"
+                    th:text="${doctor.qualification}"
+                    class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded"
+                  ></span>
+                  <span
+                    th:if="${doctor.yearsOfExperience != null}"
+                    class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded"
+                  >
+                    Exp:
+                    <span th:text="${doctor.yearsOfExperience}">0</span> yrs
+                  </span>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-2 mb-4 text-sm">
+                  <div
+                    class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                    th:if="${doctor.phoneNumber != null}"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 5a2 2 0 012-2h3.28a2 2 0 011.91 1.37l.7 2.1a2 2 0 01-.45 2.09L8.7 11.7a11.05 11.05 0 005.6 5.6l2.1-1.74a2 2 0 012.09-.45l2.1.7A2 2 0 0121 17.72V21a2 2 0 01-2 2H19c-9.39 0-17-7.61-17-17V5z"
+                      ></path>
+                    </svg>
+                    <span th:text="${doctor.phoneNumber}">Phone</span>
+                  </div>
+                  <div
+                    class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                    th:if="${doctor.email != null}"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    <span th:text="${doctor.email}">Email</span>
+                  </div>
+                </div>
+
+                <!-- Connect Button -->
+                <div class="mt-auto flex justify-center">
+                  <form
+                    th:if="${!#lists.contains(connectedDoctorIds, doctor.doctorId)}"
+                    th:action="@{/recoveredpatient/connect_doctor/{doctorId}(doctorId=${doctor.doctorId})}"
+                    method="post"
+                    class="w-full"
+                  >
+                    <button
+                      type="submit"
+                      class="ultra-btn connect-btn w-full py-3 px-6 rounded-full text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 4v16m8-8H4"
+                        ></path>
+                      </svg>
+                      Connect
+                    </button>
+                  </form>
+                  <form
+                    th:if="${#lists.contains(connectedDoctorIds, doctor.doctorId)}"
+                    th:action="@{/recoveredpatient/disconnect_doctor/{doctorId}(doctorId=${doctor.doctorId})}"
+                    method="post"
+                    class="w-full"
+                  >
+                    <button
+                      type="submit"
+                      class="ultra-btn connected-btn w-full py-3 px-6 rounded-full text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
+                      </svg>
+                      Connected
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- No doctors message -->
+          <div
+            th:if="${doctors == null or #lists.isEmpty(doctors)}"
+            class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+          >
+            <svg
+              class="w-16 h-16 text-gray-300 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">
+              No doctors available at the moment.
+            </p>
+            <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">
+              Please check back later.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <style>
+        .ultra-btn {
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+        .ultra-btn::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+          );
+          transition: left 0.5s;
+        }
+        .ultra-btn:hover::before {
+          left: 100%;
+        }
+        .connect-btn {
+          background: linear-gradient(
+            135deg,
+            #3b82f6 0%,
+            #2563eb 50%,
+            #1d4ed8 100%
+          );
+        }
+        .connect-btn:hover {
+          background: linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #1d4ed8 50%,
+            #1e40af 100%
+          );
+          transform: translateY(-2px);
+        }
+        .connected-btn {
+          background: linear-gradient(
+            135deg,
+            #10b981 0%,
+            #059669 50%,
+            #047857 100%
+          );
+        }
+        .connected-btn:hover {
+          background: linear-gradient(
+            135deg,
+            #059669 0%,
+            #047857 50%,
+            #065f46 100%
+          );
+          transform: translateY(-2px);
+        }
+        .line-clamp-3 {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      </style>
+
+      <script>
+        (function () {
+          const searchInput = document.getElementById("doctor-search");
+          const specFilter = document.getElementById("specialization-filter");
+
+          function normalize(s) {
+            return (s || "").toString().toLowerCase();
+          }
+
+          function filterCards() {
+            const q = normalize(searchInput.value);
+            const spec = normalize(specFilter.value);
+
+            document.querySelectorAll(".doctor-card").forEach((card) => {
+              const name = normalize(
+                card.querySelector("h3")?.textContent || "",
+              );
+              const about = normalize(
+                card.querySelector(".line-clamp-3")?.textContent || "",
+              );
+              const specialization = normalize(
+                card.querySelector(".text-blue-600")?.textContent || "",
+              );
+
+              const matchesQuery =
+                !q ||
+                name.includes(q) ||
+                about.includes(q) ||
+                specialization.includes(q);
+              const matchesSpec = !spec || specialization.includes(spec);
+
+              card.style.display = matchesQuery && matchesSpec ? "" : "none";
+            });
+          }
+
+          if (searchInput) searchInput.addEventListener("input", filterCards);
+          if (specFilter) specFilter.addEventListener("change", filterCards);
+        })();
+      </script>
+    </div>
+  </body>
 </html>

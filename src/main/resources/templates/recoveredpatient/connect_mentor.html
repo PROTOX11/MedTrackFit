@@ -1,101 +1,297 @@
-<!DOCTYPE html>
-<html lang="en" th:replace="~{recoveredpatient_base :: parent(~{::#content},~{::title},~{})}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html
+  lang="en"
+  th:replace="~{recoveredpatient_base :: parent(~{::#content},~{::title},~{})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Connect Mentor - MedTrackFit</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="content">
-        <!-- Header -->
-        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between px-6 py-4">
-                <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Connect Mentor</h1>
+      <!-- Header -->
+      <header
+        class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
+      >
+        <div class="flex items-center justify-between px-6 py-4">
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+            Connect Mentor
+          </h1>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 overflow-y-auto p-6">
+        <div class="max-w-6xl mx-auto">
+          <div class="mb-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2"
+            >
+              Find and Connect with Health Mentors
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+              Connect with certified health mentors who can guide you through
+              your wellness journey.
+            </p>
+          </div>
+
+          <!-- Search and Filter Section -->
+          <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <div class="flex-1 relative">
+                <svg
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+                <input
+                  type="text"
+                  id="mentor-search"
+                  placeholder="Search by name, specialty, or expertise..."
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+                />
+              </div>
+              <select
+                id="specialty-filter"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100 sm:w-48"
+              >
+                <option value="">All Specialties</option>
+                <option value="nutrition">Nutrition</option>
+                <option value="fitness">Fitness</option>
+                <option value="mental-health">Mental Health</option>
+                <option value="holistic">Holistic Health</option>
+                <option value="lifestyle">Lifestyle Coaching</option>
+              </select>
             </div>
-        </header>
+          </div>
 
-        <!-- Content -->
-        <main class="flex-1 overflow-y-auto p-6">
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Find and Connect with
-                        Health Mentors</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">
-                        Connect with certified health mentors who can guide you through your wellness journey and
-                        provide personalized advice.
-                    </p>
+          <!-- Mentor Cards Grid - SIMPLIFIED -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Loop through mentors -->
+            <div
+              th:each="mentor, iterStat : ${healthMentors}"
+              th:if="${healthMentors != null}"
+              class="mentor-card bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col p-6"
+            >
 
-                    <!-- Search and Filter Section -->
-                    <div class="mb-6">
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <input type="text" placeholder="Search by name, specialty, or expertise..."
-                                class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                            <select
-                                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                                <option value="">All Specialties</option>
-                                <option value="nutrition">Nutrition</option>
-                                <option value="fitness">Fitness</option>
-                                <option value="mental-health">Mental Health</option>
-                                <option value="holistic">Holistic Health</option>
-                                <option value="lifestyle">Lifestyle Coaching</option>
-                            </select>
-                            <button
-                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Search
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Mentor Cards -->
-                    <div class="space-y-4" th:if="${healthMentors != null}">
-                        <div th:each="mentor : ${healthMentors}"
-                            class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-start space-x-4">
-                                    <img th:src="${mentor.profilePicture != null ? mentor.profilePicture : '/images/profiles/default-avatar.png'}"
-                                        alt="Mentor Avatar" class="w-12 h-12 rounded-full">
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900 dark:text-gray-100"
-                                            th:text="${mentor.name}">Mentor Name</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">Health Mentor</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400"
-                                            th:text="${'Phone: ' + mentor.phoneNumber}">Phone: N/A</p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-                                            th:text="${mentor.about}">Experienced health mentor providing guidance.
-                                        </p>
-                                        <div class="flex items-center mt-2">
-                                            <span class="text-yellow-400">★★★★★</span>
-                                            <span
-                                                class="text-sm text-gray-600 dark:text-gray-400 ml-2">(4.9/5.0)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    class="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                                    Connect
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- No mentors message -->
-                    <div th:if="${healthMentors == null or #lists.isEmpty(healthMentors)}" class="text-center py-8">
-                        <p class="text-gray-600 dark:text-gray-400">No health mentors available at the moment.</p>
-                    </div>
-
-                    <!-- Load More Button -->
-                    <div class="text-center mt-6">
-                        <button
-                            class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-                            Load More Mentors
-                        </button>
-                    </div>
+              <!-- Avatar -->
+              <div class="flex flex-col items-center mb-4">
+                <div
+                  class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-100 dark:border-blue-900 shadow-lg mb-4 bg-gradient-to-br from-blue-200 to-blue-50 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center"
+                >
+                  <span
+                    th:text="${mentor.name != null ? mentor.name.substring(0,1) : 'M'}"
+                    class="text-3xl font-bold text-gray-700 dark:text-gray-200"
+                  ></span>
                 </div>
-            </div>
-        </main>
-    </div>
-</body>
+                <h3
+                  class="text-lg font-bold text-gray-900 dark:text-gray-100 text-center"
+                  th:text="${mentor.name != null ? mentor.name : 'Unknown Mentor'}"
+                >
+                  Mentor Name
+                </h3>
+                <p
+                  class="text-sm text-blue-600 dark:text-blue-400 font-medium mt-1"
+                  th:text="${mentor.areaOfExpertise != null ? mentor.areaOfExpertise : 'Health Mentor'}"
+                >
+                  Specialty
+                </p>
+              </div>
 
+              <!-- About -->
+              <p
+                class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4 flex-1"
+                th:text="${mentor.about != null ? mentor.about : 'Experienced health mentor providing guidance and support.'}"
+              ></p>
+
+              <!-- Contact Info -->
+              <div class="space-y-2 mb-4 text-sm">
+                <div
+                  class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                  th:if="${mentor.phoneNumber != null}"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a2 2 0 011.91 1.37l.7 2.1a2 2 0 01-.45 2.09L8.7 11.7a11.05 11.05 0 005.6 5.6l2.1-1.74a2 2 0 012.09-.45l2.1.7A2 2 0 0121 17.72V21a2 2 0 01-2 2H19c-9.39 0-17-7.61-17-17V5z"
+                    ></path>
+                  </svg>
+                  <span th:text="${mentor.phoneNumber}">Phone</span>
+                </div>
+                <div
+                  class="flex items-center gap-2 text-gray-600 dark:text-gray-400"
+                  th:if="${mentor.email != null}"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  <span th:text="${mentor.email}">Email</span>
+                </div>
+              </div>
+
+              <!-- Connect Button - ALWAYS SHOW -->
+              <div class="mt-auto flex justify-center">
+                <form
+                  th:action="@{/recoveredpatient/connect_mentor/{mentorId}(mentorId=${mentor.mentorId})}"
+                  method="post"
+                  class="w-full"
+                >
+                  <button
+                    type="submit"
+                    class="ultra-btn connect-btn w-full py-3 px-6 rounded-full text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      ></path>
+                    </svg>
+                    Connect
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- No mentors message -->
+          <div
+            th:if="${healthMentors == null or #lists.isEmpty(healthMentors)}"
+            class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
+          >
+            <svg
+              class="w-16 h-16 text-gray-300 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              ></path>
+            </svg>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">
+              No health mentors available at the moment.
+            </p>
+            <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">
+              Please check back later.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <style>
+        .ultra-btn {
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+        .ultra-btn::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+          );
+          transition: left 0.5s;
+        }
+        .ultra-btn:hover::before {
+          left: 100%;
+        }
+        .connect-btn {
+          background: linear-gradient(
+            135deg,
+            #3b82f6 0%,
+            #2563eb 50%,
+            #1d4ed8 100%
+          );
+        }
+        .connect-btn:hover {
+          background: linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #1d4ed8 50%,
+            #1e40af 100%
+          );
+          transform: translateY(-2px);
+        }
+      </style>
+
+      <script>
+        (function () {
+          const searchInput = document.getElementById("mentor-search");
+          const specialtyFilter = document.getElementById("specialty-filter");
+
+          function normalize(s) {
+            return (s || "").toString().toLowerCase();
+          }
+
+          function filterCards() {
+            const q = normalize(searchInput.value);
+            const specialty = normalize(specialtyFilter.value);
+
+            document.querySelectorAll(".mentor-card").forEach((card) => {
+              const name = normalize(
+                card.querySelector("h3")?.textContent || "",
+              );
+              const about = normalize(
+                card.querySelector("p")?.textContent || "",
+              );
+
+              const matchesQuery = !q || name.includes(q) || about.includes(q);
+              const matchesSpecialty = !specialty || about.includes(specialty);
+
+              card.style.display =
+                matchesQuery && matchesSpecialty ? "" : "none";
+            });
+          }
+
+          if (searchInput) searchInput.addEventListener("input", filterCards);
+          if (specialtyFilter)
+            specialtyFilter.addEventListener("change", filterCards);
+        })();
+      </script>
+    </div>
+  </body>
 </html>
