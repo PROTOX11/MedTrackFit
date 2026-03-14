@@ -50,4 +50,3 @@ jobs:
             pm2 restart medtrackfit || pm2 start "java -jar medtrackfit-0.0.1-SNAPSHOT.jar" --name medtrackfit
             pm2 save
             pm2 list
-            
