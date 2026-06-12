@@ -34,6 +34,15 @@ public class BlogController {
     @Autowired
     private UniversalUserService universalUserService;
 
+    @GetMapping("/api/public")
+    @ResponseBody
+    public ResponseEntity<?> getPublicBlogsJson(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AllBlogPost> allBlogs = allBlogPostService.findAllPublicBlogs(pageable);
+        return ResponseEntity.ok(allBlogs.getContent());
+    }
+
     @GetMapping("/public")
     public String publicBlogs(Model model, 
                              @RequestParam(defaultValue = "0") int page,
@@ -59,7 +68,7 @@ public class BlogController {
         model.addAttribute("mentorPosts", mentorPosts);
         model.addAttribute("patientPosts", patientPosts);
         
-        return "blog/public";
+        return "react_shell";
     }
 
     @PostMapping("/create")
@@ -135,16 +144,9 @@ public class BlogController {
                 authorName = mentor.getName();
                 authorSpecialization = mentor.getAreaOfExpertise();
                 authorProfilePicture = mentor.getProfilePicture();
-            } else if (user instanceof RecoveredPatient) {
-                RecoveredPatient patient = (RecoveredPatient) user;
-                authorType = AllBlogPost.AuthorType.RECOVERED_PATIENT;
-                authorId = patient.getPatientId();
-                authorName = patient.getName();
-                authorSpecialization = patient.getPreviousCondition();
-                authorProfilePicture = patient.getProfilePicture();
             } else {
                 response.put("success", false);
-                response.put("message", "Invalid user type for blog creation");
+                response.put("message", "Only doctors and health mentors are authorized to write blogs.");
                 return ResponseEntity.badRequest().body(response);
             }
             

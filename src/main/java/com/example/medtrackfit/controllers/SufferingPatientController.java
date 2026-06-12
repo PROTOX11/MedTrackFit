@@ -1,6 +1,7 @@
 package com.example.medtrackfit.controllers;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,13 +70,41 @@ public class SufferingPatientController {
             String username = Helper.getEmailOfLoggedInUser(authentication);
             String userRole = universalUserService.getUserRole(username);
             model.addAttribute("userRole", userRole);
-            model.addAttribute("loggedInUser", universalUserService.getUserByEmail(username));
+            model.addAttribute("role", userRole);
+            model.addAttribute("email", username);
+            model.addAttribute("name", universalUserService.getUserName(username));
+            model.addAttribute("id", universalUserService.getUserId(username));
+            
+            UserDetails userDetails = universalUserService.getUserByEmail(username);
+            model.addAttribute("loggedInUser", userDetails);
+            
+            String profilePicture = null;
+            if (userDetails instanceof Doctor) {
+                profilePicture = ((Doctor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.HealthMentor) {
+                profilePicture = ((com.example.medtrackfit.entities.HealthMentor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.SufferingPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.SufferingPatient) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.RecoveredPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.RecoveredPatient) userDetails).getProfilePicture();
+            }
+            model.addAttribute("profilePicture", profilePicture);
         }
     }
 
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "suff-pat/dashboard";
+        return "react_shell";
+    }
+
+    @GetMapping("/chat")
+    public String chat() {
+        return "react_shell";
+    }
+
+    @GetMapping("/patients")
+    public String patients() {
+        return "react_shell";
     }
 
     // Health metrics endpoints for suffering patients
@@ -92,18 +121,93 @@ public class SufferingPatientController {
             }
             PatientPerformance perf = patient.getPatientPerformance();
             if (perf == null) {
-                perf = PatientPerformance.builder().patientId(patient.getPatientId()).healthScore(0).treatmentProgress(0).sessionsAttended(0).medicationAdherence(0.0).overallImprovement(0.0).meditationScore(0).breatheScore(0).hydrationScore(0).nutritionScore(0).build();
+                perf = PatientPerformance.builder()
+                        .patientId(patient.getPatientId())
+                        .healthScore(0)
+                        .treatmentProgress(0)
+                        .sessionsAttended(0)
+                        .medicationAdherence(0.0)
+                        .overallImprovement(0.0)
+                        .meditationScore(0)
+                        .breatheScore(0)
+                        .hydrationScore(0)
+                        .nutritionScore(0)
+                        .steps(0)
+                        .calories(0)
+                        .build();
             }
             response.put("success", true);
-            response.put("meditationScore", perf.getMeditationScore());
-            response.put("breatheScore", perf.getBreatheScore());
-            response.put("hydrationScore", perf.getHydrationScore());
-            response.put("nutritionScore", perf.getNutritionScore());
+            response.put("meditationScore", perf.getMeditationScore() != null ? perf.getMeditationScore() : 0);
+            response.put("breatheScore", perf.getBreatheScore() != null ? perf.getBreatheScore() : 0);
+            response.put("hydrationScore", perf.getHydrationScore() != null ? perf.getHydrationScore() : 0);
+            response.put("nutritionScore", perf.getNutritionScore() != null ? perf.getNutritionScore() : 0);
+            response.put("steps", perf.getSteps() != null ? perf.getSteps() : 0);
+            response.put("calories", perf.getCalories() != null ? perf.getCalories() : 0);
             return org.springframework.http.ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", e.getMessage());
             return org.springframework.http.ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping("/{patientId}/steps")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> updateSteps(@PathVariable String patientId,
+                                                                                              @RequestBody java.util.Map<String, Object> req) {
+        java.util.Map<String, Object> resp = new java.util.HashMap<>();
+        try {
+            Integer steps = (Integer) (req.get("steps") instanceof Integer ? req.get("steps") : ((Number) req.get("steps")).intValue());
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(patientId);
+            if (patient == null) {
+                resp.put("success", false);
+                resp.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(resp);
+            }
+            PatientPerformance perf = patient.getPatientPerformance();
+            if (perf == null) {
+                perf = PatientPerformance.builder().patientId(patient.getPatientId()).healthScore(0).treatmentProgress(0).sessionsAttended(0).medicationAdherence(0.0).overallImprovement(0.0).meditationScore(0).breatheScore(0).hydrationScore(0).nutritionScore(0).steps(0).calories(0).build();
+                patient.setPatientPerformance(perf);
+            }
+            perf.setSteps(steps);
+            sufferingPatientRepository.save(patient);
+            resp.put("success", true);
+            resp.put("steps", perf.getSteps());
+            return org.springframework.http.ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(resp);
+        }
+    }
+
+    @PostMapping("/{patientId}/calories")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> updateCalories(@PathVariable String patientId,
+                                                                                                 @RequestBody java.util.Map<String, Object> req) {
+        java.util.Map<String, Object> resp = new java.util.HashMap<>();
+        try {
+            Integer calories = (Integer) (req.get("calories") instanceof Integer ? req.get("calories") : ((Number) req.get("calories")).intValue());
+            SufferingPatient patient = sufferingPatientService.getSufferingPatientById(patientId);
+            if (patient == null) {
+                resp.put("success", false);
+                resp.put("message", "Patient not found");
+                return org.springframework.http.ResponseEntity.badRequest().body(resp);
+            }
+            PatientPerformance perf = patient.getPatientPerformance();
+            if (perf == null) {
+                perf = PatientPerformance.builder().patientId(patient.getPatientId()).healthScore(0).treatmentProgress(0).sessionsAttended(0).medicationAdherence(0.0).overallImprovement(0.0).meditationScore(0).breatheScore(0).hydrationScore(0).nutritionScore(0).steps(0).calories(0).build();
+                patient.setPatientPerformance(perf);
+            }
+            perf.setCalories(calories);
+            sufferingPatientRepository.save(patient);
+            resp.put("success", true);
+            resp.put("calories", perf.getCalories());
+            return org.springframework.http.ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return org.springframework.http.ResponseEntity.internalServerError().body(resp);
         }
     }
 
@@ -299,7 +403,7 @@ public class SufferingPatientController {
 
     @GetMapping("/profile")
     public String profile() {
-        return "suff-pat/profile";
+        return "react_shell";
     }
 
     @GetMapping("/connect_recovered")
@@ -315,7 +419,7 @@ public class SufferingPatientController {
                 model.addAttribute("loggedInUser", patient);
             }
         }
-        return "suff-pat/connect_recovered";
+        return "react_shell";
     }
 
 
@@ -344,61 +448,61 @@ public class SufferingPatientController {
             response.put("message", e.getMessage());
             return org.springframework.http.ResponseEntity.internalServerError().body(response);
         }
-    }
+     }
 
-    @GetMapping("/disconnect_recovered/{patientId}")
-    @ResponseBody
-    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> disconnectRecovered(@PathVariable String patientId, Authentication authentication) {
-        java.util.Map<String, Object> response = new java.util.HashMap<>();
-        try {
-            String email = Helper.getEmailOfLoggedInUser(authentication);
-            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
-            if (patient == null) {
-                response.put("success", false);
-                response.put("message", "Patient not found");
-                return org.springframework.http.ResponseEntity.badRequest().body(response);
-            }
-            patient.getConnectedFriends().remove(patientId);
-            sufferingPatientRepository.save(patient);
-            response.put("success", true);
-            response.put("message", "Disconnected successfully");
-            return org.springframework.http.ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return org.springframework.http.ResponseEntity.internalServerError().body(response);
-        }
-    }
+     @GetMapping("/disconnect_recovered/{patientId}")
+     @ResponseBody
+     public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> disconnectRecovered(@PathVariable String patientId, Authentication authentication) {
+         java.util.Map<String, Object> response = new java.util.HashMap<>();
+         try {
+             String email = Helper.getEmailOfLoggedInUser(authentication);
+             SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+             if (patient == null) {
+                 response.put("success", false);
+                 response.put("message", "Patient not found");
+                 return org.springframework.http.ResponseEntity.badRequest().body(response);
+             }
+             patient.getConnectedFriends().remove(patientId);
+             sufferingPatientRepository.save(patient);
+             response.put("success", true);
+             response.put("message", "Disconnected successfully");
+             return org.springframework.http.ResponseEntity.ok(response);
+         } catch (Exception e) {
+             response.put("success", false);
+             response.put("message", e.getMessage());
+             return org.springframework.http.ResponseEntity.internalServerError().body(response);
+         }
+     }
 
-    @GetMapping("/connect_doctor")
-    public String connectDoctor(Model model, Authentication authentication) {
-        List<Doctor> doctors = doctorService.getAllDoctors();
-        model.addAttribute("doctors", doctors);
-        
-        if (authentication != null) {
-            String email = Helper.getEmailOfLoggedInUser(authentication);
-            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
-            if (patient != null) {
-                model.addAttribute("loggedInUser", patient);
-            }
-        }
-        return "suff-pat/connect_doctor";
-    }
+     @GetMapping("/connect_doctor")
+     public String connectDoctor(Model model, Authentication authentication) {
+         List<Doctor> doctors = doctorService.getAllDoctors();
+         model.addAttribute("doctors", doctors);
+         
+         if (authentication != null) {
+             String email = Helper.getEmailOfLoggedInUser(authentication);
+             SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+             if (patient != null) {
+                 model.addAttribute("loggedInUser", patient);
+             }
+         }
+         return "react_shell";
+     }
 
-    @GetMapping("/connect_mentor")
-    public String connectMentor(Model model, Authentication authentication) {
-        List<HealthMentor> mentors = healthMentorService.getAllHealthMentors();
-        model.addAttribute("mentors", mentors);
-        
-        if (authentication != null) {
-            String email = Helper.getEmailOfLoggedInUser(authentication);
-            SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
-            if (patient != null) {
-                model.addAttribute("loggedInUser", patient);
-            }
-        }
-        return "suff-pat/connect_mentor";
-    }
+     @GetMapping("/connect_mentor")
+     public String connectMentor(Model model, Authentication authentication) {
+         List<HealthMentor> mentors = healthMentorService.getAllHealthMentors();
+         model.addAttribute("mentors", mentors);
+         
+         if (authentication != null) {
+             String email = Helper.getEmailOfLoggedInUser(authentication);
+             SufferingPatient patient = sufferingPatientService.getSufferingPatientByEmail(email);
+             if (patient != null) {
+                 model.addAttribute("loggedInUser", patient);
+             }
+         }
+         return "react_shell";
+     }
 
     @GetMapping("/connect_mentor/request/{mentorId}")
     @ResponseBody
@@ -511,7 +615,7 @@ public class SufferingPatientController {
             }
         }
 
-        return "suff-pat/edit-profile";
+        return "react_shell";
     }
 
     @PostMapping("/update-profile")
@@ -543,7 +647,7 @@ public class SufferingPatientController {
 
         if (patient == null) {
             model.addAttribute("error", "Patient not found");
-            return "suff-pat/edit-profile";
+            return "redirect:/suff-pat/profile?error=true";
         }
 
         try {
@@ -579,7 +683,7 @@ public class SufferingPatientController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to update profile: " + e.getMessage());
             model.addAttribute("loggedInUser", patient);
-            return "suff-pat/edit-profile";
+            return "redirect:/suff-pat/profile?error=true";
         }
     }
 
@@ -593,7 +697,7 @@ public class SufferingPatientController {
 
         if (patient == null) {
             model.addAttribute("error", "Patient not found");
-            return "suff-pat/profile";
+            return "redirect:/suff-pat/profile?error=true";
         }
 
         try {
@@ -602,50 +706,28 @@ public class SufferingPatientController {
                 if (contentType == null || !contentType.startsWith("image/")) {
                     model.addAttribute("error", "Only image files are allowed");
                     model.addAttribute("loggedInUser", patient);
-                    return "suff-pat/profile";
+                    return "redirect:/suff-pat/profile?error=true";
                 }
 
                 // Note: Need to implement updateProfilePicture method in SufferingPatientService
                 // For now, we'll skip this functionality
                 model.addAttribute("error", "Profile picture update not yet implemented");
                 model.addAttribute("loggedInUser", patient);
-                return "suff-pat/profile";
+                return "redirect:/suff-pat/profile?error=true";
             } else {
                 model.addAttribute("error", "No file uploaded");
                 model.addAttribute("loggedInUser", patient);
-                return "suff-pat/profile";
+                return "redirect:/suff-pat/profile?error=true";
             }
         } catch (Exception e) {
             model.addAttribute("error", "Failed to update profile picture: " + e.getMessage());
             model.addAttribute("loggedInUser", patient);
-            return "suff-pat/profile";
+            return "redirect:/suff-pat/profile?error=true";
         }
     }
 
     @GetMapping("/blog")
-    public String blog(Model model,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        // Fetch all public blogs from all user types
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AllBlogPost> allBlogs = allBlogPostService.findAllPublicBlogs(pageable);
-
-        // Get blog statistics
-        long totalPosts = allBlogPostService.countByStatus(AllBlogPost.PostStatus.PUBLISHED);
-        long doctorPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.DOCTOR, AllBlogPost.PostStatus.PUBLISHED);
-        long mentorPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.MENTOR, AllBlogPost.PostStatus.PUBLISHED);
-        long patientPosts = allBlogPostService.countByAuthorTypeAndStatus(AllBlogPost.AuthorType.RECOVERED_PATIENT, AllBlogPost.PostStatus.PUBLISHED);
-
-        model.addAttribute("allBlogs", allBlogs.getContent());
-        model.addAttribute("currentPage", allBlogs.getNumber());
-        model.addAttribute("totalPages", allBlogs.getTotalPages());
-        model.addAttribute("totalElements", allBlogs.getTotalElements());
-        model.addAttribute("totalPosts", totalPosts);
-        model.addAttribute("doctorPosts", doctorPosts);
-        model.addAttribute("mentorPosts", mentorPosts);
-        model.addAttribute("patientPosts", patientPosts);
-        model.addAttribute("baseUrl", "/suff-pat/blog");
-
-        return "suff-pat/blog";
+    public String blog() {
+        return "react_shell";
     }
 }

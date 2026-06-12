@@ -1,6 +1,7 @@
 package com.example.medtrackfit.controllers;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,26 +51,58 @@ public class RecoveredPatientController {
     private RecoveredPatientMentorConnectionRepository mentorConnectionRepo;
 
     @ModelAttribute
-
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
             String username = Helper.getEmailOfLoggedInUser(authentication);
             String userRole = universalUserService.getUserRole(username);
             model.addAttribute("userRole", userRole);
-            model.addAttribute("loggedInUser", universalUserService.getUserByEmail(username));
+            model.addAttribute("role", userRole);
+            model.addAttribute("email", username);
+            model.addAttribute("name", universalUserService.getUserName(username));
+            model.addAttribute("id", universalUserService.getUserId(username));
+            
+            UserDetails userDetails = universalUserService.getUserByEmail(username);
+            model.addAttribute("loggedInUser", userDetails);
+            
+            String profilePicture = null;
+            if (userDetails instanceof Doctor) {
+                profilePicture = ((Doctor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.HealthMentor) {
+                profilePicture = ((com.example.medtrackfit.entities.HealthMentor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.SufferingPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.SufferingPatient) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.RecoveredPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.RecoveredPatient) userDetails).getProfilePicture();
+            }
+            model.addAttribute("profilePicture", profilePicture);
         }
     }
 
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "recoveredpatient/dashboard";
+        return "react_shell";
+    }
+
+    @GetMapping("/chat")
+    public String chat() {
+        return "react_shell";
+    }
+
+    @GetMapping("/patients")
+    public String patients() {
+        return "react_shell";
+    }
+
+    @GetMapping("/blog")
+    public String blog() {
+        return "react_shell";
     }
 
     @GetMapping("/connect_suffering")
     public String connectSuffering(Model model) {
         List<SufferingPatient> sufferingPatients = sufferingPatientService.getAllSufferingPatients();
         model.addAttribute("sufferingPatients", sufferingPatients);
-        return "recoveredpatient/connect_suffering";
+        return "react_shell";
     }
 
     @GetMapping("/connect_doctor")
@@ -94,7 +127,7 @@ public class RecoveredPatientController {
         
         model.addAttribute("doctors", doctors);
         model.addAttribute("connectedDoctorIds", connectedDoctorIds);
-        return "recoveredpatient/connect_doctor";
+        return "react_shell";
     }
 
     @PostMapping("/connect_doctor/{doctorId}")
@@ -148,7 +181,7 @@ public class RecoveredPatientController {
         
         model.addAttribute("healthMentors", healthMentors);
         model.addAttribute("connectedMentorIds", connectedMentorIds);
-        return "recoveredpatient/connect_mentor";
+        return "react_shell";
     }
 
     @PostMapping("/connect_mentor/{mentorId}")
@@ -189,11 +222,11 @@ public class RecoveredPatientController {
 
     @GetMapping("/profile")
     public String profile() {
-        return "recoveredpatient/profile";
+        return "react_shell";
     }
 
     @GetMapping("/edit-profile")
     public String editProfile() {
-        return "recoveredpatient/edit-profile";
+        return "react_shell";
     }
 }

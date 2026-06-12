@@ -4,7 +4,9 @@ console.log("Script loaded");
 let currentTheme = getStoredTheme();
 
 function initTheme() {
-    applyTheme(currentTheme);
+    // Theme class already applied by the inline blocking script in <head>.
+    // Just sync the icon and wire up the toggle button.
+    currentTheme = getStoredTheme();
     updateThemeIcon(currentTheme);
     setupThemeToggle();
 }
@@ -37,7 +39,11 @@ function updateThemeIcon(theme) {
 }
 
 function getStoredTheme() {
-    return localStorage.getItem('theme') || 'light';
+    var stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    // Respect OS preference as default
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ? 'dark' : 'light';
 }
 
 function setStoredTheme(theme) {

@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -70,14 +71,30 @@ public class MentorController {
     private DoctorService doctorService;
 
     @ModelAttribute
-
-
     public void addLoggedInUserInformation(Model model, Authentication authentication) {
         if (authentication != null) {
             String username = Helper.getEmailOfLoggedInUser(authentication);
             String userRole = universalUserService.getUserRole(username);
             model.addAttribute("userRole", userRole);
-            model.addAttribute("loggedInUser", universalUserService.getUserByEmail(username));
+            model.addAttribute("role", userRole);
+            model.addAttribute("email", username);
+            model.addAttribute("name", universalUserService.getUserName(username));
+            model.addAttribute("id", universalUserService.getUserId(username));
+            
+            UserDetails userDetails = universalUserService.getUserByEmail(username);
+            model.addAttribute("loggedInUser", userDetails);
+            
+            String profilePicture = null;
+            if (userDetails instanceof Doctor) {
+                profilePicture = ((Doctor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.HealthMentor) {
+                profilePicture = ((com.example.medtrackfit.entities.HealthMentor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.SufferingPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.SufferingPatient) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.RecoveredPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.RecoveredPatient) userDetails).getProfilePicture();
+            }
+            model.addAttribute("profilePicture", profilePicture);
         }
     }
 
@@ -119,7 +136,7 @@ public class MentorController {
             logger.info("Mentor dashboard loaded for: {} with {} active patients", mentor.getName(), activePatients);
         }
 
-        return "mentor/dashboard";
+        return "react_shell";
     }
 
     @RequestMapping("/chat")
@@ -166,7 +183,7 @@ public class MentorController {
         model.addAttribute("patients", patients);
         model.addAttribute("mentors", createSampleMentors()); // Keep sample mentors for now
 
-        return "mentor/chat";
+        return "react_shell";
     }
 
 
@@ -235,7 +252,7 @@ public class MentorController {
             model.addAttribute("patientPosts", patientPosts);
         }
 
-        return "mentor/blog";
+        return "react_shell";
     }
 
     @RequestMapping("/patients")
@@ -273,7 +290,7 @@ public class MentorController {
                 availablePatients.size(), mentor.getName(), allPatients.size());
         }
 
-        return "mentor/patients";
+        return "react_shell";
     }
 
     @RequestMapping("/profile")
@@ -294,7 +311,7 @@ public class MentorController {
             model.addAttribute("userRole", userRole);
         }
 
-        return "mentor/profile";
+        return "react_shell";
     }
 
     @RequestMapping("/edit-profile")

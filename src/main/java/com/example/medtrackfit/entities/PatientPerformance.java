@@ -49,4 +49,12 @@ public class PatientPerformance {
 
     @Column(name = "nutrition_score")
     private Integer nutritionScore = 0;
+
+    @Column(name = "steps")
+    @Builder.Default
+    private Integer steps = 0;
+
+    @Column(name = "calories")
+    @Builder.Default
+    private Integer calories = 0;
 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTrackFit - Dashboard</title>
+    <!-- Global Tailwind CSS compiled by backend -->
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+    <!-- CSS bundle created by Vite -->
+    <link rel="stylesheet" th:href="@{/react-app/assets/index.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 min-h-screen">
+    <div id="root"></div>
+
+    <script th:inline="javascript">
+        // Inject logged-in user data into global window object for React
+        window.__USER__ = {
+            name: [[${name}]],
+            email: [[${email}]],
+            role: [[${role}]],
+            profilePicture: [[${profilePicture}]],
+            id: [[${id}]]
+        };
+    </script>
+
+    <!-- JS bundle created by Vite -->
+    <script type="module" th:src="@{/react-app/assets/index.js}"></script>
+</body>
+</html>

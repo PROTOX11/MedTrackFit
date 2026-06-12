@@ -21,7 +21,7 @@ import com.example.medtrackfit.services.impl.SecurityCustomUserDetailsService;
 public class SecurityConfig {
 
     @Autowired
-    private SecurityCustomUserDetailsService userDetailsService;
+    private OtpAuthenticationProvider otpAuthenticationProvider;
 
     @Autowired
     @Lazy
@@ -29,15 +29,6 @@ public class SecurityConfig {
     
     @Autowired
     private AuthenticationSuccessHandler customAuthenticationSuccessHandler;
-
-    // Configure authentication provider
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        return daoAuthenticationProvider;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -54,12 +45,15 @@ public class SecurityConfig {
 
         // Form login configuration
         httpSecurity.formLogin(formLogin -> {
-            formLogin.loginPage("/login");
+            formLogin.loginPage("/join");
             formLogin.loginProcessingUrl("/authenticate");
             formLogin.successHandler(customAuthenticationSuccessHandler);
             formLogin.usernameParameter("email");
             formLogin.passwordParameter("password");
         });
+
+        // Register custom OTP authentication provider
+        httpSecurity.authenticationProvider(otpAuthenticationProvider);
 
         // Add custom authentication filter
         httpSecurity.addFilterBefore(new CustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -70,12 +64,12 @@ public class SecurityConfig {
         // Logout configuration
         httpSecurity.logout(logoutForm -> {
             logoutForm.logoutUrl("/do-logout");
-            logoutForm.logoutSuccessUrl("/login?logout=true");
+            logoutForm.logoutSuccessUrl("/join?logout=true");
         });
 
         // OAuth configuration
         httpSecurity.oauth2Login(oauth -> {
-            oauth.loginPage("/login");
+            oauth.loginPage("/join");
             oauth.successHandler(handler);
         });
 

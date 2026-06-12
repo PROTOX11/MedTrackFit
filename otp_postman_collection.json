@@ -1,0 +1,71 @@
+{
+  "info": {
+    "_postman_id": "4b6c31df-5d2a-4364-bbcf-9ee6bf08d234",
+    "name": "MedTrackFit OTP API",
+    "description": "Collection for testing MedTrackFit OTP send and verify API endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Send OTP",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/otp/send?email=user@example.com",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "otp",
+            "send"
+          ],
+          "query": [
+            {
+              "key": "email",
+              "value": "user@example.com",
+              "description": "Recipient email address"
+            }
+          ]
+        },
+        "description": "Sends a 6-digit OTP code to the requested email using Brevo SMTP."
+      },
+      "response": []
+    },
+    {
+      "name": "Verify OTP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/otp/verify",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "otp",
+            "verify"
+          ]
+        },
+        "description": "Verifies the 6-digit OTP code. The OTP is deleted upon successful verification."
+      },
+      "response": []
+    }
+  ]
+}

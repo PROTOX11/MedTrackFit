@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,25 @@ public class DoctorController {
             String username = Helper.getEmailOfLoggedInUser(authentication);
             String userRole = universalUserService.getUserRole(username);
             model.addAttribute("userRole", userRole);
-            model.addAttribute("loggedInUser", universalUserService.getUserByEmail(username));
+            model.addAttribute("role", userRole);
+            model.addAttribute("email", username);
+            model.addAttribute("name", universalUserService.getUserName(username));
+            model.addAttribute("id", universalUserService.getUserId(username));
+            
+            UserDetails userDetails = universalUserService.getUserByEmail(username);
+            model.addAttribute("loggedInUser", userDetails);
+            
+            String profilePicture = null;
+            if (userDetails instanceof Doctor) {
+                profilePicture = ((Doctor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.HealthMentor) {
+                profilePicture = ((com.example.medtrackfit.entities.HealthMentor) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.SufferingPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.SufferingPatient) userDetails).getProfilePicture();
+            } else if (userDetails instanceof com.example.medtrackfit.entities.RecoveredPatient) {
+                profilePicture = ((com.example.medtrackfit.entities.RecoveredPatient) userDetails).getProfilePicture();
+            }
+            model.addAttribute("profilePicture", profilePicture);
         }
     }
 
@@ -82,7 +101,7 @@ public class DoctorController {
             logger.info("Doctor dashboard loaded for: {}", doctor.getName());
         }
         
-        return "doctor/dashboard";
+        return "react_shell";
     }
 
     @RequestMapping("/chat")
@@ -129,7 +148,7 @@ public class DoctorController {
         model.addAttribute("patients", patients);
         model.addAttribute("mentors", createSampleMentors()); // Keep sample mentors for now
         
-        return "doctor/chat";
+        return "react_shell";
     }
     
     // Sample data methods - in real application, these would come from database
@@ -249,7 +268,7 @@ public class DoctorController {
             model.addAttribute("patientPosts", patientPosts);
         }
         
-        return "doctor/blog";
+        return "react_shell";
     }
 
     @RequestMapping("/patients")
@@ -298,7 +317,7 @@ public class DoctorController {
             model.addAttribute("connectedPatientIds", connectedPatientIds);
         }
 
-        return "doctor/patients";
+        return "react_shell";
     }
 
     @RequestMapping("/records")
@@ -319,7 +338,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/records";
+        return "react_shell";
     }
 
     @RequestMapping("/prescriptions")
@@ -340,7 +359,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/prescriptions";
+        return "react_shell";
     }
 
     @RequestMapping("/emergency")
@@ -361,7 +380,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/emergency";
+        return "react_shell";
     }
 
     @RequestMapping("/profile")
@@ -382,7 +401,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/profile";
+        return "react_shell";
     }
 
     @RequestMapping("/edit-profile")
@@ -403,7 +422,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/edit-profile";
+        return "react_shell";
     }
 
     @PostMapping("/update-profile")
@@ -470,7 +489,7 @@ public class DoctorController {
             logger.error("Failed to update doctor profile for: {}", username, e);
             model.addAttribute("error", "Failed to update profile: " + e.getMessage());
             model.addAttribute("doctor", doctor);
-            return "doctor/edit-profile";
+            return "redirect:/doctor/profile?error=true";
         }
     }
 
@@ -493,7 +512,7 @@ public class DoctorController {
                 if (contentType == null || !contentType.startsWith("image/")) {
                     model.addAttribute("error", "Only image files are allowed");
                     model.addAttribute("doctor", doctor);
-                    return "doctor/profile";
+                    return "redirect:/doctor/profile?error=true";
                 }
 
                 doctorService.updateProfilePicture(doctor.getDoctorId(), file);
@@ -501,13 +520,13 @@ public class DoctorController {
             } else {
                 model.addAttribute("error", "No file uploaded");
                 model.addAttribute("doctor", doctor);
-                return "doctor/profile";
+                return "redirect:/doctor/profile?error=true";
             }
         } catch (Exception e) {
             logger.error("Failed to update profile picture for doctor: {}", username, e);
             model.addAttribute("error", "Failed to update profile picture: " + e.getMessage());
             model.addAttribute("doctor", doctor);
-            return "doctor/profile";
+            return "redirect:/doctor/profile?error=true";
         }
 
         return "redirect:/doctor/profile";
@@ -531,7 +550,7 @@ public class DoctorController {
             model.addAttribute("userRole", userRole);
         }
         
-        return "doctor/settings";
+        return "react_shell";
     }
 
     // Blog creation endpoints

@@ -30,6 +30,9 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private com.example.medtrackfit.services.UniversalUserService universalUserService;
+
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
@@ -60,7 +63,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         if (authorizedClientRegistrationId.equalsIgnoreCase("google")) {
             user.setEmail(oauthUser.getAttribute("email").toString());
-            user.setProfilePicture(oauthUser.getAttribute("picture").toString());
+            user.setProfilePicture(null);
             user.setName(oauthUser.getAttribute("name").toString());
             user.setProviderUserId(oauthUser.getName());
             user.setProvider(Providers.GOOGLE);
@@ -70,12 +73,11 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             String email = oauthUser.getAttribute("email") != null
                     ? oauthUser.getAttribute("email").toString()
                     : oauthUser.getAttribute("login").toString() + "@github.com";
-            String picture = oauthUser.getAttribute("avatar_url").toString();
             String name = oauthUser.getAttribute("login").toString();
             String providerUserId = oauthUser.getName();
 
             user.setEmail(email);
-            user.setProfilePicture(picture);
+            user.setProfilePicture(null);
             user.setName(name);
             user.setProviderUserId(providerUserId);
             user.setProvider(Providers.GITHUB);
@@ -87,15 +89,36 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             return;
         }
 
-        // Check if the user already exists, if not, save them using UserService
-        if (!userService.isUserExistByEmail(user.getEmail())) {
-            userService.saveUser(user);
-            logger.info("User saved: {}", user.getEmail());
+        String role = universalUserService.getUserRole(user.getEmail());
+        if (role != null) {
+            logger.info("Existing role-based user logging in via Google: {}, role: {}", user.getEmail(), role);
+            String prefix;
+            switch (role.toLowerCase()) {
+                case "doctor":
+                    prefix = "/doctor";
+                    break;
+                case "healthmentor":
+                case "mentor":
+                    prefix = "/mentor";
+                    break;
+                case "recoveredpatient":
+                    prefix = "/recoveredpatient";
+                    break;
+                case "sufferingpatient":
+                default:
+                    prefix = "/suff-pat";
+                    break;
+            }
+            response.sendRedirect(prefix + "/dashboard");
         } else {
-            logger.info("User already exists: {}", user.getEmail());
+            logger.info("New OAuth user signing in: {}", user.getEmail());
+            // Save to generic User table so they can authenticate
+            if (!userService.isUserExistByEmail(user.getEmail())) {
+                userService.saveUser(user);
+                logger.info("Generic user saved for OAuth: {}", user.getEmail());
+            }
+            // Redirect to dashboard where popup will be shown
+            response.sendRedirect("/suff-pat/dashboard");
         }
-
-        // Redirect to the dashboard
-        response.sendRedirect("/user/dashboard");
     }
 }
