@@ -23,7 +23,7 @@ RUN npm run build:css
 RUN cd frontend && npm run build
 
 # Stage 2: Build the Spring Boot application (Maven)
-FROM maven:3.9.9-eclipse-temurin-17 AS backend-builder
+FROM maven:3.9.9-eclipse-temurin-21 AS backend-builder
 WORKDIR /app
 
 # Copy pom.xml and download dependencies first (for caching)
@@ -40,7 +40,7 @@ COPY --from=frontend-builder /app/src/main/resources/static/ ./src/main/resource
 RUN mvn clean package -DskipTests
 
 # Stage 3: Run stage (Lightweight Alpine JRE image, no local DB)
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy the packaged JAR from the backend-builder stage
